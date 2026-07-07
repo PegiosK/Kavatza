@@ -1,0 +1,8 @@
+{
+  "appId": "gr.kavatza.app",
+  "appName": "καβάτζα",
+  "webDir": "dist",
+  "android": {
+    "backgroundColor": "#0C4A45"
+  }
+}

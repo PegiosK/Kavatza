@@ -1,0 +1,17 @@
+# deps & build output
+node_modules/
+dist/
+# android build artefacts
+android/.gradle/
+android/build/
+android/app/build/
+android/capacitor-cordova-android-plugins/
+android/local.properties
+.DS_Store
+*.log
+
+# release signing — never commit these
+android/keystore.properties
+android/*.keystore
+*.keystore
+RELEASE_SECRETS.txt

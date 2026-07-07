@@ -1,0 +1,10 @@
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body,#root{height:100%}
+body{margin:0;background:#0C4A45;font-family:'Commissioner',system-ui,sans-serif;font-variant-numeric:tabular-nums;
+  -webkit-font-smoothing:antialiased;overscroll-behavior:none}
+input,select,button,textarea{font-family:'Commissioner',system-ui,sans-serif}
+::-webkit-scrollbar{width:0;height:0}
+@keyframes sheetUp{from{transform:translateY(24px);opacity:.6}to{transform:translateY(0);opacity:1}}
+@keyframes pulseGlow{0%,100%{box-shadow:0 0 0 0 rgba(20,110,104,0)}50%{box-shadow:0 0 0 6px rgba(20,110,104,.10)}}
+@keyframes toastIn{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+@media (prefers-reduced-motion: reduce){*{animation:none!important}}
