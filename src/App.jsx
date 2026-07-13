@@ -73,6 +73,10 @@ const STR = {
     shortcutNotice: "Tip: save this as an app on your home screen. Android/Chrome: menu ⋮ → Add to Home screen. iPhone/Safari: Share → Add to Home Screen.",
     gotIt: "Got it",
     srcSalary: "Salary", srcPension: "Pension", srcRents: "Rent income", srcInvest: "Investments",
+    accounts: "Accounts", totalSavings: "Total savings", addAccount: "Add account",
+    accountName: "Account name", startingBalance: "Starting balance", balance: "Balance",
+    noAccounts: "No accounts yet", noAccountsHint: "Add a savings or cash account to track its balance.",
+    deleteAccountConfirm: "Delete this account?",
   },
   el: {
     appName: "καβάτζα", tagline: "Δώσε δουλειά σε κάθε ευρώ",
@@ -111,6 +115,10 @@ const STR = {
     shortcutNotice: "Tip: αποθήκευσέ το σαν εφαρμογή στην αρχική οθόνη. Android/Chrome: μενού ⋮ → Προσθήκη στην αρχική οθόνη. iPhone/Safari: Κοινοποίηση → Προσθήκη σε αρχική οθόνη.",
     gotIt: "Το κατάλαβα",
     srcSalary: "Μισθός", srcPension: "Σύνταξη", srcRents: "Ενοίκια", srcInvest: "Επενδύσεις",
+    accounts: "Λογαριασμοί", totalSavings: "Συνολικές αποταμιεύσεις", addAccount: "Προσθήκη λογαριασμού",
+    accountName: "Όνομα λογαριασμού", startingBalance: "Αρχικό υπόλοιπο", balance: "Υπόλοιπο",
+    noAccounts: "Δεν υπάρχουν λογαριασμοί", noAccountsHint: "Πρόσθεσε έναν λογαριασμό αποταμίευσης ή μετρητών για να παρακολουθείς το υπόλοιπό του.",
+    deleteAccountConfirm: "Διαγραφή αυτού του λογαριασμού;",
   },
 };
 
@@ -192,6 +200,7 @@ function seedState() {
     assignments: {},          // { 'YYYY-MM': { catId: amount } }
     transactions: [],         // { id, date, amount, categoryId|null, payee, memo, scheduleId|null }
     schedules: [],            // { id, name, amount, categoryId|null, freq, nextDate, payee }
+    accounts: [{ id: uid(), name: "Μετρητά", balance: 0 }],  // { id, name, balance }
   };
 }
 
@@ -359,6 +368,9 @@ export default function App() {
   });
 
   const setLang = (l) => update((s) => { s.settings.lang = l; });
+  const addAccount = (name, balance) => update((s) => { s.accounts.push({ id: uid(), name, balance }); });
+  const editAccount = (id, name, balance) => update((s) => { const a = s.accounts.find((x) => x.id === id); if (a) { a.name = name; a.balance = balance; } });
+  const delAccount = (id) => update((s) => { s.accounts = s.accounts.filter((x) => x.id !== id); });
   const dismissBackupNotice = () => update((s) => { s.settings.backupNoticeDismissed = true; });
   const clearAll = () => { if (confirm(t("clearAllConfirm"))) { setState(seedState()); flash(t("everyEuro")); } };
 
@@ -413,6 +425,10 @@ export default function App() {
           <TransactionsScreen t={t} lang={lang} state={state}
             onEdit={(tx) => setModal({ type: "tx", tx })} onDelete={delTx} />
         )}
+        {tab === "accounts" && (
+          <AccountsScreen t={t} accounts={state.accounts} onAdd={() => setModal({ type: "account", account: null })}
+            onEdit={(a) => setModal({ type: "account", account: a })} />
+        )}
         {tab === "reports" && <ReportsScreen t={t} lang={lang} state={state} dispMonth={dispMonth} />}
         {tab === "more" && (
           <MoreScreen
@@ -439,9 +455,10 @@ export default function App() {
           background: "rgba(255,255,255,.92)", backdropFilter: "blur(10px)", borderTop: `1px solid ${C.line}`,
           zIndex: 25, paddingBottom: "env(safe-area-inset-bottom)",
         }}>
-          <div style={{ width: "100%", maxWidth: 480, display: "grid", gridTemplateColumns: "repeat(4,1fr)" }}>
+          <div style={{ width: "100%", maxWidth: 480, display: "grid", gridTemplateColumns: "repeat(5,1fr)" }}>
             <NavBtn icon={Wallet} label={t("budget")} active={tab === "budget"} onClick={() => setTab("budget")} />
             <NavBtn icon={Receipt} label={t("transactions")} active={tab === "transactions"} onClick={() => setTab("transactions")} />
+            <NavBtn icon={PiggyBank} label={t("accounts")} active={tab === "accounts"} onClick={() => setTab("accounts")} />
             <NavBtn icon={BarChart3} label={t("reports")} active={tab === "reports"} onClick={() => setTab("reports")} />
             <NavBtn icon={Settings} label={t("more")} active={tab === "more"} onClick={() => setTab("more")} badge={dueSchedules.length} />
           </div>
@@ -469,6 +486,11 @@ export default function App() {
         {modal?.type === "schedule" && (
           <ScheduleSheet t={t} state={state} onClose={() => setModal(null)}
             onSave={(sc) => { addSchedule(sc); setModal(null); }} />
+        )}
+        {modal?.type === "account" && (
+          <AccountSheet t={t} initial={modal.account} onClose={() => setModal(null)}
+            onSave={(name, bal) => { modal.account ? editAccount(modal.account.id, name, bal) : addAccount(name, bal); setModal(null); }}
+            onDelete={modal.account ? () => { delAccount(modal.account.id); setModal(null); } : null} />
         )}
 
         <input ref={fileRef} type="file" accept="application/json" onChange={onImport} style={{ display: "none" }} />
@@ -500,7 +522,7 @@ function NavBtn({ icon: Icon, label, active, onClick, badge }) {
           display: "grid", placeItems: "center",
         }}>{badge}</span>}
       </div>
-      <span style={{ font: `${active ? 600 : 500} 11px 'Commissioner',sans-serif` }}>{label}</span>
+      <span style={{ font: `${active ? 600 : 500} 10.5px 'Commissioner',sans-serif`, whiteSpace: "nowrap" }}>{label}</span>
     </button>
   );
 }
@@ -699,6 +721,72 @@ function Empty({ t, text, hint, icon: Icon = Wallet }) {
       <div style={{ font: "600 16px 'Commissioner',sans-serif", color: C.ink }}>{text}</div>
       {hint && <div style={{ font: "500 14px 'Commissioner',sans-serif", marginTop: 6 }}>{hint}</div>}
     </div>
+  );
+}
+
+/* ======================== Accounts screen ======================== */
+function AccountsScreen({ t, accounts, onAdd, onEdit }) {
+  const total = accounts.reduce((s, a) => s + a.balance, 0);
+  return (
+    <div>
+      <ScreenHead title={t("accounts")} />
+      <Ledger>
+        <div style={{
+          background: C.card, border: `1px solid ${C.line}`, borderRadius: 16, padding: "16px 18px",
+          display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14,
+        }}>
+          <span style={{ font: "600 14px 'Commissioner',sans-serif", color: C.muted }}>{t("totalSavings")}</span>
+          <span style={{ font: "700 20px 'Space Grotesk',sans-serif", color: C.ink }}>{money(total)}</span>
+        </div>
+
+        {accounts.length === 0 ? <Empty t={t} text={t("noAccounts")} hint={t("noAccountsHint")} icon={PiggyBank} /> : (
+          <div style={{ background: C.card, borderRadius: 16, overflow: "hidden", border: `1px solid ${C.line}`, marginBottom: 14 }}>
+            {accounts.map((a, i) => (
+              <button key={a.id} onClick={() => onEdit(a)} style={{
+                width: "100%", textAlign: "left", background: "transparent", border: "none", cursor: "pointer",
+                borderBottom: i === accounts.length - 1 ? "none" : `1px solid ${C.line}`,
+                padding: "14px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12,
+              }}>
+                <span style={{ font: "600 15px 'Commissioner',sans-serif", color: C.ink }}>{a.name}</span>
+                <span style={{ font: "700 16px 'Space Grotesk',sans-serif", color: a.balance < 0 ? C.clay : C.ink }}>{money(a.balance)}</span>
+              </button>
+            ))}
+          </div>
+        )}
+
+        <GhostBtn onClick={onAdd} color={C.ink}><Plus size={16} />{t("addAccount")}</GhostBtn>
+        <div style={{ height: 12 }} />
+      </Ledger>
+    </div>
+  );
+}
+function AccountSheet({ t, initial, onClose, onSave, onDelete }) {
+  const [name, setName] = useState(initial?.name || "");
+  const [bal, setBal] = useState(initial ? initial.balance.toString().replace(".", ",") : "");
+  const valid = name.trim().length > 0 && !isNaN(parseAmount(bal || "0"));
+  const submit = () => {
+    const b = parseAmount(bal || "0");
+    if (!name.trim() || isNaN(b)) return;
+    onSave(name.trim(), b);
+  };
+  return (
+    <Sheet title={initial ? t("edit") : t("addAccount")} onClose={onClose} t={t}>
+      <Field label={t("accountName")}>
+        <input value={name} onChange={(e) => setName(e.target.value)} style={inputStyle} placeholder="—" autoFocus />
+      </Field>
+      <Field label={`${initial ? t("balance") : t("startingBalance")} (€)`}>
+        <input inputMode="decimal" value={bal} onChange={(e) => setBal(e.target.value)} placeholder="0,00"
+          style={{ ...inputStyle, font: "700 20px 'Space Grotesk',sans-serif", textAlign: "right" }} />
+      </Field>
+      <PrimaryBtn onClick={submit} disabled={!valid}><Check size={18} />{t("save")}</PrimaryBtn>
+      {onDelete && (
+        <div style={{ marginTop: 10 }}>
+          <button onClick={onDelete} style={{ width: "100%", padding: "13px", borderRadius: 12, border: "none", background: C.claySoft, color: C.clay, font: "600 15px 'Commissioner',sans-serif", cursor: "pointer", display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 7 }}>
+            <Trash2 size={16} />{t("delete")}
+          </button>
+        </div>
+      )}
+    </Sheet>
   );
 }
 
