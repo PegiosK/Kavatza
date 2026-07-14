@@ -23,10 +23,10 @@ const C = {
   tealSoft: "#DCEEE9",   // active-tab mint pill
   coin: "#FFFFFF",       // white, headline text on vault
   coinDim: "#CFE3DE",    // secondary text on vault
-  gold: "#D4A72C",       // brass/gold — the money accent (bars, FAB, edit pill)
-  goldSoft: "#FBF0D2",
-  amber: "#D4A72C",      // brass — goals & due (alias of gold)
-  amberSoft: "#FBF0D2",
+  gold: "#A97B24",       // brass — the money accent (bars, FAB, edit pill)
+  goldSoft: "#F5EDDA",
+  amber: "#A97B24",      // brass — goals & due (alias of gold)
+  amberSoft: "#F5EDDA",
   clay: "#D2604A",       // overspend / outflow
   claySoft: "#F4E3DC",
   muted: "#8B8579",
@@ -72,7 +72,7 @@ const STR = {
     install: "Tip: keep a backup now and then via “Backup & restore”. Your data lives only on this device.",
     confirm: "Confirm", schedule: "Schedule", manageCats: "Categories & groups", ofWord: "of",
         backupNotice: "Your budget lives only in this browser. Export a backup now and then — Backup & restore, in More.",
-    shortcutNotice: "Install as an app — Android: open this page in CHROME → menu ⋮ → 'Add to Home screen' → Add. iPhone: Safari → Share → 'Add to Home Screen'. Avoid Firefox for installing — it has a known bug.",
+    shortcutNotice: "To install as an app — open this link in Google Chrome → menu ⋮ → 'Add to Home screen' → Add.",
     gotIt: "Got it",
     srcSalary: "Salary", srcPension: "Pension", srcRents: "Rent income", srcInvest: "Investments",
     accounts: "Accounts", totalSavings: "Total savings", addAccount: "Add account",
@@ -114,7 +114,7 @@ const STR = {
     install: "Συμβουλή: κράτα κάθε τόσο αντίγραφο από το «Αντίγραφο & επαναφορά» για ασφάλεια.",
     confirm: "Επιβεβαίωση", schedule: "Πρόγραμμα", manageCats: "Κατηγορίες & ομάδες", ofWord: "από",
         backupNotice: "Ο προϋπολογισμός σου ζει μόνο σε αυτόν τον browser. Κράτα πού και πού αντίγραφο — «Αντίγραφο & επαναφορά», στο «Άλλα».",
-    shortcutNotice: "Εγκατάσταση σαν εφαρμογή — Android: άνοιξε αυτή τη σελίδα στο CHROME → μενού ⋮ → «Προσθήκη στην αρχική οθόνη» → Προσθήκη. iPhone: Safari → Κοινοποίηση → «Προσθήκη σε αρχική οθόνη». Απόφυγε τον Firefox για την εγκατάσταση — έχει γνωστό σφάλμα.",
+    shortcutNotice: "Για εγκατάσταση σαν εφαρμογή — Άνοιξε το link στο Google Chrome → μενού ⋮ → «Προσθήκη στην αρχική οθόνη» → Προσθήκη.",
     gotIt: "Το κατάλαβα",
     srcSalary: "Μισθός", srcPension: "Σύνταξη", srcRents: "Ενοίκια", srcInvest: "Επενδύσεις",
     accounts: "Λογαριασμοί", totalSavings: "Συνολικές αποταμιεύσεις", addAccount: "Προσθήκη λογαριασμού",
