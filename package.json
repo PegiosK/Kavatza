@@ -14,6 +14,8 @@
     "@capacitor/android": "^7.0.0",
     "@capacitor/core": "^7.0.0",
     "@fontsource/commissioner": "^5.2.10",
+    "@fontsource/luckiest-guy": "^5.2.8",
+    "@fontsource/poppins": "^5.2.7",
     "@fontsource/space-grotesk": "^5.1.0",
     "lucide-react": "^0.460.0",
     "react": "^18.3.1",

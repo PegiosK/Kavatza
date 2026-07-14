@@ -4,7 +4,7 @@ import {
 } from "recharts";
 import {
   Wallet, Plus, BarChart3, Settings, Repeat, Target, Download, Upload,
-  ChevronLeft, ChevronRight, X, Pencil, Trash2, Check, ArrowDownLeft, ArrowUpRight,
+  ChevronLeft, ChevronRight, ChevronDown, X, Pencil, Trash2, Check, ArrowDownLeft, ArrowUpRight,
   PiggyBank, Languages, Receipt, AlertCircle, FolderPlus, RotateCcw, CalendarClock,
 } from "lucide-react";
 
@@ -14,22 +14,24 @@ import {
  * ------------------------------------------------------------------ */
 
 const C = {
-  ink: "#1E2522",        // warm near-black
-  paper: "#F1EFE7",      // warm paper (the ledger)
+  ink: "#1E211F",        // warm near-black
+  paper: "#F5F1E8",      // warm paper (the ledger)
   card: "#FFFFFF",
-  vault: "#0C4A45",      // deep teal canvas (the stash)
-  vaultEdge: "#0A3F3B",
-  teal: "#146E68",       // primary action
-  tealSoft: "#E3EEE9",
-  coin: "#F3EFE2",       // cream, text on vault
-  coinDim: "#A8C6BF",    // secondary text on vault
-  amber: "#A97B24",      // brass — goals & due
-  amberSoft: "#F5EDDA",
-  clay: "#C24B3F",       // overspend
-  claySoft: "#F8E5E0",
-  muted: "#71796F",
-  line: "#E6E3D5",       // warm hairline
-  green: "#1F7E56",
+  vault: "#0C3F3A",      // bold deep teal canvas (the stash)
+  vaultEdge: "#06211E",
+  teal: "#0C3F3A",       // primary action — matches the vault
+  tealSoft: "#DCEEE9",   // active-tab mint pill
+  coin: "#FFFFFF",       // white, headline text on vault
+  coinDim: "#CFE3DE",    // secondary text on vault
+  gold: "#D4A72C",       // brass/gold — the money accent (bars, FAB, edit pill)
+  goldSoft: "#FBF0D2",
+  amber: "#D4A72C",      // brass — goals & due (alias of gold)
+  amberSoft: "#FBF0D2",
+  clay: "#D2604A",       // overspend / outflow
+  claySoft: "#F4E3DC",
+  muted: "#8B8579",
+  line: "#EEE9DC",       // warm hairline
+  green: "#3AA57C",
 };
 
 const STORE_KEY = "kavatza_state_v2";
@@ -37,7 +39,7 @@ const STORE_KEY = "kavatza_state_v2";
 /* ----------------------------- i18n ------------------------------ */
 const STR = {
   en: {
-    appName: "καβάτζα", tagline: "Give every euro a job",
+    appName: "KABATZA", tagline: "Give every euro a job",
     budget: "Budget", transactions: "Activity", reports: "Reports", more: "More",
     readyToAssign: "Ready to assign", allAssigned: "Every euro has a job",
     moneyWaiting: "waiting to be assigned", overAssigned: "assigned more than you have",
@@ -70,7 +72,7 @@ const STR = {
     install: "Tip: keep a backup now and then via “Backup & restore”. Your data lives only on this device.",
     confirm: "Confirm", schedule: "Schedule", manageCats: "Categories & groups", ofWord: "of",
         backupNotice: "Your budget lives only in this browser. Export a backup now and then — Backup & restore, in More.",
-    shortcutNotice: "Tip: save this as an app on your home screen. Android/Chrome: menu ⋮ → Add to Home screen. iPhone/Safari: Share → Add to Home Screen.",
+    shortcutNotice: "Install as an app — Android: open this page in CHROME → menu ⋮ → 'Add to Home screen' → Add. iPhone: Safari → Share → 'Add to Home Screen'. Avoid Firefox for installing — it has a known bug.",
     gotIt: "Got it",
     srcSalary: "Salary", srcPension: "Pension", srcRents: "Rent income", srcInvest: "Investments",
     accounts: "Accounts", totalSavings: "Total savings", addAccount: "Add account",
@@ -79,8 +81,8 @@ const STR = {
     deleteAccountConfirm: "Delete this account?",
   },
   el: {
-    appName: "καβάτζα", tagline: "Δώσε δουλειά σε κάθε ευρώ",
-    budget: "Φάκελοι", transactions: "Κινήσεις", reports: "Αναφορές", more: "Άλλα",
+    appName: "KABATZA", tagline: "Δώσε δουλειά σε κάθε ευρώ",
+    budget: "Προϋπολογισμός", transactions: "Κινήσεις", reports: "Αναφορές", more: "Άλλα",
     readyToAssign: "Για μοίρασμα", allAssigned: "Κάθε ευρώ έχει δουλειά",
     moneyWaiting: "περιμένουν να μοιραστούν", overAssigned: "μοίρασες πιο πολλά απ' όσα έχεις",
     assigned: "Μοιρασμένα", activity: "Κίνηση", available: "Διαθέσιμα",
@@ -112,7 +114,7 @@ const STR = {
     install: "Συμβουλή: κράτα κάθε τόσο αντίγραφο από το «Αντίγραφο & επαναφορά» για ασφάλεια.",
     confirm: "Επιβεβαίωση", schedule: "Πρόγραμμα", manageCats: "Κατηγορίες & ομάδες", ofWord: "από",
         backupNotice: "Ο προϋπολογισμός σου ζει μόνο σε αυτόν τον browser. Κράτα πού και πού αντίγραφο — «Αντίγραφο & επαναφορά», στο «Άλλα».",
-    shortcutNotice: "Tip: αποθήκευσέ το σαν εφαρμογή στην αρχική οθόνη. Android/Chrome: μενού ⋮ → Προσθήκη στην αρχική οθόνη. iPhone/Safari: Κοινοποίηση → Προσθήκη σε αρχική οθόνη.",
+    shortcutNotice: "Εγκατάσταση σαν εφαρμογή — Android: άνοιξε αυτή τη σελίδα στο CHROME → μενού ⋮ → «Προσθήκη στην αρχική οθόνη» → Προσθήκη. iPhone: Safari → Κοινοποίηση → «Προσθήκη σε αρχική οθόνη». Απόφυγε τον Firefox για την εγκατάσταση — έχει γνωστό σφάλμα.",
     gotIt: "Το κατάλαβα",
     srcSalary: "Μισθός", srcPension: "Σύνταξη", srcRents: "Ενοίκια", srcInvest: "Επενδύσεις",
     accounts: "Λογαριασμοί", totalSavings: "Συνολικές αποταμιεύσεις", addAccount: "Προσθήκη λογαριασμού",
@@ -481,9 +483,9 @@ function AppInner() {
         {/* FAB */}
         <button onClick={() => setModal({ type: "tx", tx: null })} aria-label={t("addTransaction")} style={{
           position: "fixed", bottom: "calc(78px + env(safe-area-inset-bottom))", right: "max(18px, calc(50% - 240px + 18px))",
-          width: 58, height: 58, borderRadius: 20, border: "none", background: C.vault, color: C.coin,
+          width: 58, height: 58, borderRadius: 18, border: "none", background: C.gold, color: C.vault,
           display: "grid", placeItems: "center", cursor: "pointer", zIndex: 30,
-          boxShadow: "0 8px 24px rgba(12,74,69,.38)",
+          boxShadow: "0 10px 20px rgba(0,0,0,.25)",
         }}><Plus size={26} /></button>
 
         {/* bottom nav */}
@@ -547,10 +549,14 @@ function AppInner() {
 function NavBtn({ icon: Icon, label, active, onClick, badge }) {
   return (
     <button onClick={onClick} style={{
-      background: "transparent", border: "none", cursor: "pointer", padding: "10px 0 12px",
+      background: "transparent", border: "none", cursor: "pointer", padding: "8px 0 10px",
       display: "flex", flexDirection: "column", alignItems: "center", gap: 4, position: "relative",
       color: active ? C.teal : C.muted,
     }}>
+      <div style={{
+        position: "relative", display: "flex", flexDirection: "column", alignItems: "center", gap: 3,
+        background: active ? C.tealSoft : "transparent", borderRadius: 14, padding: "5px 12px 4px",
+      }}>
       <div style={{ position: "relative" }}>
         <Icon size={22} strokeWidth={active ? 2.4 : 2} />
         {badge > 0 && <span style={{
@@ -559,7 +565,8 @@ function NavBtn({ icon: Icon, label, active, onClick, badge }) {
           display: "grid", placeItems: "center",
         }}>{badge}</span>}
       </div>
-      <span style={{ font: `${active ? 600 : 500} 10.5px 'Commissioner',sans-serif`, whiteSpace: "nowrap" }}>{label}</span>
+      <span style={{ font: `${active ? 700 : 500} 10.5px 'Commissioner',sans-serif`, whiteSpace: "nowrap" }}>{label}</span>
+      </div>
     </button>
   );
 }
@@ -568,6 +575,10 @@ function NavBtn({ icon: Icon, label, active, onClick, badge }) {
 function BudgetScreen({ t, lang, calc, groupsView, dispMonth, setDispMonth, onCategory, onManage, dueCount, onDue, backupNotice, onDismissNotice }) {
   const [collapsed, setCollapsed] = useState({});
   const toggleGroup = (id) => setCollapsed((c) => ({ ...c, [id]: !c[id] }));
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const [pickerYear, setPickerYear] = useState(() => parseInt(dispMonth.slice(0, 4)));
+  const openPicker = () => { setPickerYear(parseInt(dispMonth.slice(0, 4))); setPickerOpen(true); };
+  const monthShort = (i) => new Date(2000, i, 1).toLocaleDateString(lang === "el" ? "el-GR" : "en-GB", { month: "short" });
   const rta = calc.readyToAssign;
   const rtaState = Math.abs(rta) < 0.005 ? "zero" : rta > 0 ? "pos" : "neg";
   const msg = rtaState === "zero" ? t("allAssigned") : rtaState === "pos" ? t("moneyWaiting") : t("overAssigned");
@@ -579,20 +590,59 @@ function BudgetScreen({ t, lang, calc, groupsView, dispMonth, setDispMonth, onCa
         padding: "calc(16px + env(safe-area-inset-top)) 18px 36px",
       }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
-          <span style={{ font: "700 20px 'Commissioner',sans-serif", letterSpacing: "-.01em", color: C.coin }}>{t("appName")}</span>
-          <button onClick={onManage} style={{ ...iconBtn, background: C.coin, gap: 6, padding: "8px 14px", borderRadius: 11, boxShadow: "0 2px 8px rgba(0,0,0,.18)" }}>
-            <Pencil size={14} color={C.vault} /><span style={{ font: "700 13px 'Commissioner',sans-serif", color: C.vault }}>{t("edit")}</span>
+          <span style={{ display: "flex", alignItems: "center", gap: 9 }}>
+            <img src="./mascot/mascot-circle.png" alt="" style={{ width: 38, height: 38, borderRadius: "50%", border: "2px solid " + C.gold, display: "block" }} />
+            <span style={{
+              fontFamily: "'Luckiest Guy',cursive", fontSize: 22, lineHeight: 1, paddingTop: 4, color: "#fff",
+              textShadow: "-2px 0 0 #06211E,2px 0 0 #06211E,0 -2px 0 #06211E,0 2px 0 #06211E,-2px -2px 0 #06211E,2px -2px 0 #06211E,-2px 2px 0 #06211E,3px 3px 0 #06211E",
+            }}>KABATZA</span>
+          </span>
+          <button onClick={onManage} style={{ ...iconBtn, background: C.gold, gap: 7, padding: "9px 16px", borderRadius: 100, boxShadow: "0 4px 12px rgba(0,0,0,.25)" }}>
+            <span style={{ font: "800 12px 'Commissioner',sans-serif", color: "#12332E", textTransform: "uppercase", letterSpacing: ".04em" }}>{t("edit")}</span>
           </button>
         </div>
 
         {/* month nav */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, marginBottom: 16 }}>
           <button onClick={() => setDispMonth(addMonthsKey(dispMonth, -1))} style={iconBtn} aria-label="previous month"><ChevronLeft size={22} color={C.coinDim} /></button>
-          <span style={{ font: "600 15px 'Commissioner',sans-serif", minWidth: 150, textAlign: "center", textTransform: "capitalize", color: C.coin }}>
-            {monthLabel(dispMonth, lang)}
-          </span>
+          <button onClick={openPicker} style={{ ...iconBtn, gap: 5, minWidth: 150, justifyContent: "center" }}>
+            <span style={{ font: "600 15px 'Commissioner',sans-serif", textTransform: "capitalize", color: C.coin }}>{monthLabel(dispMonth, lang)}</span>
+            <ChevronDown size={15} color={C.coinDim} />
+          </button>
           <button onClick={() => setDispMonth(addMonthsKey(dispMonth, 1))} style={iconBtn} aria-label="next month"><ChevronRight size={22} color={C.coinDim} /></button>
         </div>
+
+        {pickerOpen && (
+          <div onClick={() => setPickerOpen(false)} style={{
+            position: "fixed", inset: 0, background: "rgba(21,32,43,.5)", zIndex: 55,
+            display: "flex", alignItems: "center", justifyContent: "center", padding: 24,
+          }}>
+            <div onClick={(e) => e.stopPropagation()} style={{
+              background: C.card, borderRadius: 20, padding: "18px 16px", width: "100%", maxWidth: 320,
+              boxShadow: "0 16px 48px rgba(21,32,43,.35)",
+            }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
+                <button onClick={() => setPickerYear((y) => y - 1)} style={iconBtn}><ChevronLeft size={20} color={C.muted} /></button>
+                <span style={{ font: "700 17px 'Poppins',sans-serif", color: C.ink }}>{pickerYear}</span>
+                <button onClick={() => setPickerYear((y) => y + 1)} style={iconBtn}><ChevronRight size={20} color={C.muted} /></button>
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 6 }}>
+                {Array.from({ length: 12 }, (_, i) => {
+                  const mk = `${pickerYear}-${String(i + 1).padStart(2, "0")}`;
+                  const sel = mk === dispMonth;
+                  return (
+                    <button key={i} onClick={() => { setDispMonth(mk); setPickerOpen(false); }} style={{
+                      border: "none", cursor: "pointer", padding: "12px 0", borderRadius: 12, textTransform: "capitalize",
+                      background: sel ? C.teal : "transparent",
+                      font: `${sel ? 700 : 500} 14px 'Commissioner',sans-serif`,
+                      color: sel ? "#fff" : C.ink,
+                    }}>{monthShort(i)}</button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* the stash */}
         <div style={{ textAlign: "center" }}>
@@ -600,7 +650,7 @@ function BudgetScreen({ t, lang, calc, groupsView, dispMonth, setDispMonth, onCa
             {t("readyToAssign")}
           </div>
           <div style={{
-            font: "700 42px/1.05 'Space Grotesk',sans-serif", letterSpacing: "-.02em", margin: "7px 0 3px",
+            font: "700 42px/1.05 'Poppins',sans-serif", letterSpacing: "-.02em", margin: "7px 0 3px",
             color: rtaState === "neg" ? "#F0A08F" : C.coin,
           }}>
             {money(rta)}
@@ -669,7 +719,7 @@ function BudgetScreen({ t, lang, calc, groupsView, dispMonth, setDispMonth, onCa
                   <ChevronRight size={15} color={C.muted} style={{ transform: collapsed[g.id] ? "none" : "rotate(90deg)", transition: "transform .15s" }} />
                   <h3 style={{ font: "600 13px 'Commissioner',sans-serif", letterSpacing: ".06em", textTransform: "uppercase", color: C.muted, margin: 0 }}>{g.name}</h3>
                 </span>
-                <span style={{ font: "600 13px 'Space Grotesk',sans-serif", color: C.muted }}>{money(gAssigned)}</span>
+                <span style={{ font: "600 13px 'Poppins',sans-serif", color: C.muted }}>{money(gAssigned)}</span>
               </button>
               {!collapsed[g.id] && (
               <div style={{ background: C.card, borderRadius: 16, overflow: "hidden", border: `1px solid ${C.line}` }}>
@@ -722,14 +772,14 @@ function CategoryRow({ t, cat, info, last, onClick, dispMonth }) {
         <div style={{ font: "600 15px 'Commissioner',sans-serif", color: C.ink, minWidth: 0, flex: 1, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
           {cat.name} {gp && <Target size={12} color={C.amber} style={{ verticalAlign: "middle", marginLeft: 2 }} />}
         </div>
-        <div style={{ font: "700 16px 'Space Grotesk',sans-serif", color: availColor, flexShrink: 0 }}>{money(avail)}</div>
+        <div style={{ font: "700 16px 'Poppins',sans-serif", color: availColor, flexShrink: 0 }}>{money(avail)}</div>
       </div>
 
       {/* envelope depletion: spent vs assigned */}
       <div style={{ marginTop: 9, height: 6, background: "#EBE8DB", borderRadius: 4, overflow: "hidden" }}>
         <div style={{
           width: `${frac * 100}%`, height: "100%", borderRadius: 4,
-          background: over ? C.clay : C.teal, transition: "width .35s ease",
+          background: over ? C.clay : C.gold, transition: "width .35s ease",
         }} />
       </div>
       <div style={{ display: "flex", justifyContent: "space-between", gap: 10, font: "500 12px 'Commissioner',sans-serif", color: over ? C.clay : C.muted, marginTop: 5 }}>
@@ -783,7 +833,7 @@ function AccountsScreen({ t, accounts, onAdd, onEdit }) {
           display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14,
         }}>
           <span style={{ font: "600 14px 'Commissioner',sans-serif", color: C.muted }}>{t("totalSavings")}</span>
-          <span style={{ font: "700 20px 'Space Grotesk',sans-serif", color: C.ink }}>{money(total)}</span>
+          <span style={{ font: "700 20px 'Poppins',sans-serif", color: C.ink }}>{money(total)}</span>
         </div>
 
         {accounts.length === 0 ? <Empty t={t} text={t("noAccounts")} hint={t("noAccountsHint")} icon={PiggyBank} /> : (
@@ -795,7 +845,7 @@ function AccountsScreen({ t, accounts, onAdd, onEdit }) {
                 padding: "14px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12,
               }}>
                 <span style={{ font: "600 15px 'Commissioner',sans-serif", color: C.ink }}>{a.name}</span>
-                <span style={{ font: "700 16px 'Space Grotesk',sans-serif", color: a.balance < 0 ? C.clay : C.ink }}>{money(a.balance)}</span>
+                <span style={{ font: "700 16px 'Poppins',sans-serif", color: a.balance < 0 ? C.clay : C.ink }}>{money(a.balance)}</span>
               </button>
             ))}
           </div>
@@ -823,7 +873,7 @@ function AccountSheet({ t, initial, onClose, onSave, onDelete }) {
       </Field>
       <Field label={`${initial ? t("balance") : t("startingBalance")} (€)`}>
         <input inputMode="decimal" value={bal} onChange={(e) => setBal(e.target.value)} placeholder="0,00"
-          style={{ ...inputStyle, font: "700 20px 'Space Grotesk',sans-serif", textAlign: "right" }} />
+          style={{ ...inputStyle, font: "700 20px 'Poppins',sans-serif", textAlign: "right" }} />
       </Field>
       <PrimaryBtn onClick={submit} disabled={!valid}><Check size={18} />{t("save")}</PrimaryBtn>
       {onDelete && (
@@ -863,7 +913,7 @@ function TransactionsScreen({ t, lang, state, onEdit, onDelete }) {
             <div key={grp.date} style={{ marginBottom: 14 }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", padding: "6px 6px 8px" }}>
                 <span style={{ font: "600 12px 'Commissioner',sans-serif", color: C.muted, textTransform: "uppercase", letterSpacing: ".05em" }}>{dfmt(grp.date)}</span>
-                {dayOut < -0.005 && <span style={{ font: "600 12px 'Space Grotesk',sans-serif", color: C.muted }}>{money(dayOut)}</span>}
+                {dayOut < -0.005 && <span style={{ font: "600 12px 'Poppins',sans-serif", color: C.muted }}>{money(dayOut)}</span>}
               </div>
               <div style={{ background: C.card, borderRadius: 16, overflow: "hidden", border: `1px solid ${C.line}` }}>
                 {grp.items.map((x, i) => {
@@ -875,8 +925,8 @@ function TransactionsScreen({ t, lang, state, onEdit, onDelete }) {
                       cursor: "pointer", textAlign: "left",
                     }}>
                       <div style={{ width: 38, height: 38, borderRadius: 11, flexShrink: 0, display: "grid", placeItems: "center",
-                        background: inflow ? C.tealSoft : C.paper }}>
-                        {inflow ? <ArrowDownLeft size={18} color={C.teal} /> : <ArrowUpRight size={18} color={C.muted} />}
+                        background: inflow ? C.goldSoft : C.claySoft }}>
+                        {inflow ? <ArrowDownLeft size={18} color={C.vault} /> : <ArrowUpRight size={18} color={C.clay} />}
                       </div>
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ font: "600 15px 'Commissioner',sans-serif", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
@@ -884,7 +934,7 @@ function TransactionsScreen({ t, lang, state, onEdit, onDelete }) {
                         </div>
                         <div style={{ font: "500 12px 'Commissioner',sans-serif", color: C.muted, marginTop: 2 }}>{catName(x.categoryId)}</div>
                       </div>
-                      <div style={{ font: "700 15px 'Space Grotesk',sans-serif", color: inflow ? C.green : C.ink }}>
+                      <div style={{ font: "700 15px 'Poppins',sans-serif", color: inflow ? C.green : C.ink }}>
                         {inflow ? "+" : ""}{money(x.amount)}
                       </div>
                     </button>
@@ -941,7 +991,7 @@ function ReportsScreen({ t, lang, state, dispMonth }) {
           <CardTitle icon={BarChart3}>{t("spendingByCategory")}</CardTitle>
           {spend.length === 0 ? <MiniEmpty t={t} /> : (
             <>
-              <div style={{ font: "700 26px 'Space Grotesk',sans-serif", color: C.ink, margin: "2px 0 12px" }}>{money(totalSpend)}</div>
+              <div style={{ font: "700 26px 'Poppins',sans-serif", color: C.ink, margin: "2px 0 12px" }}>{money(totalSpend)}</div>
               <ResponsiveContainer width="100%" height={Math.max(140, spend.length * 38)}>
                 <BarChart data={spend} layout="vertical" margin={{ left: 0, right: 16, top: 0, bottom: 0 }}>
                   <XAxis type="number" hide />
@@ -1025,7 +1075,7 @@ function MoreScreen({ t, lang, state, due, onEnterSchedule, onDelSchedule, onNew
                     {catName(s.categoryId)} · {freqLabel[s.freq]} · {dfmt(s.nextDate)}
                   </div>
                 </div>
-                <div style={{ font: "700 15px 'Space Grotesk',sans-serif", color: inflow ? C.green : C.ink }}>{inflow ? "+" : ""}{money(s.amount)}</div>
+                <div style={{ font: "700 15px 'Poppins',sans-serif", color: inflow ? C.green : C.ink }}>{inflow ? "+" : ""}{money(s.amount)}</div>
                 {isDue ? (
                   <button onClick={() => onEnterSchedule(s)} style={{ background: C.teal, color: "#fff", border: "none", borderRadius: 10, padding: "8px 12px", font: "600 13px 'Commissioner',sans-serif", cursor: "pointer" }}>{t("enter")}</button>
                 ) : (
@@ -1134,7 +1184,7 @@ function TxSheet({ t, state, initial, dispMonth, onClose, onSave, onDelete }) {
 
       <Field label={`${t("amount")} (€)`}>
         <input inputMode="decimal" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="0,00"
-          style={{ ...inputStyle, font: "700 22px 'Space Grotesk',sans-serif", textAlign: "right" }} autoFocus={!initial} />
+          style={{ ...inputStyle, font: "700 22px 'Poppins',sans-serif", textAlign: "right" }} autoFocus={!initial} />
       </Field>
 
       <Field label={t("category")}>
@@ -1221,7 +1271,7 @@ function AssignSheet({ t, cat, info, dispMonth, lang, onClose, onAssign, onSetGo
 
       <Field label={`${t("assignedThisMonth")} (€)`}>
         <input inputMode="decimal" value={amount} onChange={(e) => setAmount(e.target.value)}
-          style={{ ...inputStyle, font: "700 22px 'Space Grotesk',sans-serif", textAlign: "right" }} />
+          style={{ ...inputStyle, font: "700 22px 'Poppins',sans-serif", textAlign: "right" }} />
       </Field>
 
       {(overspend > 0.005 || goalGap > 0.005) && (
@@ -1270,7 +1320,7 @@ function AssignSheet({ t, cat, info, dispMonth, lang, onClose, onAssign, onSetGo
 function Stat({ label, value, accent = C.ink }) {
   return (
     <div style={{ flex: 1, background: C.paper, borderRadius: 12, padding: "10px 8px", textAlign: "center" }}>
-      <div style={{ font: "700 14px 'Space Grotesk',sans-serif", color: accent }}>{value}</div>
+      <div style={{ font: "700 14px 'Poppins',sans-serif", color: accent }}>{value}</div>
       <div style={{ font: "500 10.5px 'Commissioner',sans-serif", color: C.muted, marginTop: 2, textTransform: "uppercase", letterSpacing: ".03em" }}>{label}</div>
     </div>
   );
@@ -1354,7 +1404,7 @@ function ScheduleSheet({ t, state, onClose, onSave }) {
       </div>
       <Field label={`${t("amount")} (€)`}>
         <input inputMode="decimal" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="0,00"
-          style={{ ...inputStyle, font: "700 20px 'Space Grotesk',sans-serif", textAlign: "right" }} />
+          style={{ ...inputStyle, font: "700 20px 'Poppins',sans-serif", textAlign: "right" }} />
       </Field>
       <Field label={t("category")}>
         <select value={catId} onChange={(e) => { setCatId(e.target.value); if (e.target.value === "__income__") setInflow(true); }}

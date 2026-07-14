@@ -7,7 +7,7 @@
 
 ## App name (≤ 30 χαρακτήρες)
 ```
-καβάτζα
+KABATZA
 ```
 
 ## Short description (≤ 80 χαρακτήρες)

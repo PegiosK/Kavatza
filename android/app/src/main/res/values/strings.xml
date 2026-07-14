@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">καβάτζα</string>
-    <string name="title_activity_main">καβάτζα</string>
+    <string name="app_name">KABATZA</string>
+    <string name="title_activity_main">KABATZA</string>
     <string name="package_name">gr.kavatza.app</string>
     <string name="custom_url_scheme">gr.kavatza.app</string>
 </resources>
