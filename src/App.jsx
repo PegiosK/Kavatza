@@ -211,9 +211,15 @@ function seedState() {
 function loadState() {
   try {
     const raw = localStorage.getItem(STORE_KEY);
-    if (raw) return JSON.parse(raw);
+    if (raw) return withDefaults(JSON.parse(raw));
   } catch { /* fall through */ }
   return seedState();
+}
+// Fills in fields added after someone's data was already saved (e.g. "accounts"),
+// so old saved state never crashes a screen that expects a newer field to exist.
+function withDefaults(state) {
+  if (!state.accounts) state.accounts = [];
+  return state;
 }
 function saveState(state) {
   try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch { /* ignore quota */ }
@@ -276,8 +282,37 @@ function GhostBtn({ children, onClick, color = C.muted }) {
   );
 }
 
+
+class ErrorBoundary extends React.Component {
+  constructor(props) { super(props); this.state = { crashed: false }; }
+  static getDerivedStateFromError() { return { crashed: true }; }
+  componentDidCatch(err, info) { console.error("καβάτζα crashed:", err, info); }
+  render() {
+    if (!this.state.crashed) return this.props.children;
+    return (
+      <div style={{
+        minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center",
+        justifyContent: "center", gap: 16, padding: 28, background: "#F1EFE7", textAlign: "center",
+        fontFamily: "'Commissioner',sans-serif",
+      }}>
+        <div style={{ font: "700 19px 'Commissioner',sans-serif", color: "#1E2522" }}>Κάτι πήγε στραβά</div>
+        <div style={{ font: "500 14px/1.5 'Commissioner',sans-serif", color: "#71796F", maxWidth: 320 }}>
+          Τα δεδομένα σου δεν χάθηκαν — μένουν αποθηκευμένα στη συσκευή. Δοκίμασε να ξαναφορτώσεις την εφαρμογή.
+        </div>
+        <button onClick={() => window.location.reload()} style={{
+          border: "none", background: "#146E68", color: "#fff", borderRadius: 12,
+          padding: "12px 22px", font: "600 15px 'Commissioner',sans-serif", cursor: "pointer",
+        }}>Ξαναφόρτωση</button>
+      </div>
+    );
+  }
+}
+
 /* =========================== main app =========================== */
 export default function App() {
+  return <ErrorBoundary><AppInner /></ErrorBoundary>;
+}
+function AppInner() {
   const [state, setState] = useState(loadState);
   const [tab, setTab] = useState("budget");
   const [dispMonth, setDispMonth] = useState(curMonth());
@@ -357,6 +392,8 @@ export default function App() {
     s.groups = s.groups.filter((g) => g.id !== id);
     s.categories = s.categories.filter((c) => c.groupId !== id);
     s.transactions.forEach((x) => { if (catIds.includes(x.categoryId)) x.categoryId = null; });
+    for (const m in s.assignments) for (const cid of catIds) delete s.assignments[m][cid];
+    s.schedules.forEach((x) => { if (catIds.includes(x.categoryId)) x.categoryId = null; });
   });
 
   const addSchedule = (sc) => update((s) => { s.schedules.push({ id: uid(), ...sc }); });
@@ -395,7 +432,7 @@ export default function App() {
       try {
         const obj = JSON.parse(r.result);
         if (!obj.categories || !obj.transactions || !obj.groups) throw new Error("bad");
-        setState(obj); flash(t("restored"));
+        setState(withDefaults(obj)); flash(t("restored"));
       } catch { flash(t("badFile")); }
     };
     r.readAsText(f);
@@ -529,6 +566,8 @@ function NavBtn({ icon: Icon, label, active, onClick, badge }) {
 
 /* ======================== Budget screen ========================= */
 function BudgetScreen({ t, lang, calc, groupsView, dispMonth, setDispMonth, onCategory, onManage, dueCount, onDue, backupNotice, onDismissNotice }) {
+  const [collapsed, setCollapsed] = useState({});
+  const toggleGroup = (id) => setCollapsed((c) => ({ ...c, [id]: !c[id] }));
   const rta = calc.readyToAssign;
   const rtaState = Math.abs(rta) < 0.005 ? "zero" : rta > 0 ? "pos" : "neg";
   const msg = rtaState === "zero" ? t("allAssigned") : rtaState === "pos" ? t("moneyWaiting") : t("overAssigned");
@@ -541,8 +580,8 @@ function BudgetScreen({ t, lang, calc, groupsView, dispMonth, setDispMonth, onCa
       }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
           <span style={{ font: "700 20px 'Commissioner',sans-serif", letterSpacing: "-.01em", color: C.coin }}>{t("appName")}</span>
-          <button onClick={onManage} style={{ ...iconBtn, border: "1.5px solid rgba(243,239,226,.26)", gap: 6, padding: "7px 12px", borderRadius: 11 }}>
-            <Pencil size={14} color={C.coinDim} /><span style={{ font: "600 13px 'Commissioner',sans-serif", color: C.coinDim }}>{t("edit")}</span>
+          <button onClick={onManage} style={{ ...iconBtn, background: C.coin, gap: 6, padding: "8px 14px", borderRadius: 11, boxShadow: "0 2px 8px rgba(0,0,0,.18)" }}>
+            <Pencil size={14} color={C.vault} /><span style={{ font: "700 13px 'Commissioner',sans-serif", color: C.vault }}>{t("edit")}</span>
           </button>
         </div>
 
@@ -622,10 +661,17 @@ function BudgetScreen({ t, lang, calc, groupsView, dispMonth, setDispMonth, onCa
           const gAssigned = g.cats.reduce((s, c) => s + calc.byCat[c.id].assigned, 0);
           return (
             <section key={g.id} style={{ marginBottom: 16 }}>
-              <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", padding: "4px 6px 8px" }}>
-                <h3 style={{ font: "600 13px 'Commissioner',sans-serif", letterSpacing: ".06em", textTransform: "uppercase", color: C.muted, margin: 0 }}>{g.name}</h3>
+              <button onClick={() => toggleGroup(g.id)} style={{
+                width: "100%", background: "transparent", border: "none", cursor: "pointer",
+                display: "flex", alignItems: "center", justifyContent: "space-between", padding: "4px 6px 8px",
+              }}>
+                <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                  <ChevronRight size={15} color={C.muted} style={{ transform: collapsed[g.id] ? "none" : "rotate(90deg)", transition: "transform .15s" }} />
+                  <h3 style={{ font: "600 13px 'Commissioner',sans-serif", letterSpacing: ".06em", textTransform: "uppercase", color: C.muted, margin: 0 }}>{g.name}</h3>
+                </span>
                 <span style={{ font: "600 13px 'Space Grotesk',sans-serif", color: C.muted }}>{money(gAssigned)}</span>
-              </div>
+              </button>
+              {!collapsed[g.id] && (
               <div style={{ background: C.card, borderRadius: 16, overflow: "hidden", border: `1px solid ${C.line}` }}>
                 {g.cats.length === 0 && <div style={{ padding: 16, color: C.muted, font: "500 14px 'Commissioner',sans-serif" }}>—</div>}
                 {g.cats.map((c, i) => (
@@ -633,6 +679,7 @@ function BudgetScreen({ t, lang, calc, groupsView, dispMonth, setDispMonth, onCa
                     last={i === g.cats.length - 1} onClick={() => onCategory(c)} dispMonth={dispMonth} />
                 ))}
               </div>
+              )}
             </section>
           );
         })}
@@ -1093,12 +1140,12 @@ function TxSheet({ t, state, initial, dispMonth, onClose, onSave, onDelete }) {
       <Field label={t("category")}>
         {inflow ? (
           <select value={src} onChange={(e) => setSrc(e.target.value)}
-            style={{ ...inputStyle, appearance: "none", background: "#FBFCFC" }}>
+            style={{ ...inputStyle, appearance: "none", backgroundColor: "#FBFCFC", backgroundImage: "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2371796F' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><path d='m6 9 6 6 6-6'/></svg>\")", backgroundRepeat: "no-repeat", backgroundPosition: "right 13px center", paddingRight: 40 }}>
             {SRC.map((k) => <option key={k} value={k}>{t(k)}</option>)}
           </select>
         ) : (
           <select value={catId ?? state.categories[0]?.id ?? ""} onChange={(e) => setCatId(e.target.value)}
-            style={{ ...inputStyle, appearance: "none", background: "#FBFCFC" }}>
+            style={{ ...inputStyle, appearance: "none", backgroundColor: "#FBFCFC", backgroundImage: "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2371796F' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><path d='m6 9 6 6 6-6'/></svg>\")", backgroundRepeat: "no-repeat", backgroundPosition: "right 13px center", paddingRight: 40 }}>
             {state.groups.map((g) => (
               <optgroup key={g.id} label={g.name}>
                 {state.categories.filter((c) => c.groupId === g.id).map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
@@ -1311,7 +1358,7 @@ function ScheduleSheet({ t, state, onClose, onSave }) {
       </Field>
       <Field label={t("category")}>
         <select value={catId} onChange={(e) => { setCatId(e.target.value); if (e.target.value === "__income__") setInflow(true); }}
-          style={{ ...inputStyle, appearance: "none", background: "#FBFCFC" }}>
+          style={{ ...inputStyle, appearance: "none", backgroundColor: "#FBFCFC", backgroundImage: "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2371796F' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><path d='m6 9 6 6 6-6'/></svg>\")", backgroundRepeat: "no-repeat", backgroundPosition: "right 13px center", paddingRight: 40 }}>
           <option value="__income__">＋ {t("income")}</option>
           {state.groups.map((g) => (
             <optgroup key={g.id} label={g.name}>
@@ -1323,7 +1370,7 @@ function ScheduleSheet({ t, state, onClose, onSave }) {
       <div style={{ display: "flex", gap: 12 }}>
         <div style={{ flex: 1 }}>
           <Field label={t("frequency")}>
-            <select value={freq} onChange={(e) => setFreq(e.target.value)} style={{ ...inputStyle, appearance: "none", background: "#FBFCFC" }}>
+            <select value={freq} onChange={(e) => setFreq(e.target.value)} style={{ ...inputStyle, appearance: "none", backgroundColor: "#FBFCFC", backgroundImage: "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2371796F' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><path d='m6 9 6 6 6-6'/></svg>\")", backgroundRepeat: "no-repeat", backgroundPosition: "right 13px center", paddingRight: 40 }}>
               <option value="monthly">{t("monthly")}</option>
               <option value="weekly">{t("weekly")}</option>
               <option value="biweekly">{t("biweekly")}</option>
