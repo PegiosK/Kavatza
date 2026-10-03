@@ -6,10 +6,11 @@ import {
   Wallet, Plus, BarChart3, Settings, Repeat, Target, Download, Upload,
   ChevronLeft, ChevronRight, ChevronDown, X, Pencil, Trash2, Check, ArrowDownLeft, ArrowUpRight,
   PiggyBank, Languages, Receipt, AlertCircle, FolderPlus, RotateCcw, CalendarClock,
+  ArrowLeftRight, ArrowUpDown, Landmark,
 } from "lucide-react";
 
 /* ------------------------------------------------------------------ *
- * Lefta — a zero-based envelope budget for Greece (EUR).
+ * KABATZA (καβάτζα) — a zero-based envelope budget for Greece (EUR).
  * Local-only. No accounts linked. Data lives on the device.
  * ------------------------------------------------------------------ */
 
@@ -66,7 +67,7 @@ const STR = {
     deleteGroupConfirm: "Delete this group and all its categories?",
     newSchedule: "New scheduled item", frequency: "Repeats", monthly: "Monthly", weekly: "Weekly",
     biweekly: "Every 2 weeks", yearly: "Yearly", nextDate: "Next date", name: "Name",
-    everyEuro: "every euro a job", restored: "Backup restored.", badFile: "That file isn't a valid Lefta backup.",
+    everyEuro: "every euro a job", restored: "Backup restored.", badFile: "That file isn't a valid KABATZA backup.",
     uncategorised: "Uncategorised", thisMonth: "this month", needPerMonth: "/mo to reach by date",
     emptyBudget: "Add a category to start budgeting.", spent: "spent", received: "received",
     install: "Tip: keep a backup now and then via “Backup & restore”. Your data lives only on this device.",
@@ -79,6 +80,15 @@ const STR = {
     accountName: "Account name", startingBalance: "Starting balance", balance: "Balance",
     noAccounts: "No accounts yet", noAccountsHint: "Add a savings or cash account to track its balance.",
     deleteAccountConfirm: "Delete this account?",
+    move: "Move", moveMoney: "Move money", from: "From", to: "To", allAvailable: "All available",
+    willGoNegative: "The source will go negative.", moved: "Moved", coverFromCategory: "From another category",
+    targets: "Targets", scopeMonth: "This month only", scopeForward: "This month onward",
+    targetsHint: "Each amount is assigned every month until you change it. Tap a spending figure to use it.",
+    spentSoFar: "So far", lastMonth: "Last month", avg3: "3-mo avg",
+    savings: "Savings", fromSavings: "From savings", toSavings: "To savings", account: "Account",
+    assignTo: "Assign to", readyToAssignOpt: "Ready to assign (assign later)", exceedsBalance: "More than this account's balance.",
+    deletedAccount: "Deleted account", leftovers: "Leftovers", allLeftovers: "All leftovers",
+    savingsGoal: "Savings goal", goalThisMonth: "This month's goal", transfer: "Transfer",
   },
   el: {
     appName: "KABATZA", tagline: "Δώσε δουλειά σε κάθε ευρώ",
@@ -108,7 +118,7 @@ const STR = {
     deleteGroupConfirm: "Διαγραφή ομάδας και όλων των κατηγοριών της;",
     newSchedule: "Νέο προγραμματισμένο", frequency: "Επανάληψη", monthly: "Μηνιαία", weekly: "Εβδομαδιαία",
     biweekly: "Κάθε 2 εβδομάδες", yearly: "Ετήσια", nextDate: "Επόμενη ημ/νία", name: "Όνομα",
-    everyEuro: "κάθε ευρώ μια δουλειά", restored: "Το αντίγραφο επαναφέρθηκε.", badFile: "Μη έγκυρο αρχείο αντιγράφου Λεφτά.",
+    everyEuro: "κάθε ευρώ μια δουλειά", restored: "Το αντίγραφο επαναφέρθηκε.", badFile: "Μη έγκυρο αρχείο αντιγράφου KABATZA.",
     uncategorised: "Χωρίς κατηγορία", thisMonth: "αυτόν τον μήνα", needPerMonth: "/μήνα για τον στόχο",
     emptyBudget: "Πρόσθεσε κατηγορία για να ξεκινήσεις.", spent: "ξοδεύτηκαν", received: "εισπράχθηκαν",
     install: "Συμβουλή: κράτα κάθε τόσο αντίγραφο από το «Αντίγραφο & επαναφορά» για ασφάλεια.",
@@ -121,12 +131,27 @@ const STR = {
     accountName: "Όνομα λογαριασμού", startingBalance: "Αρχικό υπόλοιπο", balance: "Υπόλοιπο",
     noAccounts: "Δεν υπάρχουν λογαριασμοί", noAccountsHint: "Πρόσθεσε έναν λογαριασμό αποταμίευσης ή μετρητών για να παρακολουθείς το υπόλοιπό του.",
     deleteAccountConfirm: "Διαγραφή αυτού του λογαριασμού;",
+    move: "Μεταφορά", moveMoney: "Μεταφορά χρημάτων", from: "Από", to: "Προς", allAvailable: "Όλο το διαθέσιμο",
+    willGoNegative: "Η πηγή θα βγει αρνητική.", moved: "Μεταφέρθηκαν", coverFromCategory: "Από άλλη κατηγορία",
+    targets: "Στόχοι", scopeMonth: "Μόνο αυτόν τον μήνα", scopeForward: "Από αυτόν και μετά",
+    targetsHint: "Κάθε ποσό μοιράζεται κάθε μήνα μέχρι να το αλλάξεις. Πάτησε ένα ποσό εξόδων για να το χρησιμοποιήσεις.",
+    spentSoFar: "Μέχρι τώρα", lastMonth: "Προηγ. μήνας", avg3: "Μ.Ο. 3μ",
+    savings: "Αποταμίευση", fromSavings: "Από αποταμίευση", toSavings: "Προς αποταμίευση", account: "Λογαριασμός",
+    assignTo: "Μοίρασμα σε", readyToAssignOpt: "Για μοίρασμα (αργότερα)", exceedsBalance: "Ξεπερνά το υπόλοιπο του λογαριασμού.",
+    deletedAccount: "Διαγραμμένος λογαριασμός", leftovers: "Περισσεύματα", allLeftovers: "Όλα τα περισσεύματα",
+    savingsGoal: "Στόχος αποταμίευσης", goalThisMonth: "Στόχος μήνα", transfer: "Μεταφορά",
   },
 };
 
 /* --------------------------- helpers ----------------------------- */
 const uid = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
-const todayISO = () => new Date().toISOString().slice(0, 10);
+// Local-date formatting: toISOString() is UTC and shifts dates back a day in Greece (UTC+2/+3).
+const fmtLocal = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+const todayISO = () => fmtLocal(new Date());
+const round2 = (n) => Math.round(n * 100) / 100;
+const toInput = (n) => (n ? String(round2(n)).replace(".", ",") : "");
+const RTA = "__rta__";                 // "Για μοίρασμα" as a move/transfer source
+const ALL = "__all__";                 // "all category leftovers" as a transfer source
 const monthKey = (iso) => (iso || "").slice(0, 7);
 const curMonth = () => todayISO().slice(0, 7);
 
@@ -165,20 +190,39 @@ function advanceDate(iso, freq) {
   else if (freq === "biweekly") d.setDate(d.getDate() + 14);
   else if (freq === "yearly") d.setFullYear(d.getFullYear() + 1);
   else d.setMonth(d.getMonth() + 1);
-  return d.toISOString().slice(0, 10);
+  return fmtLocal(d);
 }
-function monthsDiff(fromMk, toIso) {
+// Works with "YYYY-MM" (<input type="month">) and "YYYY-MM-DD".
+function monthsDiff(fromMk, toDate) {
   const [fy, fm] = fromMk.split("-").map(Number);
-  const t = new Date(toIso + "T00:00:00");
-  return (t.getFullYear() - fy) * 12 + (t.getMonth() + 1 - fm);
+  const [ty, tm] = toDate.slice(0, 7).split("-").map(Number);
+  return (ty - fy) * 12 + (tm - fm);
+}
+
+/* Repeating assignment ("plan"): cat.plan = [{ from: "YYYY-MM", amount }], sorted.
+   A month with no explicit assignment gets the last plan step starting on or before it. */
+function planFor(plan, mk) {
+  let v = 0;
+  for (const st of plan || []) { if (st.from <= mk) v = st.amount; else break; }
+  return v;
+}
+const setPlan = (plan, mk, amount) => [...(plan || []).filter((st) => st.from < mk), { from: mk, amount }];
+
+// Savings-account goal: monthly amount to reach goal.target by goal.byDate, and what's still missing this month.
+function accountNeed(acc, inThisMonth, mk) {
+  const g = acc.goal;
+  if (!g?.target || !g.byDate) return null;
+  const months = Math.max(1, monthsDiff(mk, g.byDate) + 1);
+  const perMonth = Math.max(0, (g.target - (acc.balance - inThisMonth)) / months);
+  return { perMonth, left: Math.max(0, perMonth - inThisMonth) };
 }
 
 /* --------------------------- seed data --------------------------- */
 function seedState() {
   const g1 = uid(), g2 = uid(), g3 = uid();
-  const cat = (groupId, name, goal = null) => ({ id: uid(), groupId, name, goal });
+  const cat = (groupId, name) => ({ id: uid(), groupId, name, plan: [] });
   return {
-    version: 1,
+    version: 3,
     settings: { lang: "el" },
     groups: [
       { id: g1, name: "Πάγια έξοδα" },
@@ -196,13 +240,14 @@ function seedState() {
       cat(g2, "Φαγητό έξω"),
       cat(g2, "Διασκέδαση"),
       cat(g2, "Συνδρομές"),
-      cat(g3, "Έκτακτο ταμείο", { type: "balance", target: 3000, byDate: "" }),
-      cat(g3, "Διακοπές", { type: "monthly", target: 150, byDate: "" }),
+      cat(g3, "Έκτακτο ταμείο"),
+      cat(g3, "Διακοπές"),
     ],
     assignments: {},          // { 'YYYY-MM': { catId: amount } }
-    transactions: [],         // { id, date, amount, categoryId|null, payee, memo, scheduleId|null }
+    transactions: [],         // { id, date, amount, categoryId|null, source?, payee, memo, scheduleId|null, accountId? }
+                              // accountId set = savings transfer: +amount into the budget, −amount into savings
     schedules: [],            // { id, name, amount, categoryId|null, freq, nextDate, payee }
-    accounts: [{ id: uid(), name: "Μετρητά", balance: 0 }],  // { id, name, balance }
+    accounts: [{ id: uid(), name: "Μετρητά", balance: 0 }],  // { id, name, balance, goal?: { target, byDate } }
   };
 }
 
@@ -219,8 +264,22 @@ function loadState() {
 }
 // Fills in fields added after someone's data was already saved (e.g. "accounts"),
 // so old saved state never crashes a screen that expects a newer field to exist.
+// v3: category goals merged into a repeating assignment ("plan"). A monthly goal becomes a plan
+// from this month; old goals are parked in legacyGoal, never deleted.
 function withDefaults(state) {
   if (!state.accounts) state.accounts = [];
+  if (!state.schedules) state.schedules = [];
+  if (!state.assignments) state.assignments = {};
+  if (!state.settings) state.settings = { lang: "el" };
+  const nowMk = curMonth();
+  state.categories = state.categories.map((c) => {
+    if (c.plan) return c;
+    const { goal, ...rest } = c;
+    if (!goal) return { ...rest, plan: [] };
+    const plan = goal.type === "monthly" && goal.target > 0 ? [{ from: nowMk, amount: goal.target }] : [];
+    return { ...rest, plan, legacyGoal: goal };
+  });
+  state.version = 3;
   return state;
 }
 function saveState(state) {
@@ -327,33 +386,60 @@ function AppInner() {
 
   const lang = state?.settings?.lang || "el";
   const t = useCallback((k) => (STR[lang] && STR[lang][k]) || STR.en[k] || k, [lang]);
+  // lang="el" makes uppercase labels drop the tonos (ΓΙΑ ΜΟΙΡΑΣΜΑ, not ΜΟΊΡΑΣΜΑ)
+  useEffect(() => { document.documentElement.lang = lang; }, [lang]);
 
   const flash = (msg) => { setToast(msg); setTimeout(() => setToast(null), 2600); };
 
   /* ---- derived budget math ---- */
+  // One pass over transactions → per-category, per-month activity.
   const calc = useMemo(() => {
     if (!state) return null;
-    const { transactions, assignments, categories } = state;
-    const totalIncome = transactions.filter((x) => x.categoryId === null).reduce((s, x) => s + x.amount, 0);
+    const { transactions, assignments, categories, accounts } = state;
+    const nowMk = curMonth();
+    const act = {};               // catId -> { "YYYY-MM": sum }
+    const accIn = {};             // accountId -> paid into savings this calendar month
+    let totalIncome = 0;
+    for (const x of transactions) {
+      if (x.accountId && monthKey(x.date) === nowMk) accIn[x.accountId] = (accIn[x.accountId] || 0) - x.amount;
+      if (x.categoryId === null) { totalIncome += x.amount; continue; }
+      const mk = monthKey(x.date);
+      const m = act[x.categoryId] || (act[x.categoryId] = {});
+      m[mk] = (m[mk] || 0) + x.amount;
+    }
+    // Plans count up to the later of this month and the month on screen,
+    // so looking ahead shows what "Για μοίρασμα" will be once those months are assigned.
+    const horizon = dispMonth > nowMk ? dispMonth : nowMk;
+    const prev = [1, 2, 3].map((i) => addMonthsKey(dispMonth, -i));
     let totalAssigned = 0;
-    for (const m in assignments) for (const c in assignments[m]) totalAssigned += assignments[m][c] || 0;
-    const readyToAssign = totalIncome - totalAssigned;
-
-    const assignedThis = (catId) => (assignments[dispMonth] && assignments[dispMonth][catId]) || 0;
-    const activityThis = (catId) =>
-      transactions.filter((x) => x.categoryId === catId && monthKey(x.date) === dispMonth)
-        .reduce((s, x) => s + x.amount, 0);
-    const availableThrough = (catId) => {
-      let tot = 0;
-      for (const m in assignments) if (m <= dispMonth) tot += assignments[m][catId] || 0;
-      for (const x of transactions) if (x.categoryId === catId && monthKey(x.date) <= dispMonth) tot += x.amount;
-      return tot;
-    };
     const byCat = {};
-    for (const c of categories) byCat[c.id] = {
-      assigned: assignedThis(c.id), activity: activityThis(c.id), available: availableThrough(c.id),
-    };
-    return { readyToAssign, byCat, totalIncome, totalAssigned };
+    for (const c of categories) {
+      const a = act[c.id] || {};
+      const months = new Set();
+      for (const m in assignments) if (c.id in assignments[m]) months.add(m);
+      if (c.plan?.length) for (let m = c.plan[0].from; m <= horizon; m = addMonthsKey(m, 1)) months.add(m);
+      const assignedIn = (m) => assignments[m]?.[c.id] ?? planFor(c.plan, m);
+      let available = 0;
+      for (const m of months) {
+        const v = assignedIn(m);
+        totalAssigned += v;
+        if (m <= dispMonth) available += v;
+      }
+      for (const m in a) if (m <= dispMonth) available += a[m];
+      const hist = prev.filter((m) => m in a).map((m) => -a[m]);   // only months with activity count
+      byCat[c.id] = {
+        assigned: assignedIn(dispMonth),
+        planned: planFor(c.plan, dispMonth),
+        activity: a[dispMonth] || 0,
+        available,
+        spent: -(a[dispMonth] || 0),
+        lastSpent: prev[0] in a ? -a[prev[0]] : null,
+        avgSpent: hist.length ? hist.reduce((s, v) => s + v, 0) / hist.length : null,
+      };
+    }
+    const accNeed = {};
+    for (const ac of accounts) accNeed[ac.id] = accountNeed(ac, accIn[ac.id] || 0, nowMk);
+    return { readyToAssign: totalIncome - totalAssigned, byCat, totalIncome, totalAssigned, accNeed };
   }, [state, dispMonth]);
 
   const dueSchedules = useMemo(() => {
@@ -369,18 +455,56 @@ function AppInner() {
   /* ---- mutations ---- */
   const update = (fn) => setState((prev) => { const next = structuredClone(prev); fn(next); return next; });
 
+  // A savings transfer moves an account's balance the opposite way to the budget:
+  // +amount into the budget = −amount from the account. sign −1 undoes it.
+  const applyTransfer = (s, tx, sign = 1) => {
+    const a = tx?.accountId && s.accounts.find((x) => x.id === tx.accountId);
+    if (a) a.balance = round2(a.balance - sign * tx.amount);
+  };
   const addTx = (tx) => update((s) => { s.transactions.unshift({ id: uid(), scheduleId: null, ...tx }); });
   const editTx = (id, tx) => update((s) => { const i = s.transactions.findIndex((x) => x.id === id); if (i > -1) s.transactions[i] = { ...s.transactions[i], ...tx }; });
-  const delTx = (id) => update((s) => { s.transactions = s.transactions.filter((x) => x.id !== id); });
-
-  const setAssigned = (catId, amount) => update((s) => {
-    if (!s.assignments[dispMonth]) s.assignments[dispMonth] = {};
-    s.assignments[dispMonth][catId] = amount;
+  const delTx = (id) => update((s) => {
+    applyTransfer(s, s.transactions.find((x) => x.id === id), -1);
+    s.transactions = s.transactions.filter((x) => x.id !== id);
   });
 
-  const addCategory = (groupId, name) => update((s) => { s.categories.push({ id: uid(), groupId, name, goal: null }); });
+  const monthAssign = (s) => s.assignments[dispMonth] || (s.assignments[dispMonth] = {});
+  // Adjust this month's assignment relative to what's in effect (explicit, else the plan).
+  const addAssigned = (s, cid, delta) => {
+    const cur = s.assignments[dispMonth]?.[cid] ?? planFor(s.categories.find((c) => c.id === cid)?.plan, dispMonth);
+    monthAssign(s)[cid] = round2(cur + delta);
+  };
+  const setAssigned = (catId, amount) => update((s) => { monthAssign(s)[catId] = round2(amount); });
+  // scope "month": this month only. "forward": repeats every month from here until changed.
+  const setAssignments = (entries, scope) => update((s) => {
+    for (const { catId, amount } of entries) {
+      if (scope === "month") { monthAssign(s)[catId] = amount; continue; }
+      const c = s.categories.find((x) => x.id === catId); if (!c) continue;
+      c.plan = setPlan(c.plan, dispMonth, amount);
+      for (const m in s.assignments) if (m >= dispMonth) delete s.assignments[m][catId];
+    }
+  });
+  const moveMoney = (fromId, toId, amt) => update((s) => {
+    if (fromId !== RTA) addAssigned(s, fromId, -amt);
+    if (toId !== RTA) addAssigned(s, toId, amt);
+  });
+  // tx.amount > 0: from savings into the budget; `cat` assigns it straight on (this month).
+  // tx.amount < 0: into savings; `cat` = RTA, one category's leftover, or ALL category leftovers.
+  const saveTransfer = (id, tx, cat) => {
+    const takes = tx.amount >= 0 || !cat || cat === RTA ? []
+      : cat === ALL ? Object.entries(calc.byCat).filter(([, v]) => v.available > 0.005).map(([cid, v]) => [cid, v.available])
+      : [[cat, -tx.amount]];
+    update((s) => {
+      const i = s.transactions.findIndex((x) => x.id === id);
+      if (i > -1) { applyTransfer(s, s.transactions[i], -1); s.transactions[i] = { ...s.transactions[i], ...tx }; applyTransfer(s, s.transactions[i]); }
+      else { const nt = { id: uid(), categoryId: null, scheduleId: null, payee: "", ...tx }; s.transactions.unshift(nt); applyTransfer(s, nt); }
+      if (cat && tx.amount > 0) addAssigned(s, cat, tx.amount);
+      for (const [cid, amt] of takes) addAssigned(s, cid, -amt);
+    });
+  };
+
+  const addCategory = (groupId, name) => update((s) => { s.categories.push({ id: uid(), groupId, name, plan: [] }); });
   const renameCategory = (id, name) => update((s) => { const c = s.categories.find((x) => x.id === id); if (c) c.name = name; });
-  const setGoal = (id, goal) => update((s) => { const c = s.categories.find((x) => x.id === id); if (c) c.goal = goal; });
   const delCategory = (id) => update((s) => {
     s.categories = s.categories.filter((x) => x.id !== id);
     s.transactions.forEach((x) => { if (x.categoryId === id) x.categoryId = null; });
@@ -401,17 +525,23 @@ function AppInner() {
   const addSchedule = (sc) => update((s) => { s.schedules.push({ id: uid(), ...sc }); });
   const delSchedule = (id) => update((s) => { s.schedules = s.schedules.filter((x) => x.id !== id); });
   const enterSchedule = (sc) => update((s) => {
-    s.transactions.unshift({ id: uid(), date: sc.nextDate, amount: sc.amount, categoryId: sc.categoryId, payee: sc.payee || sc.name, memo: "", scheduleId: sc.id });
+    s.transactions.unshift({ id: uid(), date: sc.nextDate, amount: sc.amount, categoryId: sc.categoryId, ...(sc.source ? { source: sc.source } : {}), payee: sc.payee || sc.name, memo: "", scheduleId: sc.id });
     const i = s.schedules.findIndex((x) => x.id === sc.id);
     if (i > -1) s.schedules[i].nextDate = advanceDate(sc.nextDate, sc.freq);
   });
 
   const setLang = (l) => update((s) => { s.settings.lang = l; });
-  const addAccount = (name, balance) => update((s) => { s.accounts.push({ id: uid(), name, balance }); });
-  const editAccount = (id, name, balance) => update((s) => { const a = s.accounts.find((x) => x.id === id); if (a) { a.name = name; a.balance = balance; } });
+  const addAccount = (name, balance, goal) => update((s) => { s.accounts.push({ id: uid(), name, balance, goal }); });
+  const editAccount = (id, name, balance, goal) => update((s) => { const a = s.accounts.find((x) => x.id === id); if (a) { a.name = name; a.balance = balance; a.goal = goal; } });
   const delAccount = (id) => update((s) => { s.accounts = s.accounts.filter((x) => x.id !== id); });
   const dismissBackupNotice = () => update((s) => { s.settings.backupNoticeDismissed = true; });
-  const clearAll = () => { if (confirm(t("clearAllConfirm"))) { setState(seedState()); flash(t("everyEuro")); } };
+  const clearAll = () => { setState(seedState()); flash(t("everyEuro")); };
+
+  const accName = (id) => state.accounts.find((a) => a.id === id)?.name || t("deletedAccount");
+  const txLabel = (x) => x.accountId
+    ? `${x.amount >= 0 ? t("fromSavings") : t("toSavings")}: ${accName(x.accountId)}`
+    : x.categoryId === null ? (x.source ? t(x.source) : t("income"))
+    : (state.categories.find((c) => c.id === x.categoryId)?.name || t("uncategorised"));
 
   /* ---- backup / restore ---- */
   const exportJSON = () => {
@@ -419,11 +549,10 @@ function AppInner() {
     download(blob, `kavatza-backup-${todayISO()}.json`);
   };
   const exportCSV = () => {
-    const catName = (id) => id === null ? t("income") : (state.categories.find((c) => c.id === id)?.name || t("uncategorised"));
     const esc = (v) => `"${String(v ?? "").replace(/"/g, '""')}"`;
     const rows = [["Date", "Payee", "Category", "Memo", "Amount_EUR"]];
     [...state.transactions].sort((a, b) => a.date.localeCompare(b.date)).forEach((x) =>
-      rows.push([x.date, esc(x.payee), esc(catName(x.categoryId)), esc(x.memo), x.amount.toFixed(2)]));
+      rows.push([x.date, esc(x.payee), esc(txLabel(x)), esc(x.memo), x.amount.toFixed(2)]));
     const blob = new Blob([rows.map((r) => r.join(",")).join("\n")], { type: "text/csv" });
     download(blob, `kavatza-activity-${todayISO()}.csv`);
   };
@@ -453,20 +582,24 @@ function AppInner() {
           <BudgetScreen
             t={t} lang={lang} calc={calc} groupsView={groupsView} dispMonth={dispMonth}
             setDispMonth={setDispMonth} dueCount={dueSchedules.length}
-            onCategory={(c) => setModal({ type: "assign", cat: c })}
+            onCategory={(c) => setModal({ type: "assign", catId: c.id })}
             onManage={() => setModal({ type: "manage" })}
+            onTargets={() => setModal({ type: "targets" })}
+            onMove={() => setModal({ type: "move" })}
+            onSavings={() => setModal({ type: "savings" })}
             onDue={() => setTab("more")}
             backupNotice={!state.settings.backupNoticeDismissed && typeof window !== "undefined" && !window.Capacitor?.isNativePlatform?.()}
             onDismissNotice={dismissBackupNotice}
           />
         )}
         {tab === "transactions" && (
-          <TransactionsScreen t={t} lang={lang} state={state}
-            onEdit={(tx) => setModal({ type: "tx", tx })} onDelete={delTx} />
+          <TransactionsScreen t={t} lang={lang} state={state} txLabel={txLabel}
+            onEdit={(tx) => setModal(tx.accountId ? { type: "savings", tx } : { type: "tx", tx })} />
         )}
         {tab === "accounts" && (
-          <AccountsScreen t={t} accounts={state.accounts} onAdd={() => setModal({ type: "account", account: null })}
-            onEdit={(a) => setModal({ type: "account", account: a })} />
+          <AccountsScreen t={t} accounts={state.accounts} need={calc.accNeed} onAdd={() => setModal({ type: "account", account: null })}
+            onEdit={(a) => setModal({ type: "account", account: a })}
+            onTransfer={() => setModal({ type: "savings", dir: "out" })} />
         )}
         {tab === "reports" && <ReportsScreen t={t} lang={lang} state={state} dispMonth={dispMonth} />}
         {tab === "more" && (
@@ -510,11 +643,35 @@ function AppInner() {
             onSave={(tx) => { modal.tx ? editTx(modal.tx.id, tx) : addTx(tx); setModal(null); }}
             onDelete={modal.tx ? () => { delTx(modal.tx.id); setModal(null); } : null} />
         )}
-        {modal?.type === "assign" && (
-          <AssignSheet t={t} cat={modal.cat} info={calc.byCat[modal.cat.id]} dispMonth={dispMonth} lang={lang}
+        {modal?.type === "assign" && (() => {
+          const cat = state.categories.find((c) => c.id === modal.catId);
+          if (!cat) return null;
+          return (
+            <AssignSheet t={t} cat={cat} info={calc.byCat[cat.id]} dispMonth={dispMonth} lang={lang}
+              hasAccounts={state.accounts.length > 0}
+              onClose={() => setModal(null)}
+              onAssign={(amt) => setAssigned(cat.id, amt)}
+              onSetAmount={(amt, scope) => setAssignments([{ catId: cat.id, amount: amt }], scope)}
+              onMove={(preset) => setModal({ type: "move", ...preset, back: modal })}
+              onFromSavings={(preset) => setModal({ type: "savings", ...preset, back: modal })} />
+          );
+        })()}
+        {modal?.type === "move" && (
+          <MoveSheet t={t} groupsView={groupsView} calc={calc} preset={modal}
+            onClose={() => setModal(modal.back || null)}
+            onMove={(from, to, amt) => { moveMoney(from, to, amt); flash(`${t("moved")} ${money(amt)}`); setModal(modal.back || null); }} />
+        )}
+        {modal?.type === "targets" && (
+          <TargetsSheet t={t} lang={lang} groupsView={groupsView} calc={calc} dispMonth={dispMonth}
             onClose={() => setModal(null)}
-            onAssign={(amt) => { setAssigned(modal.cat.id, amt); }}
-            onSetGoal={(goal) => setGoal(modal.cat.id, goal)} />
+            onSave={(entries, scope) => { setAssignments(entries, scope); setModal(null); }} />
+        )}
+        {modal?.type === "savings" && (
+          <SavingsSheet t={t} lang={lang} state={state} calc={calc} groupsView={groupsView} preset={modal} dispMonth={dispMonth}
+            onClose={() => setModal(modal.back || null)}
+            onAddAccount={() => setModal({ type: "account", account: null, back: modal })}
+            onSave={(tx, cat) => { saveTransfer(modal.tx?.id, tx, cat); setModal(modal.back || null); }}
+            onDelete={modal.tx ? () => { delTx(modal.tx.id); setModal(null); } : null} />
         )}
         {modal?.type === "manage" && (
           <ManageSheet t={t} groupsView={groupsView}
@@ -527,8 +684,8 @@ function AppInner() {
             onSave={(sc) => { addSchedule(sc); setModal(null); }} />
         )}
         {modal?.type === "account" && (
-          <AccountSheet t={t} initial={modal.account} onClose={() => setModal(null)}
-            onSave={(name, bal) => { modal.account ? editAccount(modal.account.id, name, bal) : addAccount(name, bal); setModal(null); }}
+          <AccountSheet t={t} initial={modal.account} onClose={() => setModal(modal.back || null)}
+            onSave={(name, bal, goal) => { modal.account ? editAccount(modal.account.id, name, bal, goal) : addAccount(name, bal, goal); setModal(modal.back || null); }}
             onDelete={modal.account ? () => { delAccount(modal.account.id); setModal(null); } : null} />
         )}
 
@@ -572,7 +729,7 @@ function NavBtn({ icon: Icon, label, active, onClick, badge }) {
 }
 
 /* ======================== Budget screen ========================= */
-function BudgetScreen({ t, lang, calc, groupsView, dispMonth, setDispMonth, onCategory, onManage, dueCount, onDue, backupNotice, onDismissNotice }) {
+function BudgetScreen({ t, lang, calc, groupsView, dispMonth, setDispMonth, onCategory, onManage, dueCount, onDue, backupNotice, onDismissNotice, onTargets, onMove, onSavings }) {
   const [collapsed, setCollapsed] = useState({});
   const toggleGroup = (id) => setCollapsed((c) => ({ ...c, [id]: !c[id] }));
   const [pickerOpen, setPickerOpen] = useState(false);
@@ -674,6 +831,17 @@ function BudgetScreen({ t, lang, calc, groupsView, dispMonth, setDispMonth, onCa
           </div>
         )}
 
+        {/* budget actions */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 8, marginTop: 16 }}>
+          {[[Target, t("targets"), onTargets], [ArrowLeftRight, t("move"), onMove], [Landmark, t("savings"), onSavings]].map(([Icon, label, fn]) => (
+            <button key={label} onClick={fn} style={{
+              display: "flex", flexDirection: "column", alignItems: "center", gap: 4, padding: "10px 4px",
+              background: "rgba(243,239,226,.12)", color: C.coin, border: "none", borderRadius: 12, cursor: "pointer",
+              font: "600 12.5px 'Commissioner',sans-serif",
+            }}><Icon size={18} color="#E5C173" />{label}</button>
+          ))}
+        </div>
+
         {dueCount > 0 && (
           <button onClick={onDue} style={{
             marginTop: 14, width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
@@ -738,30 +906,12 @@ function BudgetScreen({ t, lang, calc, groupsView, dispMonth, setDispMonth, onCa
   );
 }
 
-function goalProgress(cat, info, dispMonth) {
-  if (!cat.goal) return null;
-  const tgt = cat.goal.target || 0;
-  if (tgt <= 0) return null;
-  if (cat.goal.type === "monthly") {
-    return { pct: Math.min(1, info.assigned / tgt), have: info.assigned, target: tgt, kind: "monthly" };
-  }
-  // balance
-  let needPerMonth = null;
-  if (cat.goal.byDate) {
-    const months = Math.max(1, monthsDiff(dispMonth, cat.goal.byDate));
-    const remaining = Math.max(0, tgt - info.available);
-    needPerMonth = remaining / months;
-  }
-  return { pct: Math.min(1, info.available / tgt), have: info.available, target: tgt, kind: "balance", needPerMonth };
-}
-
 function CategoryRow({ t, cat, info, last, onClick, dispMonth }) {
   const avail = info.available;
   const availColor = avail < -0.005 ? C.clay : avail > 0.005 ? C.green : C.muted;
   const spent = Math.max(0, -info.activity);   // outflow this month
   const over = spent > info.assigned + 0.005;
   const frac = info.assigned > 0.005 ? Math.min(1, spent / info.assigned) : (spent > 0.005 ? 1 : 0);
-  const gp = goalProgress(cat, info, dispMonth);
   return (
     <button onClick={onClick} style={{
       width: "100%", textAlign: "left", background: "transparent", border: "none",
@@ -770,7 +920,7 @@ function CategoryRow({ t, cat, info, last, onClick, dispMonth }) {
     }}>
       <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 12 }}>
         <div style={{ font: "600 15px 'Commissioner',sans-serif", color: C.ink, minWidth: 0, flex: 1, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-          {cat.name} {gp && <Target size={12} color={C.amber} style={{ verticalAlign: "middle", marginLeft: 2 }} />}
+          {cat.name} {info.planned > 0 && <Repeat size={12} color={C.gold} style={{ verticalAlign: "middle", marginLeft: 2 }} />}
         </div>
         <div style={{ font: "700 16px 'Poppins',sans-serif", color: availColor, flexShrink: 0 }}>{money(avail)}</div>
       </div>
@@ -782,13 +932,8 @@ function CategoryRow({ t, cat, info, last, onClick, dispMonth }) {
           background: over ? C.clay : C.gold, transition: "width .35s ease",
         }} />
       </div>
-      <div style={{ display: "flex", justifyContent: "space-between", gap: 10, font: "500 12px 'Commissioner',sans-serif", color: over ? C.clay : C.muted, marginTop: 5 }}>
-        <span>{money(spent)} {t("ofWord")} {money(info.assigned)}</span>
-        {gp && (
-          <span style={{ color: gp.pct >= 0.999 ? C.green : C.amber }}>
-            {t("target")} {moneyShort(gp.have)}/{moneyShort(gp.target)}
-          </span>
-        )}
+      <div style={{ font: "500 12px 'Commissioner',sans-serif", color: over ? C.clay : C.muted, marginTop: 5 }}>
+        {money(spent)} {t("ofWord")} {money(info.assigned)}
       </div>
     </button>
   );
@@ -822,7 +967,7 @@ function Empty({ t, text, hint, icon: Icon = Wallet }) {
 }
 
 /* ======================== Accounts screen ======================== */
-function AccountsScreen({ t, accounts, onAdd, onEdit }) {
+function AccountsScreen({ t, accounts, need, onAdd, onEdit, onTransfer }) {
   const total = accounts.reduce((s, a) => s + a.balance, 0);
   return (
     <div>
@@ -842,16 +987,34 @@ function AccountsScreen({ t, accounts, onAdd, onEdit }) {
               <button key={a.id} onClick={() => onEdit(a)} style={{
                 width: "100%", textAlign: "left", background: "transparent", border: "none", cursor: "pointer",
                 borderBottom: i === accounts.length - 1 ? "none" : `1px solid ${C.line}`,
-                padding: "14px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12,
+                padding: "14px 16px", display: "block",
               }}>
-                <span style={{ font: "600 15px 'Commissioner',sans-serif", color: C.ink }}>{a.name}</span>
-                <span style={{ font: "700 16px 'Poppins',sans-serif", color: a.balance < 0 ? C.clay : C.ink }}>{money(a.balance)}</span>
+                <span style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+                  <span style={{ font: "600 15px 'Commissioner',sans-serif", color: C.ink }}>
+                    {a.name} {a.goal?.target > 0 && <Target size={12} color={C.gold} style={{ verticalAlign: "middle" }} />}
+                  </span>
+                  <span style={{ font: "700 16px 'Poppins',sans-serif", color: a.balance < 0 ? C.clay : C.ink }}>{money(a.balance)}</span>
+                </span>
+                {a.goal?.target > 0 && (
+                  <span style={{ display: "block", marginTop: 9 }}>
+                    <span style={{ display: "block", height: 6, background: "#EBE8DB", borderRadius: 4, overflow: "hidden" }}>
+                      <span style={{ display: "block", width: `${Math.max(0, Math.min(1, a.balance / a.goal.target)) * 100}%`, height: "100%", borderRadius: 4, background: a.balance >= a.goal.target ? C.green : C.gold }} />
+                    </span>
+                    <span style={{ display: "block", font: "500 12px 'Commissioner',sans-serif", color: C.muted, marginTop: 5 }}>
+                      {money(a.balance)} {t("ofWord")} {money(a.goal.target)}
+                      {need[a.id]?.perMonth > 0.005 && <> · {money(need[a.id].perMonth)} {t("needPerMonth")}</>}
+                    </span>
+                  </span>
+                )}
               </button>
             ))}
           </div>
         )}
 
-        <GhostBtn onClick={onAdd} color={C.ink}><Plus size={16} />{t("addAccount")}</GhostBtn>
+        <div style={{ display: "flex", gap: 8 }}>
+          <GhostBtn onClick={onAdd} color={C.ink}><Plus size={16} />{t("addAccount")}</GhostBtn>
+          {accounts.length > 0 && <GhostBtn onClick={onTransfer} color={C.ink}><ArrowLeftRight size={16} />{t("transfer")}</GhostBtn>}
+        </div>
         <div style={{ height: 12 }} />
       </Ledger>
     </div>
@@ -860,11 +1023,15 @@ function AccountsScreen({ t, accounts, onAdd, onEdit }) {
 function AccountSheet({ t, initial, onClose, onSave, onDelete }) {
   const [name, setName] = useState(initial?.name || "");
   const [bal, setBal] = useState(initial ? initial.balance.toString().replace(".", ",") : "");
-  const valid = name.trim().length > 0 && !isNaN(parseAmount(bal || "0"));
+  const [goal, setGoal] = useState(toInput(initial?.goal?.target));
+  const [byDate, setByDate] = useState(initial?.goal?.byDate || "");
+  const [confirmDel, setConfirmDel] = useState(false);
+  const g = goal.trim() === "" ? 0 : parseAmount(goal);
+  const valid = name.trim().length > 0 && !isNaN(parseAmount(bal || "0")) && !isNaN(g);
   const submit = () => {
     const b = parseAmount(bal || "0");
-    if (!name.trim() || isNaN(b)) return;
-    onSave(name.trim(), b);
+    if (!valid) return;
+    onSave(name.trim(), round2(b), g > 0 ? { target: round2(g), byDate } : null);
   };
   return (
     <Sheet title={initial ? t("edit") : t("addAccount")} onClose={onClose} t={t}>
@@ -875,10 +1042,23 @@ function AccountSheet({ t, initial, onClose, onSave, onDelete }) {
         <input inputMode="decimal" value={bal} onChange={(e) => setBal(e.target.value)} placeholder="0,00"
           style={{ ...inputStyle, font: "700 20px 'Poppins',sans-serif", textAlign: "right" }} />
       </Field>
+      <div style={{ display: "flex", gap: 12 }}>
+        <div style={{ flex: 1 }}>
+          <Field label={`${t("savingsGoal")} (€)`}>
+            <input inputMode="decimal" value={goal} onChange={(e) => setGoal(e.target.value)} placeholder="—" style={inputStyle} />
+          </Field>
+        </div>
+        <div style={{ flex: 1 }}>
+          <Field label={t("byDate")}>
+            <input type="month" value={byDate} onChange={(e) => setByDate(e.target.value)} style={inputStyle} />
+          </Field>
+        </div>
+      </div>
       <PrimaryBtn onClick={submit} disabled={!valid}><Check size={18} />{t("save")}</PrimaryBtn>
+      {confirmDel && <ConfirmDialog t={t} message={t("deleteAccountConfirm")} onCancel={() => setConfirmDel(false)} onConfirm={onDelete} />}
       {onDelete && (
         <div style={{ marginTop: 10 }}>
-          <button onClick={onDelete} style={{ width: "100%", padding: "13px", borderRadius: 12, border: "none", background: C.claySoft, color: C.clay, font: "600 15px 'Commissioner',sans-serif", cursor: "pointer", display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 7 }}>
+          <button onClick={() => setConfirmDel(true)} style={{ width: "100%", padding: "13px", borderRadius: 12, border: "none", background: C.claySoft, color: C.clay, font: "600 15px 'Commissioner',sans-serif", cursor: "pointer", display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 7 }}>
             <Trash2 size={16} />{t("delete")}
           </button>
         </div>
@@ -888,8 +1068,7 @@ function AccountSheet({ t, initial, onClose, onSave, onDelete }) {
 }
 
 /* ===================== Transactions screen ====================== */
-function TransactionsScreen({ t, lang, state, onEdit, onDelete }) {
-  const catName = (id) => id === null ? t("income") : (state.categories.find((c) => c.id === id)?.name || t("uncategorised"));
+function TransactionsScreen({ t, lang, state, txLabel, onEdit }) {
   const txs = [...state.transactions].sort((a, b) => b.date.localeCompare(a.date) || 0);
   // group by date
   const groups = [];
@@ -918,6 +1097,7 @@ function TransactionsScreen({ t, lang, state, onEdit, onDelete }) {
               <div style={{ background: C.card, borderRadius: 16, overflow: "hidden", border: `1px solid ${C.line}` }}>
                 {grp.items.map((x, i) => {
                   const inflow = x.amount >= 0;
+                  const transfer = !!x.accountId;
                   return (
                     <button key={x.id} onClick={() => onEdit(x)} style={{
                       width: "100%", display: "flex", alignItems: "center", gap: 12, padding: "13px 14px",
@@ -925,14 +1105,15 @@ function TransactionsScreen({ t, lang, state, onEdit, onDelete }) {
                       cursor: "pointer", textAlign: "left",
                     }}>
                       <div style={{ width: 38, height: 38, borderRadius: 11, flexShrink: 0, display: "grid", placeItems: "center",
-                        background: inflow ? C.goldSoft : C.claySoft }}>
-                        {inflow ? <ArrowDownLeft size={18} color={C.vault} /> : <ArrowUpRight size={18} color={C.clay} />}
+                        background: transfer ? C.tealSoft : inflow ? C.goldSoft : C.claySoft }}>
+                        {transfer ? <Landmark size={18} color={C.vault} />
+                          : inflow ? <ArrowDownLeft size={18} color={C.vault} /> : <ArrowUpRight size={18} color={C.clay} />}
                       </div>
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ font: "600 15px 'Commissioner',sans-serif", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                          {x.payee || (inflow ? t("inflow") : t("outflow"))}
+                          {x.payee || x.memo || (transfer ? t("savings") : inflow ? t("inflow") : t("outflow"))}
                         </div>
-                        <div style={{ font: "500 12px 'Commissioner',sans-serif", color: C.muted, marginTop: 2 }}>{catName(x.categoryId)}</div>
+                        <div style={{ font: "500 12px 'Commissioner',sans-serif", color: C.muted, marginTop: 2 }}>{txLabel(x)}</div>
                       </div>
                       <div style={{ font: "700 15px 'Poppins',sans-serif", color: inflow ? C.green : C.ink }}>
                         {inflow ? "+" : ""}{money(x.amount)}
@@ -971,7 +1152,7 @@ function ReportsScreen({ t, lang, state, dispMonth }) {
       const mk = addMonthsKey(dispMonth, -i);
       let inc = 0, exp = 0;
       state.transactions.forEach((x) => {
-        if (monthKey(x.date) !== mk) return;
+        if (monthKey(x.date) !== mk || x.accountId) return;
         if (x.amount > 0) inc += x.amount; else exp += -x.amount;
       });
       out.push({ name: shortMonth(mk, lang), income: Math.round(inc), expense: Math.round(exp) });
@@ -1041,6 +1222,7 @@ function MiniEmpty({ t }) {
 
 /* ========================= More screen ========================== */
 function MoreScreen({ t, lang, state, due, onEnterSchedule, onDelSchedule, onNewSchedule, onManageCats, onSetLang, onExportJSON, onExportCSV, onImport, onClear }) {
+  const [confirmClear, setConfirmClear] = useState(false);
   const catName = (id) => id === null ? t("income") : (state.categories.find((c) => c.id === id)?.name || t("uncategorised"));
   const dfmt = (iso) => new Date(iso + "T00:00:00").toLocaleDateString(lang === "el" ? "el-GR" : "en-GB", { day: "numeric", month: "short", year: "numeric" });
   const freqLabel = { monthly: t("monthly"), weekly: t("weekly"), biweekly: t("biweekly"), yearly: t("yearly") };
@@ -1119,7 +1301,7 @@ function MoreScreen({ t, lang, state, due, onEnterSchedule, onDelSchedule, onNew
         </Card>
 
         <Card>
-          <button onClick={onClear} style={{ width: "100%", background: "transparent", border: "none", cursor: "pointer", display: "flex", alignItems: "center", gap: 9, color: C.clay, font: "600 15px 'Commissioner',sans-serif", padding: "2px 0" }}>
+          <button onClick={() => setConfirmClear(true)} style={{ width: "100%", background: "transparent", border: "none", cursor: "pointer", display: "flex", alignItems: "center", gap: 9, color: C.clay, font: "600 15px 'Commissioner',sans-serif", padding: "2px 0" }}>
             <RotateCcw size={18} />{t("clearAll")}
           </button>
         </Card>
@@ -1130,6 +1312,8 @@ function MoreScreen({ t, lang, state, due, onEnterSchedule, onDelSchedule, onNew
         </div>
       </div>
       </Ledger>
+      {confirmClear && <ConfirmDialog t={t} title={t("clearAll")} message={t("clearAllConfirm")} confirmText={t("clearAll")}
+        onCancel={() => setConfirmClear(false)} onConfirm={() => { setConfirmClear(false); onClear(); }} />}
     </div>
   );
 }
@@ -1145,6 +1329,7 @@ function TxSheet({ t, state, initial, dispMonth, onClose, onSave, onDelete }) {
   const SRC = ["srcSalary", "srcPension", "srcRents", "srcInvest"];
   const [src, setSrc] = useState(() => {
     if (initial && initial.categoryId === null) {
+      if (SRC.includes(initial.source)) return initial.source;
       const hit = SRC.find((k) => t(k) === initial.payee);
       if (hit) return hit;
     }
@@ -1162,6 +1347,7 @@ function TxSheet({ t, state, initial, dispMonth, onClose, onSave, onDelete }) {
     onSave({
       date, amount: inflow ? Math.abs(amt) : -Math.abs(amt),
       categoryId: inflow ? null : catId,
+      ...(inflow ? { source: src } : {}),
       payee: inflow ? (payee.trim() || t(src)) : payee.trim(),
       memo: memo.trim(),
     });
@@ -1234,31 +1420,24 @@ function TxSheet({ t, state, initial, dispMonth, onClose, onSave, onDelete }) {
 }
 
 /* ======================== Assign sheet ========================== */
-function AssignSheet({ t, cat, info, dispMonth, lang, onClose, onAssign, onSetGoal }) {
-  const [amount, setAmount] = useState((info.assigned || 0).toString().replace(".", ","));
-  const [goalType, setGoalType] = useState(cat.goal?.type || "none");
-  const [goalTarget, setGoalTarget] = useState(cat.goal ? (cat.goal.target || "").toString().replace(".", ",") : "");
-  const [goalDate, setGoalDate] = useState(cat.goal?.byDate || "");
+function AssignSheet({ t, cat, info, dispMonth, lang, hasAccounts, onClose, onAssign, onSetAmount, onMove, onFromSavings }) {
+  const [amount, setAmount] = useState(toInput(info.assigned));
+  const [scope, setScope] = useState("forward");
+  const [dirty, setDirty] = useState(false);   // only the amount field / scope toggle commit a repeating change
+  const edit = (v) => { setAmount(v); setDirty(true); };
 
-  const apply = (amt) => { onAssign(amt); setAmount(amt.toString().replace(".", ",")); };
+  // one-off top-ups (cover overspending) apply to this month only
+  const apply = (amt) => { onAssign(amt); setAmount(toInput(amt)); };
 
-  const saveAll = () => {
-    const amt = parseAmount(amount);
-    if (!isNaN(amt)) onAssign(amt);
-    if (goalType === "none") onSetGoal(null);
-    else {
-      const tg = parseAmount(goalTarget);
-      onSetGoal({ type: goalType, target: isNaN(tg) ? 0 : tg, byDate: goalType === "balance" ? goalDate : "" });
-    }
-    onClose();
+  // Persist edits without closing (also used before jumping to Move / Savings).
+  const commit = () => {
+    if (!dirty) return;
+    const v = amount.trim() === "" ? 0 : parseAmount(amount);
+    if (!isNaN(v)) onSetAmount(round2(v), scope);
+    setDirty(false);
   };
 
-  // quick fund suggestions
-  const overspend = info.available < 0 ? Math.abs(info.available) : 0;
-  const goalGap = cat.goal && cat.goal.type === "balance"
-    ? Math.max(0, (cat.goal.target || 0) - info.available)
-    : cat.goal && cat.goal.type === "monthly"
-      ? Math.max(0, (cat.goal.target || 0) - info.assigned) : 0;
+  const overspend = info.available < 0 ? -info.available : 0;
 
   return (
     <Sheet title={cat.name} onClose={onClose} t={t}>
@@ -1269,51 +1448,37 @@ function AssignSheet({ t, cat, info, dispMonth, lang, onClose, onAssign, onSetGo
         <Stat label={t("available")} value={money(info.available)} accent={info.available < 0 ? C.clay : info.available > 0 ? C.green : C.muted} />
       </div>
 
-      <Field label={`${t("assignedThisMonth")} (€)`}>
-        <input inputMode="decimal" value={amount} onChange={(e) => setAmount(e.target.value)}
+      <Field label={`${t("assignedThisMonth")} · ${monthLabel(dispMonth, lang)} (€)`}>
+        <input inputMode="decimal" value={amount} onChange={(e) => edit(e.target.value)} placeholder="0,00"
           style={{ ...inputStyle, font: "700 22px 'Poppins',sans-serif", textAlign: "right" }} />
+        <SpendHints t={t} info={info} onPick={(v) => edit(toInput(v))} />
       </Field>
+      <Segmented value={scope} onChange={(v) => { setScope(v); setDirty(true); }}
+        options={[["month", t("scopeMonth")], ["forward", t("scopeForward")]]} />
 
-      {(overspend > 0.005 || goalGap > 0.005) && (
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 18 }}>
-          {goalGap > 0.005 && (
-            <Chip onClick={() => apply((parseAmount(amount) || 0) + Number(goalGap.toFixed(2)))}>
-              {t("fundGoal")} +{money(goalGap)}
-            </Chip>
-          )}
-          {overspend > 0.005 && (
-            <Chip onClick={() => apply((parseAmount(amount) || 0) + Number(overspend.toFixed(2)))} color={C.clay} bg={C.claySoft}>
-              {t("coverOverspend")} +{money(overspend)}
-            </Chip>
-          )}
+      {overspend > 0.005 && (
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 14 }}>
+          <Chip onClick={() => apply((parseAmount(amount) || 0) + round2(overspend))} color={C.clay} bg={C.claySoft}>
+            {t("coverOverspend")} +{money(overspend)}
+          </Chip>
+          <Chip onClick={() => { commit(); onMove({ toId: cat.id, amount: overspend }); }} color={C.clay} bg={C.claySoft}>
+            {t("coverFromCategory")}
+          </Chip>
         </div>
       )}
 
-      {/* goal config */}
-      <div style={{ borderTop: `1px solid ${C.line}`, paddingTop: 16, marginBottom: 16 }}>
-        <label style={fieldLabel}>{t("setGoal")}</label>
-        <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
-          {[["none", t("noGoal")], ["balance", t("balanceGoal")], ["monthly", t("monthlyGoal")]].map(([v, l]) => (
-            <button key={v} onClick={() => setGoalType(v)} style={{
-              flex: 1, padding: "10px 6px", borderRadius: 11, cursor: "pointer", font: "600 12.5px 'Commissioner',sans-serif",
-              border: `1.5px solid ${goalType === v ? C.teal : C.line}`,
-              background: goalType === v ? C.tealSoft : C.card, color: goalType === v ? C.teal : C.muted,
-            }}>{l}</button>
-          ))}
-        </div>
-        {goalType !== "none" && (
-          <Field label={`${t("goalTarget")} (€)`}>
-            <input inputMode="decimal" value={goalTarget} onChange={(e) => setGoalTarget(e.target.value)} style={inputStyle} placeholder="0,00" />
-          </Field>
-        )}
-        {goalType === "balance" && (
-          <Field label={t("byDate")}>
-            <input type="month" value={goalDate} onChange={(e) => setGoalDate(e.target.value)} style={inputStyle} />
-          </Field>
+      <div style={{ display: "flex", gap: 8, marginBottom: 18 }}>
+        <GhostBtn color={C.ink} onClick={() => { commit(); onMove(info.available > 0.005 ? { fromId: cat.id } : { toId: cat.id }); }}>
+          <ArrowLeftRight size={16} />{t("move")}
+        </GhostBtn>
+        {hasAccounts && (
+          <GhostBtn color={C.ink} onClick={() => { commit(); onFromSavings({ catId: cat.id, amount: round2(overspend) }); }}>
+            <Landmark size={16} />{t("fromSavings")}
+          </GhostBtn>
         )}
       </div>
 
-      <PrimaryBtn onClick={saveAll}><Check size={18} />{t("save")}</PrimaryBtn>
+      <PrimaryBtn onClick={() => { commit(); onClose(); }}><Check size={18} />{t("save")}</PrimaryBtn>
     </Sheet>
   );
 }
@@ -1331,37 +1496,39 @@ function Chip({ children, onClick, color = C.teal, bg = C.tealSoft }) {
 
 /* ====================== Manage categories ======================= */
 function ManageSheet({ t, groupsView, onClose, onAddCategory, onRenameCategory, onDelCategory, onAddGroup, onRenameGroup, onDelGroup }) {
-  const askAddCat = (g) => { const n = prompt(t("categoryName")); if (n && n.trim()) onAddCategory(g.id, n.trim()); };
-  const askRenameCat = (c) => { const n = prompt(t("rename"), c.name); if (n && n.trim()) onRenameCategory(c.id, n.trim()); };
-  const askDelCat = (c) => { if (confirm(t("deleteCatConfirm"))) onDelCategory(c.id); };
-  const askAddGroup = () => { const n = prompt(t("groupName")); if (n && n.trim()) onAddGroup(n.trim()); };
-  const askRenameGroup = (g) => { const n = prompt(t("rename"), g.name); if (n && n.trim()) onRenameGroup(g.id, n.trim()); };
-  const askDelGroup = (g) => { if (confirm(t("deleteGroupConfirm"))) onDelGroup(g.id); };
-
+  const [dialog, setDialog] = useState(null);
+  const close = () => setDialog(null);
   return (
     <Sheet title={t("manageCats")} onClose={onClose} t={t}>
       {groupsView.map((g) => (
         <div key={g.id} style={{ marginBottom: 18 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8 }}>
             <span style={{ flex: 1, font: "600 13px 'Commissioner',sans-serif", letterSpacing: ".05em", textTransform: "uppercase", color: C.muted }}>{g.name}</span>
-            <button onClick={() => askRenameGroup(g)} style={iconBtn}><Pencil size={15} color={C.muted} /></button>
-            <button onClick={() => askDelGroup(g)} style={iconBtn}><Trash2 size={15} color={C.clay} /></button>
+            <button onClick={() => setDialog({ kind: "renameGroup", id: g.id, name: g.name })} aria-label={t("rename")} style={iconBtn}><Pencil size={15} color={C.muted} /></button>
+            <button onClick={() => setDialog({ kind: "delGroup", id: g.id })} aria-label={t("delete")} style={iconBtn}><Trash2 size={15} color={C.clay} /></button>
           </div>
           <div style={{ background: C.card, borderRadius: 14, border: `1px solid ${C.line}`, overflow: "hidden" }}>
             {g.cats.map((c, i) => (
               <div key={c.id} style={{ display: "flex", alignItems: "center", gap: 6, padding: "11px 14px", borderBottom: i === g.cats.length - 1 ? "none" : `1px solid ${C.line}` }}>
-                <span style={{ flex: 1, font: "600 15px 'Commissioner',sans-serif" }}>{c.name} {c.goal && <Target size={12} color={C.amber} style={{ verticalAlign: "middle" }} />}</span>
-                <button onClick={() => askRenameCat(c)} style={iconBtn}><Pencil size={15} color={C.muted} /></button>
-                <button onClick={() => askDelCat(c)} style={iconBtn}><Trash2 size={15} color={C.clay} /></button>
+                <span style={{ flex: 1, font: "600 15px 'Commissioner',sans-serif" }}>{c.name} {c.plan?.some((st) => st.amount > 0) && <Repeat size={12} color={C.gold} style={{ verticalAlign: "middle" }} />}</span>
+                <button onClick={() => setDialog({ kind: "renameCat", id: c.id, name: c.name })} aria-label={t("rename")} style={iconBtn}><Pencil size={15} color={C.muted} /></button>
+                <button onClick={() => setDialog({ kind: "delCat", id: c.id })} aria-label={t("delete")} style={iconBtn}><Trash2 size={15} color={C.clay} /></button>
               </div>
             ))}
-            <button onClick={() => askAddCat(g)} style={{ width: "100%", padding: "11px", background: "transparent", border: "none", borderTop: g.cats.length ? `1px solid ${C.line}` : "none", color: C.teal, font: "600 14px 'Commissioner',sans-serif", cursor: "pointer", display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
+            <button onClick={() => setDialog({ kind: "addCat", groupId: g.id })} style={{ width: "100%", padding: "11px", background: "transparent", border: "none", borderTop: g.cats.length ? `1px solid ${C.line}` : "none", color: C.teal, font: "600 14px 'Commissioner',sans-serif", cursor: "pointer", display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
               <Plus size={16} />{t("addCategory")}
             </button>
           </div>
         </div>
       ))}
-      <GhostBtn onClick={askAddGroup} color={C.ink}><FolderPlus size={17} />{t("addGroup")}</GhostBtn>
+      <GhostBtn onClick={() => setDialog({ kind: "addGroup" })} color={C.ink}><FolderPlus size={17} />{t("addGroup")}</GhostBtn>
+
+      {dialog?.kind === "addCat" && <PromptDialog t={t} title={t("addCategory")} label={t("categoryName")} onCancel={close} onSubmit={(n) => { onAddCategory(dialog.groupId, n); close(); }} />}
+      {dialog?.kind === "renameCat" && <PromptDialog t={t} title={t("rename")} label={t("categoryName")} initial={dialog.name} onCancel={close} onSubmit={(n) => { onRenameCategory(dialog.id, n); close(); }} />}
+      {dialog?.kind === "delCat" && <ConfirmDialog t={t} message={t("deleteCatConfirm")} onCancel={close} onConfirm={() => { onDelCategory(dialog.id); close(); }} />}
+      {dialog?.kind === "addGroup" && <PromptDialog t={t} title={t("addGroup")} label={t("groupName")} onCancel={close} onSubmit={(n) => { onAddGroup(n); close(); }} />}
+      {dialog?.kind === "renameGroup" && <PromptDialog t={t} title={t("rename")} label={t("groupName")} initial={dialog.name} onCancel={close} onSubmit={(n) => { onRenameGroup(dialog.id, n); close(); }} />}
+      {dialog?.kind === "delGroup" && <ConfirmDialog t={t} message={t("deleteGroupConfirm")} onCancel={close} onConfirm={() => { onDelGroup(dialog.id); close(); }} />}
     </Sheet>
   );
 }
@@ -1435,6 +1602,276 @@ function ScheduleSheet({ t, state, onClose, onSave }) {
         </div>
       </div>
       <PrimaryBtn onClick={submit} disabled={!valid}><Check size={18} />{t("save")}</PrimaryBtn>
+    </Sheet>
+  );
+}
+
+/* ===================== dialogs & small controls ================= */
+function Dialog({ children, onClose }) {
+  return (
+    <div onClick={onClose} style={{ position: "fixed", inset: 0, background: "rgba(21,32,43,.45)", zIndex: 70, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
+      <div onClick={(e) => e.stopPropagation()} style={{ width: "100%", maxWidth: 360, background: C.card, borderRadius: 18, padding: 18, boxShadow: "0 20px 60px rgba(21,32,43,.3)" }}>{children}</div>
+    </div>
+  );
+}
+function PromptDialog({ t, title, label, initial = "", onCancel, onSubmit }) {
+  const [v, setV] = useState(initial);
+  const ok = v.trim().length > 0;
+  return (
+    <Dialog onClose={onCancel}>
+      <h3 style={{ font: "600 17px 'Commissioner',sans-serif", margin: "0 0 14px", color: C.ink }}>{title}</h3>
+      {label && <label style={fieldLabel}>{label}</label>}
+      <input autoFocus value={v} onChange={(e) => setV(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter" && ok) onSubmit(v.trim()); }} style={{ ...inputStyle, marginBottom: 16 }} />
+      <div style={{ display: "flex", gap: 8 }}>
+        <GhostBtn onClick={onCancel}>{t("cancel")}</GhostBtn>
+        <div style={{ flex: 1 }}><PrimaryBtn onClick={() => ok && onSubmit(v.trim())} disabled={!ok}>{t("save")}</PrimaryBtn></div>
+      </div>
+    </Dialog>
+  );
+}
+function ConfirmDialog({ t, title, message, confirmText, onCancel, onConfirm }) {
+  return (
+    <Dialog onClose={onCancel}>
+      {title && <h3 style={{ font: "600 17px 'Commissioner',sans-serif", margin: "0 0 8px", color: C.ink }}>{title}</h3>}
+      <p style={{ font: "500 14px/1.5 'Commissioner',sans-serif", color: C.muted, margin: "0 0 16px" }}>{message}</p>
+      <div style={{ display: "flex", gap: 8 }}>
+        <GhostBtn onClick={onCancel}>{t("cancel")}</GhostBtn>
+        <div style={{ flex: 1 }}><PrimaryBtn onClick={onConfirm} color={C.clay}>{confirmText || t("delete")}</PrimaryBtn></div>
+      </div>
+    </Dialog>
+  );
+}
+function Segmented({ value, options, onChange }) {
+  return (
+    <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
+      {options.map(([v, label, Icon]) => (
+        <button key={String(v)} onClick={() => onChange(v)} style={{
+          flex: 1, padding: "11px 6px", borderRadius: 12, cursor: "pointer", font: "600 13.5px 'Commissioner',sans-serif",
+          display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 6,
+          border: `1.5px solid ${value === v ? C.teal : C.line}`,
+          background: value === v ? C.tealSoft : C.card, color: value === v ? C.teal : C.muted,
+        }}>{Icon && <Icon size={16} />}{label}</button>
+      ))}
+    </div>
+  );
+}
+// Tappable spending figures: this month so far, last month, 3-month average.
+function SpendHints({ t, info, onPick }) {
+  const items = [[t("spentSoFar"), info.spent], [t("lastMonth"), info.lastSpent], [t("avg3"), info.avgSpent]]
+    .filter(([, v]) => v != null && v > 0.005);
+  if (!items.length) return null;
+  return (
+    <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginTop: 7 }}>
+      {items.map(([label, v]) => (
+        <button key={label} onClick={() => onPick(Math.ceil(v))} style={{
+          border: `1px solid ${C.line}`, background: C.paper, color: C.ink, borderRadius: 8, padding: "5px 8px",
+          font: "500 12px 'Commissioner',sans-serif", cursor: "pointer",
+        }}>{label} <b style={{ fontFamily: "'Poppins',sans-serif" }}>{moneyShort(Math.ceil(v))}</b></button>
+      ))}
+    </div>
+  );
+}
+const selectStyle = { ...inputStyle, appearance: "none", backgroundColor: "#FBFCFC", backgroundImage: "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2371796F' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><path d='m6 9 6 6 6-6'/></svg>\")", backgroundRepeat: "no-repeat", backgroundPosition: "right 13px center", paddingRight: 40 };
+const amountStyle = { ...inputStyle, font: "700 22px 'Poppins',sans-serif", textAlign: "right" };
+function DangerBtn({ children, onClick }) {
+  return (
+    <button onClick={onClick} style={{ width: "100%", marginTop: 10, padding: "13px", borderRadius: 12, border: "none", background: C.claySoft, color: C.clay, font: "600 15px 'Commissioner',sans-serif", cursor: "pointer", display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 7 }}>
+      {children}
+    </button>
+  );
+}
+
+/* ========================= Move sheet =========================== */
+function MoveSheet({ t, groupsView, calc, preset, onClose, onMove }) {
+  const cats = groupsView.flatMap((g) => g.cats);
+  const av = (id) => (id === RTA ? calc.readyToAssign : calc.byCat[id]?.available ?? 0);
+  const pick = (pred, cmp) => cats.filter(pred).sort(cmp)[0]?.id;
+  // Defaults: to = most overspent category, from = category with the most available.
+  const defTo = preset.toId ?? pick((c) => av(c.id) < -0.005 && c.id !== preset.fromId, (a, b) => av(a.id) - av(b.id)) ?? RTA;
+  const defFrom = preset.fromId ?? pick((c) => av(c.id) > 0.005 && c.id !== defTo, (a, b) => av(b.id) - av(a.id)) ?? RTA;
+  const [fromId, setFromId] = useState(defFrom);
+  const [toId, setToId] = useState(defTo);
+  const [amount, setAmount] = useState(toInput(preset.amount));
+  const amt = parseAmount(amount);
+  const valid = !isNaN(amt) && amt > 0 && fromId !== toId;
+  const options = (
+    <>
+      <option value={RTA}>{t("readyToAssign")} ({money(calc.readyToAssign)})</option>
+      {groupsView.map((g) => (
+        <optgroup key={g.id} label={g.name}>
+          {g.cats.map((c) => <option key={c.id} value={c.id}>{c.name} ({money(av(c.id))})</option>)}
+        </optgroup>
+      ))}
+    </>
+  );
+  return (
+    <Sheet title={t("moveMoney")} onClose={onClose} t={t}>
+      <Field label={t("from")}>
+        <select value={fromId} onChange={(e) => setFromId(e.target.value)} style={selectStyle}>{options}</select>
+      </Field>
+      <div style={{ display: "flex", justifyContent: "center", margin: "-8px 0 6px" }}>
+        <button onClick={() => { setFromId(toId); setToId(fromId); }} aria-label="⇅" style={{ ...iconBtn, background: C.paper, borderRadius: 20 }}>
+          <ArrowUpDown size={18} color={C.teal} />
+        </button>
+      </div>
+      <Field label={t("to")}>
+        <select value={toId} onChange={(e) => setToId(e.target.value)} style={selectStyle}>{options}</select>
+      </Field>
+      <Field label={`${t("amount")} (€)`}>
+        <input inputMode="decimal" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="0,00" style={amountStyle} autoFocus={!preset.amount} />
+      </Field>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 16, alignItems: "center" }}>
+        {av(fromId) > 0.005 && <Chip onClick={() => setAmount(toInput(av(fromId)))}>{t("allAvailable")} {money(av(fromId))}</Chip>}
+        {valid && amt > av(fromId) + 0.005 && <span style={{ font: "500 13px 'Commissioner',sans-serif", color: C.clay }}>{t("willGoNegative")}</span>}
+      </div>
+      <PrimaryBtn onClick={() => valid && onMove(fromId, toId, round2(amt))} disabled={!valid}><ArrowLeftRight size={18} />{t("move")}</PrimaryBtn>
+    </Sheet>
+  );
+}
+
+/* ======================= Targets sheet ========================== */
+// Every category's monthly amount on one screen, with actual spending next to it.
+function TargetsSheet({ t, lang, groupsView, calc, dispMonth, onClose, onSave }) {
+  const init = {};
+  for (const g of groupsView) for (const c of g.cats) init[c.id] = toInput(calc.byCat[c.id].assigned);
+  const [vals, setVals] = useState(init);
+  const [scope, setScope] = useState("forward");
+  const set = (id, v) => setVals((p) => ({ ...p, [id]: v }));
+  const save = () => {
+    const entries = [];
+    for (const id in vals) {
+      if (vals[id] === init[id]) continue;
+      const n = vals[id].trim() === "" ? 0 : parseAmount(vals[id]);
+      if (!isNaN(n) && n >= 0) entries.push({ catId: id, amount: round2(n) });
+    }
+    onSave(entries, scope);
+  };
+  return (
+    <Sheet title={`${t("targets")} · ${monthLabel(dispMonth, lang)}`} onClose={onClose} t={t}>
+      <Segmented value={scope} onChange={setScope} options={[["month", t("scopeMonth")], ["forward", t("scopeForward")]]} />
+      <div style={{ font: "500 13px/1.45 'Commissioner',sans-serif", color: C.muted, margin: "-6px 0 16px" }}>{t("targetsHint")}</div>
+      {groupsView.map((g) => g.cats.length > 0 && (
+        <section key={g.id} style={{ marginBottom: 16 }}>
+          <h3 style={{ font: "600 13px 'Commissioner',sans-serif", color: C.muted, margin: "0 0 8px 2px" }}>{g.name}</h3>
+          <div style={{ background: C.card, borderRadius: 14, border: `1px solid ${C.line}` }}>
+            {g.cats.map((c, i) => (
+              <div key={c.id} style={{ padding: "11px 14px", borderBottom: i === g.cats.length - 1 ? "none" : `1px solid ${C.line}` }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  <span style={{ flex: 1, minWidth: 0, font: "600 15px 'Commissioner',sans-serif", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.name}</span>
+                  <input inputMode="decimal" value={vals[c.id] ?? ""} onChange={(e) => set(c.id, e.target.value)} placeholder="—" aria-label={c.name}
+                    style={{ ...inputStyle, width: 112, padding: "9px 10px", font: "600 16px 'Poppins',sans-serif", textAlign: "right" }} />
+                </div>
+                <SpendHints t={t} info={calc.byCat[c.id]} onPick={(v) => set(c.id, toInput(v))} />
+              </div>
+            ))}
+          </div>
+        </section>
+      ))}
+      <div style={{ position: "sticky", bottom: 0, background: C.card, paddingTop: 8 }}>
+        <PrimaryBtn onClick={save}><Check size={18} />{t("save")}</PrimaryBtn>
+      </div>
+    </Sheet>
+  );
+}
+
+/* ======================= Savings transfer ======================= */
+function SavingsSheet({ t, lang, state, calc, groupsView, preset, dispMonth, onClose, onAddAccount, onSave, onDelete }) {
+  const init = preset.tx;
+  const [dir, setDir] = useState(init ? (init.amount >= 0 ? "in" : "out") : preset.dir || "in");
+  const [accountId, setAccountId] = useState(init?.accountId ?? preset.accountId ?? state.accounts[0]?.id ?? "");
+  const [amount, setAmount] = useState(init ? toInput(Math.abs(init.amount)) : toInput(preset.amount));
+  const [catId, setCatId] = useState(preset.catId ?? "");
+  const [from, setFrom] = useState(preset.from ?? RTA);      // where money going INTO savings comes from
+  const [date, setDate] = useState(init?.date || todayISO());
+  const [memo, setMemo] = useState(init?.memo || "");
+
+  if (!init && state.accounts.length === 0) {
+    return (
+      <Sheet title={t("savings")} onClose={onClose} t={t}>
+        <Empty t={t} icon={PiggyBank} text={t("noAccounts")} hint={t("noAccountsHint")} />
+        <PrimaryBtn onClick={onAddAccount}><Plus size={18} />{t("addAccount")}</PrimaryBtn>
+      </Sheet>
+    );
+  }
+
+  const av = (id) => calc.byCat[id]?.available ?? 0;
+  const leftTotal = round2(Object.values(calc.byCat).reduce((s, v) => s + Math.max(0, v.available), 0));
+  const pickFrom = (v) => {
+    setFrom(v);
+    if (v === ALL) setAmount(toInput(leftTotal));
+    else if (v !== RTA) setAmount(toInput(Math.max(0, av(v))));
+  };
+  const acc = state.accounts.find((a) => a.id === accountId);
+  const showFrom = dir === "out" && !init;
+  const amt = parseAmount(amount);
+  const valid = !isNaN(amt) && amt > 0 && accountId;
+  // balance available to draw from, counting this transfer's own amount back in when editing
+  const bal = (acc?.balance ?? 0) + (init?.accountId === accountId ? Math.max(0, init.amount) : 0);
+  const need = calc.accNeed[accountId];
+
+  return (
+    <Sheet title={t("savings")} onClose={onClose} t={t}>
+      <Segmented value={dir} onChange={setDir}
+        options={[["in", t("fromSavings"), ArrowDownLeft], ["out", t("toSavings"), ArrowUpRight]]} />
+      <Field label={t("account")}>
+        <select value={accountId} onChange={(e) => setAccountId(e.target.value)} style={selectStyle}>
+          {!acc && <option value={accountId}>{t("deletedAccount")}</option>}
+          {state.accounts.map((a) => <option key={a.id} value={a.id}>{a.name} ({money(a.balance)})</option>)}
+        </select>
+      </Field>
+      {showFrom && (
+        <Field label={t("from")}>
+          <select value={from} onChange={(e) => pickFrom(e.target.value)} style={selectStyle}>
+            <option value={RTA}>{t("readyToAssign")} ({money(calc.readyToAssign)})</option>
+            <option value={ALL}>{t("allLeftovers")} ({money(leftTotal)})</option>
+            {groupsView.map((g) => (
+              <optgroup key={g.id} label={g.name}>
+                {g.cats.map((c) => <option key={c.id} value={c.id}>{c.name} ({money(av(c.id))})</option>)}
+              </optgroup>
+            ))}
+          </select>
+        </Field>
+      )}
+      <Field label={`${t("amount")} (€)`}>
+        <input inputMode="decimal" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="0,00"
+          readOnly={showFrom && from === ALL} style={amountStyle} autoFocus={!init && !preset.amount} />
+        {dir === "in" && valid && amt > bal + 0.005 && (
+          <div style={{ font: "500 13px 'Commissioner',sans-serif", color: C.clay, marginTop: 6 }}>{t("exceedsBalance")}</div>
+        )}
+        {showFrom && from !== ALL && valid && amt > (from === RTA ? calc.readyToAssign : av(from)) + 0.005 && (
+          <div style={{ font: "500 13px 'Commissioner',sans-serif", color: C.clay, marginTop: 6 }}>{t("willGoNegative")}</div>
+        )}
+        {showFrom && from === RTA && need?.left > 0.005 && (
+          <div style={{ marginTop: 8 }}>
+            <Chip onClick={() => setAmount(toInput(round2(need.left)))}>{t("goalThisMonth")} +{money(need.left)}</Chip>
+          </div>
+        )}
+      </Field>
+      {dir === "in" && !init && (
+        <Field label={t("assignTo")}>
+          <select value={catId} onChange={(e) => setCatId(e.target.value)} style={selectStyle}>
+            <option value="">{t("readyToAssignOpt")}</option>
+            {groupsView.map((g) => (
+              <optgroup key={g.id} label={g.name}>
+                {g.cats.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+              </optgroup>
+            ))}
+          </select>
+        </Field>
+      )}
+      <Field label={t("date")}>
+        <input type="date" value={date} onChange={(e) => setDate(e.target.value)} style={inputStyle} />
+      </Field>
+      <Field label={t("memo")}>
+        <input value={memo} onChange={(e) => setMemo(e.target.value)} style={inputStyle} placeholder="—" />
+      </Field>
+      <PrimaryBtn disabled={!valid} onClick={() => valid && onSave({
+        accountId, amount: dir === "in" ? round2(amt) : -round2(amt), date,
+        memo: memo.trim() || (showFrom && from === ALL ? `${t("leftovers")} ${monthLabel(dispMonth, lang)}` : ""),
+      }, dir === "in" ? catId : (showFrom ? from : ""))}>
+        <Check size={18} />{t("save")}
+      </PrimaryBtn>
+      {onDelete && <DangerBtn onClick={onDelete}><Trash2 size={16} />{t("delete")}</DangerBtn>}
     </Sheet>
   );
 }
