@@ -89,6 +89,8 @@ const STR = {
     assignTo: "Assign to", readyToAssignOpt: "Ready to assign (assign later)", exceedsBalance: "More than this account's balance.",
     deletedAccount: "Deleted account", leftovers: "Leftovers", allLeftovers: "All leftovers",
     savingsGoal: "Savings goal", goalThisMonth: "This month's goal", transfer: "Transfer",
+    incomeSources: "Income sources", addSource: "Add income source", sourceName: "Source name",
+    deleteSourceConfirm: "Delete this source? Income you've already entered stays, without a source.",
     reorder: "Reorder", reorderHint: "Drag the ⠿ handle to change the order. A category can also be dropped into another group.",
     finalGoal: "Final amount goal", finalAmount: "Final amount", stillNeeded: "still needed", goalDone: "Goal reached",
     perMonthUntil: "a month until", goalExpired: "expired", neededThisMonth: "needed this month", removeGoal: "Remove goal",
@@ -145,6 +147,8 @@ const STR = {
     assignTo: "Μοίρασμα σε", readyToAssignOpt: "Για μοίρασμα (αργότερα)", exceedsBalance: "Ξεπερνά το υπόλοιπο του λογαριασμού.",
     deletedAccount: "Διαγραμμένος λογαριασμός", leftovers: "Περισσεύματα", allLeftovers: "Όλα τα περισσεύματα",
     savingsGoal: "Στόχος αποταμίευσης", goalThisMonth: "Στόχος μήνα", transfer: "Μεταφορά",
+    incomeSources: "Πηγές εσόδων", addSource: "Νέα πηγή εσόδων", sourceName: "Όνομα πηγής",
+    deleteSourceConfirm: "Διαγραφή πηγής; Τα έσοδα που έχεις ήδη καταχωρίσει μένουν, χωρίς πηγή.",
     reorder: "Ταξινόμηση", reorderHint: "Σύρε από τη λαβή ⠿ για να αλλάξεις σειρά. Μια κατηγορία μπορεί να πάει και σε άλλη ομάδα.",
     finalGoal: "Στόχος τελικού ποσού", finalAmount: "Τελικό ποσό", stillNeeded: "λείπουν", goalDone: "Ο στόχος ολοκληρώθηκε",
     perMonthUntil: "τον μήνα μέχρι", goalExpired: "έληξε", neededThisMonth: "λείπουν αυτόν τον μήνα", removeGoal: "Αφαίρεση στόχου",
@@ -233,6 +237,14 @@ function goalInfo(goal, available, assigned, mk) {
   return { target: goal.target, byDate: goal.byDate, balance: available, remaining, expired, perMonth, left };
 }
 
+// Income sources: the four built-in ones keep a translation key as id (name null = translated);
+// ones you add have their own name. Income transactions point to a source by id (tx.source).
+const DEFAULT_SOURCES = () => ["srcSalary", "srcPension", "srcRents", "srcInvest"].map((id) => ({ id, name: null }));
+const srcLabel = (t, sources, id) => {
+  const x = (sources || []).find((v) => v.id === id);
+  return x ? (x.name || t(x.id)) : t("income");
+};
+
 /* --------------------------- seed data --------------------------- */
 function seedState() {
   const g1 = uid(), g2 = uid(), g3 = uid();
@@ -263,7 +275,8 @@ function seedState() {
     transactions: [],         // { id, date, amount, categoryId|null, source?, payee, memo, scheduleId|null, accountId? }
                               // accountId set = savings transfer: +amount into the budget, −amount into savings
     schedules: [],            // { id, name, amount, categoryId|null, freq, nextDate, payee }
-    accounts: [{ id: uid(), name: "Μετρητά", balance: 0 }],  // { id, name, balance, goal?: { target, byDate } }
+    accounts: [{ id: uid(), name: "Μετρητά", balance: 0 }],  // { id, name, balance }
+    incomeSources: DEFAULT_SOURCES(),
   };
 }
 
@@ -284,6 +297,7 @@ function loadState() {
 // from this month; old goals are parked in legacyGoal, never deleted.
 function withDefaults(state) {
   if (!state.accounts) state.accounts = [];
+  if (!state.incomeSources) state.incomeSources = DEFAULT_SOURCES();
   if (!state.schedules) state.schedules = [];
   if (!state.assignments) state.assignments = {};
   if (!state.settings) state.settings = { lang: "el" };
@@ -596,6 +610,9 @@ function AppInner() {
     const at = s.categories.reduce((acc, x, k) => (x.groupId === toGroupId ? [...acc, k] : acc), []);
     s.categories.splice(toIndex < at.length ? at[toIndex] : at.length ? at[at.length - 1] + 1 : s.categories.length, 0, c);
   });
+  const addSource = (name) => update((s) => { s.incomeSources.push({ id: uid(), name }); });
+  const renameSource = (id, name) => update((s) => { const x = s.incomeSources.find((v) => v.id === id); if (x) x.name = name; });
+  const delSource = (id) => update((s) => { s.incomeSources = s.incomeSources.filter((v) => v.id !== id); });
   const delGroup = (id) => update((s) => {
     const catIds = s.categories.filter((c) => c.groupId === id).map((c) => c.id);
     s.groups = s.groups.filter((g) => g.id !== id);
@@ -623,7 +640,9 @@ function AppInner() {
   const accName = (id) => state.accounts.find((a) => a.id === id)?.name || t("deletedAccount");
   const txLabel = (x) => x.accountId
     ? `${x.amount >= 0 ? t("fromSavings") : t("toSavings")}: ${accName(x.accountId)}`
-    : x.categoryId === null ? (x.source ? t(x.source) : t("income"))
+    : x.categoryId === null ? (x.source ? srcLabel(t, state.incomeSources, x.source)
+      // older income kept its source only in the payee
+      : state.incomeSources.map((v) => srcLabel(t, state.incomeSources, v.id)).find((l) => l === x.payee) || t("income"))
     : (state.categories.find((c) => c.id === x.categoryId)?.name || t("uncategorised"));
 
   /* ---- backup / restore ---- */
@@ -761,7 +780,9 @@ function AppInner() {
           <ManageSheet t={t} groupsView={groupsView}
             onClose={() => setModal(null)}
             onAddCategory={addCategory} onRenameCategory={renameCategory} onDelCategory={delCategory}
-            onAddGroup={addGroup} onRenameGroup={renameGroup} onDelGroup={delGroup} onMoveGroup={moveGroup} onMoveCategory={moveCategory} />
+            onAddGroup={addGroup} onRenameGroup={renameGroup} onDelGroup={delGroup} onMoveGroup={moveGroup} onMoveCategory={moveCategory}
+            sources={state.incomeSources.map((v) => ({ id: v.id, label: srcLabel(t, state.incomeSources, v.id) }))}
+            onAddSource={addSource} onRenameSource={renameSource} onDelSource={delSource} />
         )}
         {modal?.type === "schedule" && (
           <ScheduleSheet t={t} state={state} onClose={() => setModal(null)}
@@ -1406,17 +1427,16 @@ function TxSheet({ t, state, initial, dispMonth, onClose, onSave, onDelete }) {
   const [inflow, setInflow] = useState(initial ? initial.amount >= 0 : false);
   const [amount, setAmount] = useState(initial ? Math.abs(initial.amount).toString().replace(".", ",") : "");
   const [catId, setCatId] = useState(initial ? initial.categoryId : (state.categories[0]?.id ?? null));
-  // ponytail: income "categories" are labels stored in payee; categoryId stays null
-  // so all zero-based math (Ready to assign) is untouched. Promote to real
-  // categories only if income reports per source are ever needed.
-  const SRC = ["srcSalary", "srcPension", "srcRents", "srcInvest"];
+  // Income keeps categoryId null (so "Για μοίρασμα" math is untouched) and points to a source by id.
+  const SRC = state.incomeSources.map((v) => v.id);
+  const label = (id) => srcLabel(t, state.incomeSources, id);
   const [src, setSrc] = useState(() => {
     if (initial && initial.categoryId === null) {
       if (SRC.includes(initial.source)) return initial.source;
-      const hit = SRC.find((k) => t(k) === initial.payee);
+      const hit = SRC.find((k) => label(k) === initial.payee);   // older entries kept the source in the payee
       if (hit) return hit;
     }
-    return "srcSalary";
+    return SRC[0] || "";
   });
   const [payee, setPayee] = useState(initial?.payee || "");
   const [memo, setMemo] = useState(initial?.memo || "");
@@ -1431,7 +1451,7 @@ function TxSheet({ t, state, initial, dispMonth, onClose, onSave, onDelete }) {
       date, amount: inflow ? Math.abs(amt) : -Math.abs(amt),
       categoryId: inflow ? null : catId,
       ...(inflow ? { source: src } : {}),
-      payee: inflow ? (payee.trim() || t(src)) : payee.trim(),
+      payee: inflow ? (payee.trim() || label(src)) : payee.trim(),
       memo: memo.trim(),
     });
   };
@@ -1460,7 +1480,7 @@ function TxSheet({ t, state, initial, dispMonth, onClose, onSave, onDelete }) {
         {inflow ? (
           <select value={src} onChange={(e) => setSrc(e.target.value)}
             style={{ ...inputStyle, appearance: "none", backgroundColor: "#FBFCFC", backgroundImage: "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2371796F' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><path d='m6 9 6 6 6-6'/></svg>\")", backgroundRepeat: "no-repeat", backgroundPosition: "right 13px center", paddingRight: 40 }}>
-            {SRC.map((k) => <option key={k} value={k}>{t(k)}</option>)}
+            {SRC.length ? SRC.map((k) => <option key={k} value={k}>{label(k)}</option>) : <option value="">{t("income")}</option>}
           </select>
         ) : (
           <select value={catId ?? state.categories[0]?.id ?? ""} onChange={(e) => setCatId(e.target.value)}
@@ -1625,7 +1645,7 @@ function Chip({ children, onClick, color = C.teal, bg = C.tealSoft }) {
 }
 
 /* ====================== Manage categories ======================= */
-function ManageSheet({ t, groupsView, onClose, onAddCategory, onRenameCategory, onDelCategory, onAddGroup, onRenameGroup, onDelGroup, onMoveGroup, onMoveCategory }) {
+function ManageSheet({ t, groupsView, onClose, onAddCategory, onRenameCategory, onDelCategory, onAddGroup, onRenameGroup, onDelGroup, onMoveGroup, onMoveCategory, sources, onAddSource, onRenameSource, onDelSource }) {
   const [dialog, setDialog] = useState(null);
   const [sorting, setSorting] = useState(false);
   const close = () => setDialog(null);
@@ -1739,6 +1759,24 @@ function ManageSheet({ t, groupsView, onClose, onAddCategory, onRenameCategory, 
         </>
       ) : (
         <>
+          {/* income sources ("categories" for income) */}
+          <div style={{ marginBottom: 18 }}>
+            <div style={{ font: "600 13px 'Commissioner',sans-serif", letterSpacing: ".05em", textTransform: "uppercase", color: C.teal, marginBottom: 8 }}>{t("incomeSources")}</div>
+            <div style={{ background: C.card, borderRadius: 14, border: `1px solid ${C.line}`, overflow: "hidden" }}>
+              {sources.map((v) => (
+                <div key={v.id} style={{ display: "flex", alignItems: "center", gap: 6, padding: "11px 14px", borderBottom: `1px solid ${C.line}` }}>
+                  <ArrowDownLeft size={15} color={C.teal} />
+                  <span style={{ flex: 1, font: "600 15px 'Commissioner',sans-serif" }}>{v.label}</span>
+                  <button onClick={() => setDialog({ kind: "renameSrc", id: v.id, name: v.label })} aria-label={t("rename")} style={iconBtn}><Pencil size={15} color={C.muted} /></button>
+                  <button onClick={() => setDialog({ kind: "delSrc", id: v.id })} aria-label={t("delete")} style={iconBtn}><Trash2 size={15} color={C.clay} /></button>
+                </div>
+              ))}
+              <button onClick={() => setDialog({ kind: "addSrc" })} style={{ width: "100%", padding: "11px", background: "transparent", border: "none", color: C.teal, font: "600 14px 'Commissioner',sans-serif", cursor: "pointer", display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
+                <Plus size={16} />{t("addSource")}
+              </button>
+            </div>
+          </div>
+
           {groupsView.map((g) => (
             <div key={g.id} style={{ marginBottom: 18 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8 }}>
@@ -1764,6 +1802,9 @@ function ManageSheet({ t, groupsView, onClose, onAddCategory, onRenameCategory, 
         </>
       )}
 
+      {dialog?.kind === "addSrc" && <PromptDialog t={t} title={t("addSource")} label={t("sourceName")} onCancel={close} onSubmit={(n) => { onAddSource(n); close(); }} />}
+      {dialog?.kind === "renameSrc" && <PromptDialog t={t} title={t("rename")} label={t("sourceName")} initial={dialog.name} onCancel={close} onSubmit={(n) => { onRenameSource(dialog.id, n); close(); }} />}
+      {dialog?.kind === "delSrc" && <ConfirmDialog t={t} message={t("deleteSourceConfirm")} onCancel={close} onConfirm={() => { onDelSource(dialog.id); close(); }} />}
       {dialog?.kind === "addCat" && <PromptDialog t={t} title={t("addCategory")} label={t("categoryName")} onCancel={close} onSubmit={(n) => { onAddCategory(dialog.groupId, n); close(); }} />}
       {dialog?.kind === "renameCat" && <PromptDialog t={t} title={t("rename")} label={t("categoryName")} initial={dialog.name} onCancel={close} onSubmit={(n) => { onRenameCategory(dialog.id, n); close(); }} />}
       {dialog?.kind === "delCat" && <ConfirmDialog t={t} message={t("deleteCatConfirm")} onCancel={close} onConfirm={() => { onDelCategory(dialog.id); close(); }} />}
