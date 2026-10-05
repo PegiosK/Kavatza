@@ -1,4 +1,10 @@
 import React, { useState, useEffect, useMemo, useCallback, useRef } from "react";
+import catRichImg from "./assets/mascot/cat-rich.webp";
+import catBrokeImg from "./assets/mascot/cat-broke.jpg";
+import catExpenseImg from "./assets/mascot/cat-expense.webp";
+import catIncomeImg from "./assets/mascot/cat-income.webp";
+import catEmptyImg from "./assets/mascot/cat-empty.webp";
+import catOverspendImg from "./assets/mascot/cat-overspend.webp";
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, CartesianGrid, Legend,
 } from "recharts";
@@ -501,9 +507,9 @@ function expenseFeedback(state, tx) {
 
 function MascotBadge({ status = "neutral", size = 44, src: srcOverride }) {
   const broke = status === "broke";
-  const src = srcOverride || (broke ? "./mascot/cat-broke.jpg" : "./mascot/cat-rich.png");
+  const src = srcOverride || (broke ? catBrokeImg : catRichImg);
   return (
-    <img src={src} alt="" width={size} height={size} style={{
+    <img src={src} alt="" width={size} height={size} loading="eager" decoding="async" style={{
       width: size, height: size, objectFit: "cover", display: "block", flexShrink: 0,
       borderRadius: broke ? Math.max(10, size * 0.22) : "50%",
       border: `2px solid ${broke ? C.clay : C.gold}`,
@@ -593,19 +599,19 @@ function TutorialSheet({ t, onClose }) {
 
 const CAT_FEEDBACK_KINDS = {
   expense: {
-    img: "./mascot/cat-expense.png", titleKey: "catRichTitle", good: true,
+    img: catExpenseImg, titleKey: "catRichTitle", good: true,
     msg: (t, f) => t("catRemain").replace("{x}", money(Math.max(0, f.remaining || 0))),
   },
   income: {
-    img: "./mascot/cat-income.png", titleKey: "catIncomeTitle", good: true,
+    img: catIncomeImg, titleKey: "catIncomeTitle", good: true,
     msg: (t, f) => t("catIncome").replace("{x}", money(Math.max(0, f.amount || 0))),
   },
   empty: {
-    img: "./mascot/cat-empty.png", titleKey: "catEmptyTitle", good: false,
+    img: catEmptyImg, titleKey: "catEmptyTitle", good: false,
     msg: (t) => t("catEmpty"),
   },
   overspend: {
-    img: "./mascot/cat-overspend.png", titleKey: "catOverspendTitle", good: false,
+    img: catOverspendImg, titleKey: "catOverspendTitle", good: false,
     msg: (t) => t("catOverspend"),
   },
 };
