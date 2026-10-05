@@ -4,7 +4,7 @@ import {
 } from "recharts";
 import {
   Wallet, Plus, BarChart3, Settings, Repeat, Target, Download, Upload,
-  ChevronLeft, ChevronRight, ChevronDown, X, Pencil, Trash2, Check, ArrowDownLeft, ArrowUpRight,
+  ChevronLeft, ChevronRight, ChevronDown, GripVertical, X, Pencil, Trash2, Check, ArrowDownLeft, ArrowUpRight,
   PiggyBank, Languages, Receipt, AlertCircle, FolderPlus, RotateCcw, CalendarClock,
   ArrowLeftRight, ArrowUpDown, Landmark,
 } from "lucide-react";
@@ -89,6 +89,7 @@ const STR = {
     assignTo: "Assign to", readyToAssignOpt: "Ready to assign (assign later)", exceedsBalance: "More than this account's balance.",
     deletedAccount: "Deleted account", leftovers: "Leftovers", allLeftovers: "All leftovers",
     savingsGoal: "Savings goal", goalThisMonth: "This month's goal", transfer: "Transfer",
+    reorder: "Reorder", reorderHint: "Drag the ⠿ handle to change the order. A category can also be dropped into another group.",
     finalGoal: "Final amount goal", finalAmount: "Final amount", stillNeeded: "still needed", goalDone: "Goal reached",
     perMonthUntil: "a month until", goalExpired: "expired", neededThisMonth: "needed this month", removeGoal: "Remove goal",
     removeGoalMsg: "The money stays in the category this month. Whatever is left when the month closes goes back to Ready to assign.",
@@ -144,6 +145,7 @@ const STR = {
     assignTo: "Μοίρασμα σε", readyToAssignOpt: "Για μοίρασμα (αργότερα)", exceedsBalance: "Ξεπερνά το υπόλοιπο του λογαριασμού.",
     deletedAccount: "Διαγραμμένος λογαριασμός", leftovers: "Περισσεύματα", allLeftovers: "Όλα τα περισσεύματα",
     savingsGoal: "Στόχος αποταμίευσης", goalThisMonth: "Στόχος μήνα", transfer: "Μεταφορά",
+    reorder: "Ταξινόμηση", reorderHint: "Σύρε από τη λαβή ⠿ για να αλλάξεις σειρά. Μια κατηγορία μπορεί να πάει και σε άλλη ομάδα.",
     finalGoal: "Στόχος τελικού ποσού", finalAmount: "Τελικό ποσό", stillNeeded: "λείπουν", goalDone: "Ο στόχος ολοκληρώθηκε",
     perMonthUntil: "τον μήνα μέχρι", goalExpired: "έληξε", neededThisMonth: "λείπουν αυτόν τον μήνα", removeGoal: "Αφαίρεση στόχου",
     removeGoalMsg: "Τα χρήματα μένουν στην κατηγορία αυτόν τον μήνα. Ό,τι περισσέψει στο κλείσιμο του μήνα επιστρέφει στο «Για μοίρασμα».",
@@ -580,6 +582,20 @@ function AppInner() {
   });
   const addGroup = (name) => update((s) => { s.groups.push({ id: uid(), name }); });
   const renameGroup = (id, name) => update((s) => { const g = s.groups.find((x) => x.id === id); if (g) g.name = name; });
+  // dir −1 = up, +1 = down; the Budget screen lists groups in this order
+  const moveGroup = (id, dir) => update((s) => {
+    const i = s.groups.findIndex((x) => x.id === id), j = i + dir;
+    if (i < 0 || j < 0 || j >= s.groups.length) return;
+    [s.groups[i], s.groups[j]] = [s.groups[j], s.groups[i]];
+  });
+  // Move a category to position `toIndex` of group `toGroupId` (counted without the category itself).
+  const moveCategory = (id, toGroupId, toIndex) => update((s) => {
+    const i = s.categories.findIndex((c) => c.id === id); if (i < 0) return;
+    const [c] = s.categories.splice(i, 1);
+    c.groupId = toGroupId;
+    const at = s.categories.reduce((acc, x, k) => (x.groupId === toGroupId ? [...acc, k] : acc), []);
+    s.categories.splice(toIndex < at.length ? at[toIndex] : at.length ? at[at.length - 1] + 1 : s.categories.length, 0, c);
+  });
   const delGroup = (id) => update((s) => {
     const catIds = s.categories.filter((c) => c.groupId === id).map((c) => c.id);
     s.groups = s.groups.filter((g) => g.id !== id);
@@ -745,7 +761,7 @@ function AppInner() {
           <ManageSheet t={t} groupsView={groupsView}
             onClose={() => setModal(null)}
             onAddCategory={addCategory} onRenameCategory={renameCategory} onDelCategory={delCategory}
-            onAddGroup={addGroup} onRenameGroup={renameGroup} onDelGroup={delGroup} />
+            onAddGroup={addGroup} onRenameGroup={renameGroup} onDelGroup={delGroup} onMoveGroup={moveGroup} onMoveCategory={moveCategory} />
         )}
         {modal?.type === "schedule" && (
           <ScheduleSheet t={t} state={state} onClose={() => setModal(null)}
@@ -1609,33 +1625,144 @@ function Chip({ children, onClick, color = C.teal, bg = C.tealSoft }) {
 }
 
 /* ====================== Manage categories ======================= */
-function ManageSheet({ t, groupsView, onClose, onAddCategory, onRenameCategory, onDelCategory, onAddGroup, onRenameGroup, onDelGroup }) {
+function ManageSheet({ t, groupsView, onClose, onAddCategory, onRenameCategory, onDelCategory, onAddGroup, onRenameGroup, onDelGroup, onMoveGroup, onMoveCategory }) {
   const [dialog, setDialog] = useState(null);
+  const [sorting, setSorting] = useState(false);
   const close = () => setDialog(null);
+
+  /* ---- Reorder mode (like YNAB's "Reorder"): drag ⠿ handles, touch or mouse ----
+     refs: "g:<id>" group box, "h:<id>" group header, "c:<id>" category row.
+     The dragged item follows the finger by measuring its untransformed position each move,
+     so it stays put when the layout changes (groups folding to titles, swaps re-rendering). */
+  const refs = useRef({});
+  const gv = useRef(groupsView); gv.current = groupsView;
+  const [drag, setDrag] = useState(null);            // { kind: "g"|"c", id, ty }
+  const shownTy = useRef(0); shownTy.current = drag?.ty || 0;
+
+  // what the dragged item swaps with next, and how
+  const groupTarget = (id, down) => {
+    const gs = gv.current, i = gs.findIndex((g) => g.id === id), j = down ? i + 1 : i - 1;
+    if (i < 0 || j < 0 || j >= gs.length) return null;
+    return { key: "g:" + gs[j].id, apply: () => onMoveGroup(id, down ? 1 : -1) };
+  };
+  const catTarget = (id, down) => {
+    const gs = gv.current, gi = gs.findIndex((g) => g.cats.some((c) => c.id === id));
+    if (gi < 0) return null;
+    const cats = gs[gi].cats, ci = cats.findIndex((c) => c.id === id);
+    if (down) {
+      if (ci < cats.length - 1) return { key: "c:" + cats[ci + 1].id, apply: () => onMoveCategory(id, gs[gi].id, ci + 1) };
+      if (gi < gs.length - 1) return { key: "h:" + gs[gi + 1].id, apply: () => onMoveCategory(id, gs[gi + 1].id, 0) };
+    } else {
+      if (ci > 0) return { key: "c:" + cats[ci - 1].id, apply: () => onMoveCategory(id, gs[gi].id, ci - 1) };
+      if (gi > 0) return { key: "h:" + gs[gi].id, apply: () => onMoveCategory(id, gs[gi - 1].id, gs[gi - 1].cats.length) };
+    }
+    return null;
+  };
+
+  const startDrag = (e, kind, id) => {
+    e.preventDefault();
+    const key = kind + ":" + id;
+    const st = { grab: e.clientY - refs.current[key].getBoundingClientRect().top, lock: false };
+    const move = (ev) => {
+      const el = refs.current[key]; if (!el) return;
+      const r = el.getBoundingClientRect();
+      const top = ev.clientY - st.grab;
+      const ty = top - (r.top - shownTy.current);
+      if (!st.lock) {
+        const down = ty > 0, mid = top + r.height / 2;
+        const tg = kind === "g" ? groupTarget(id, down) : catTarget(id, down);
+        const nr = tg && refs.current[tg.key]?.getBoundingClientRect();
+        if (nr && (down ? mid > nr.top + nr.height / 2 : mid < nr.top + nr.height / 2)) {
+          st.lock = true;                              // one swap per layout: wait for React to re-render
+          tg.apply();
+          requestAnimationFrame(() => requestAnimationFrame(() => { st.lock = false; }));
+        }
+      }
+      setDrag({ kind, id, ty });
+    };
+    const end = () => {
+      window.removeEventListener("pointermove", move);
+      window.removeEventListener("pointerup", end);
+      window.removeEventListener("pointercancel", end);
+      setDrag(null);
+    };
+    window.addEventListener("pointermove", move);
+    window.addEventListener("pointerup", end);
+    window.addEventListener("pointercancel", end);
+    setDrag({ kind, id, ty: 0 });
+  };
+  const lifted = (on, extra) => ({
+    position: "relative", zIndex: on ? 5 : "auto",
+    transform: on ? `translateY(${drag.ty}px)` : "none",
+    boxShadow: on ? "0 14px 30px rgba(21,32,43,.22)" : "none",
+    transition: on ? "none" : "transform .15s ease", ...extra,
+  });
+  const handle = (kind, id) => (
+    <span onPointerDown={(e) => startDrag(e, kind, id)} aria-label={`drag-${kind}`}
+      style={{ display: "inline-flex", padding: "6px 4px", cursor: "grab", touchAction: "none", userSelect: "none" }}>
+      <GripVertical size={18} color={C.muted} />
+    </span>
+  );
+
   return (
     <Sheet title={t("manageCats")} onClose={onClose} t={t}>
-      {groupsView.map((g) => (
-        <div key={g.id} style={{ marginBottom: 18 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8 }}>
-            <span style={{ flex: 1, font: "600 13px 'Commissioner',sans-serif", letterSpacing: ".05em", textTransform: "uppercase", color: C.muted }}>{g.name}</span>
-            <button onClick={() => setDialog({ kind: "renameGroup", id: g.id, name: g.name })} aria-label={t("rename")} style={iconBtn}><Pencil size={15} color={C.muted} /></button>
-            <button onClick={() => setDialog({ kind: "delGroup", id: g.id })} aria-label={t("delete")} style={iconBtn}><Trash2 size={15} color={C.clay} /></button>
-          </div>
-          <div style={{ background: C.card, borderRadius: 14, border: `1px solid ${C.line}`, overflow: "hidden" }}>
-            {g.cats.map((c, i) => (
-              <div key={c.id} style={{ display: "flex", alignItems: "center", gap: 6, padding: "11px 14px", borderBottom: i === g.cats.length - 1 ? "none" : `1px solid ${C.line}` }}>
-                <span style={{ flex: 1, font: "600 15px 'Commissioner',sans-serif" }}>{c.name} {c.plan?.some((st) => st.amount > 0) && <Repeat size={12} color={C.gold} style={{ verticalAlign: "middle" }} />}</span>
-                <button onClick={() => setDialog({ kind: "renameCat", id: c.id, name: c.name })} aria-label={t("rename")} style={iconBtn}><Pencil size={15} color={C.muted} /></button>
-                <button onClick={() => setDialog({ kind: "delCat", id: c.id })} aria-label={t("delete")} style={iconBtn}><Trash2 size={15} color={C.clay} /></button>
+      <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 12 }}>
+        <button onClick={() => setSorting((v) => !v)} style={{
+          border: `1.5px solid ${sorting ? C.teal : C.line}`, background: sorting ? C.tealSoft : C.card, color: sorting ? C.teal : C.ink,
+          borderRadius: 10, padding: "8px 14px", font: "600 13.5px 'Commissioner',sans-serif", cursor: "pointer",
+          display: "inline-flex", alignItems: "center", gap: 6,
+        }}>{sorting ? <><Check size={15} />{t("done")}</> : <><ArrowUpDown size={15} />{t("reorder")}</>}</button>
+      </div>
+
+      {sorting ? (
+        <>
+          <div style={{ font: "500 13px/1.45 'Commissioner',sans-serif", color: C.muted, margin: "-4px 0 14px" }}>{t("reorderHint")}</div>
+          {groupsView.map((g) => (
+            <div key={g.id} ref={(el) => { refs.current["g:" + g.id] = el; }}
+              style={lifted(drag?.kind === "g" && drag.id === g.id, { marginBottom: 12, background: C.card, border: `1px solid ${C.line}`, borderRadius: 14 })}>
+              <div ref={(el) => { refs.current["h:" + g.id] = el; }} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 10px" }}>
+                {handle("g", g.id)}
+                <span style={{ font: "600 13px 'Commissioner',sans-serif", letterSpacing: ".05em", textTransform: "uppercase", color: C.muted }}>{g.name}</span>
               </div>
-            ))}
-            <button onClick={() => setDialog({ kind: "addCat", groupId: g.id })} style={{ width: "100%", padding: "11px", background: "transparent", border: "none", borderTop: g.cats.length ? `1px solid ${C.line}` : "none", color: C.teal, font: "600 14px 'Commissioner',sans-serif", cursor: "pointer", display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
-              <Plus size={16} />{t("addCategory")}
-            </button>
-          </div>
-        </div>
-      ))}
-      <GhostBtn onClick={() => setDialog({ kind: "addGroup" })} color={C.ink}><FolderPlus size={17} />{t("addGroup")}</GhostBtn>
+              {drag?.kind !== "g" && g.cats.map((c, ci) => (
+                <div key={c.id} ref={(el) => { refs.current["c:" + c.id] = el; }}
+                  style={lifted(drag?.kind === "c" && drag.id === c.id, {
+                    display: "flex", alignItems: "center", gap: 6, padding: "3px 10px", borderTop: `1px solid ${C.line}`,
+                    background: C.card, borderRadius: drag?.id === c.id ? 10 : ci === g.cats.length - 1 ? "0 0 13px 13px" : 0,
+                  })}>
+                  {handle("c", c.id)}
+                  <span style={{ font: "600 15px 'Commissioner',sans-serif", color: C.ink }}>{c.name}</span>
+                </div>
+              ))}
+            </div>
+          ))}
+        </>
+      ) : (
+        <>
+          {groupsView.map((g) => (
+            <div key={g.id} style={{ marginBottom: 18 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8 }}>
+                <span style={{ flex: 1, font: "600 13px 'Commissioner',sans-serif", letterSpacing: ".05em", textTransform: "uppercase", color: C.muted }}>{g.name}</span>
+                <button onClick={() => setDialog({ kind: "renameGroup", id: g.id, name: g.name })} aria-label={t("rename")} style={iconBtn}><Pencil size={15} color={C.muted} /></button>
+                <button onClick={() => setDialog({ kind: "delGroup", id: g.id })} aria-label={t("delete")} style={iconBtn}><Trash2 size={15} color={C.clay} /></button>
+              </div>
+              <div style={{ background: C.card, borderRadius: 14, border: `1px solid ${C.line}`, overflow: "hidden" }}>
+                {g.cats.map((c, i) => (
+                  <div key={c.id} style={{ display: "flex", alignItems: "center", gap: 6, padding: "11px 14px", borderBottom: i === g.cats.length - 1 ? "none" : `1px solid ${C.line}` }}>
+                    <span style={{ flex: 1, font: "600 15px 'Commissioner',sans-serif" }}>{c.name} {c.plan?.some((st) => st.amount > 0) && <Repeat size={12} color={C.gold} style={{ verticalAlign: "middle" }} />}</span>
+                    <button onClick={() => setDialog({ kind: "renameCat", id: c.id, name: c.name })} aria-label={t("rename")} style={iconBtn}><Pencil size={15} color={C.muted} /></button>
+                    <button onClick={() => setDialog({ kind: "delCat", id: c.id })} aria-label={t("delete")} style={iconBtn}><Trash2 size={15} color={C.clay} /></button>
+                  </div>
+                ))}
+                <button onClick={() => setDialog({ kind: "addCat", groupId: g.id })} style={{ width: "100%", padding: "11px", background: "transparent", border: "none", borderTop: g.cats.length ? `1px solid ${C.line}` : "none", color: C.teal, font: "600 14px 'Commissioner',sans-serif", cursor: "pointer", display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
+                  <Plus size={16} />{t("addCategory")}
+                </button>
+              </div>
+            </div>
+          ))}
+          <GhostBtn onClick={() => setDialog({ kind: "addGroup" })} color={C.ink}><FolderPlus size={17} />{t("addGroup")}</GhostBtn>
+        </>
+      )}
 
       {dialog?.kind === "addCat" && <PromptDialog t={t} title={t("addCategory")} label={t("categoryName")} onCancel={close} onSubmit={(n) => { onAddCategory(dialog.groupId, n); close(); }} />}
       {dialog?.kind === "renameCat" && <PromptDialog t={t} title={t("rename")} label={t("categoryName")} initial={dialog.name} onCancel={close} onSubmit={(n) => { onRenameCategory(dialog.id, n); close(); }} />}
