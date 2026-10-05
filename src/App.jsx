@@ -89,7 +89,7 @@ const STR = {
     assignTo: "Assign to", readyToAssignOpt: "Ready to assign (assign later)", exceedsBalance: "More than this account's balance.",
     deletedAccount: "Deleted account", leftovers: "Leftovers", allLeftovers: "All leftovers",
     savingsGoal: "Savings goal", goalThisMonth: "This month's goal", transfer: "Transfer",
-    incomeSources: "Income sources", addSource: "Add income source", sourceName: "Source name",
+    incomeBySource: "Income by source", incomeSources: "Income sources", addSource: "Add income source", sourceName: "Source name",
     deleteSourceConfirm: "Delete this source? Income you've already entered stays, without a source.",
     reorder: "Reorder", reorderHint: "Drag the ⠿ handle to change the order. A category can also be dropped into another group.",
     finalGoal: "Final amount goal", finalAmount: "Final amount", stillNeeded: "still needed", goalDone: "Goal reached",
@@ -147,7 +147,7 @@ const STR = {
     assignTo: "Μοίρασμα σε", readyToAssignOpt: "Για μοίρασμα (αργότερα)", exceedsBalance: "Ξεπερνά το υπόλοιπο του λογαριασμού.",
     deletedAccount: "Διαγραμμένος λογαριασμός", leftovers: "Περισσεύματα", allLeftovers: "Όλα τα περισσεύματα",
     savingsGoal: "Στόχος αποταμίευσης", goalThisMonth: "Στόχος μήνα", transfer: "Μεταφορά",
-    incomeSources: "Πηγές εσόδων", addSource: "Νέα πηγή εσόδων", sourceName: "Όνομα πηγής",
+    incomeBySource: "Έσοδα ανά πηγή", incomeSources: "Πηγές εσόδων", addSource: "Νέα πηγή εσόδων", sourceName: "Όνομα πηγής",
     deleteSourceConfirm: "Διαγραφή πηγής; Τα έσοδα που έχεις ήδη καταχωρίσει μένουν, χωρίς πηγή.",
     reorder: "Ταξινόμηση", reorderHint: "Σύρε από τη λαβή ⠿ για να αλλάξεις σειρά. Μια κατηγορία μπορεί να πάει και σε άλλη ομάδα.",
     finalGoal: "Στόχος τελικού ποσού", finalAmount: "Τελικό ποσό", stillNeeded: "λείπουν", goalDone: "Ο στόχος ολοκληρώθηκε",
@@ -703,7 +703,7 @@ function AppInner() {
             onEdit={(a) => setModal({ type: "account", account: a })}
             onTransfer={() => setModal({ type: "savings", dir: "out" })} />
         )}
-        {tab === "reports" && <ReportsScreen t={t} lang={lang} state={state} dispMonth={dispMonth} />}
+        {tab === "reports" && <ReportsScreen t={t} lang={lang} state={state} dispMonth={dispMonth} txLabel={txLabel} />}
         {tab === "more" && (
           <MoreScreen
             t={t} lang={lang} state={state} due={dueSchedules}
@@ -1236,7 +1236,7 @@ function TransactionsScreen({ t, lang, state, txLabel, onEdit }) {
 }
 
 /* ======================== Reports screen ======================== */
-function ReportsScreen({ t, lang, state, dispMonth }) {
+function ReportsScreen({ t, lang, state, dispMonth, txLabel }) {
   // spending by category, this month
   const spend = useMemo(() => {
     const map = {};
@@ -1248,6 +1248,18 @@ function ReportsScreen({ t, lang, state, dispMonth }) {
     });
     return Object.entries(map).map(([name, value]) => ({ name, value })).sort((a, b) => b.value - a.value);
   }, [state, dispMonth, t]);
+
+  // income by source, this month (savings transfers aren't income)
+  const income = useMemo(() => {
+    const map = {};
+    for (const x of state.transactions) {
+      if (x.categoryId !== null || x.accountId || x.amount <= 0 || monthKey(x.date) !== dispMonth) continue;
+      const name = txLabel(x);
+      map[name] = (map[name] || 0) + x.amount;
+    }
+    return Object.entries(map).map(([name, value]) => ({ name, value })).sort((a, b) => b.value - a.value);
+  }, [state, dispMonth, txLabel]);
+  const totalIncome = income.reduce((s, x) => s + x.value, 0);
 
   // income vs expense, last 6 months
   const trend = useMemo(() => {
@@ -1288,6 +1300,28 @@ function ReportsScreen({ t, lang, state, dispMonth }) {
                   </Bar>
                 </BarChart>
               </ResponsiveContainer>
+            </>
+          )}
+        </Card>
+
+        <Card>
+          <CardTitle icon={ArrowDownLeft}>{t("incomeBySource")}</CardTitle>
+          {income.length === 0 ? <MiniEmpty t={t} /> : (
+            <>
+              <div style={{ font: "700 26px 'Poppins',sans-serif", color: C.ink, margin: "2px 0 12px" }}>{money(totalIncome)}</div>
+              {income.map((x) => (
+                <div key={x.name} style={{ marginBottom: 12 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 10, font: "600 14px 'Commissioner',sans-serif", color: C.ink }}>
+                    <span>{x.name}</span>
+                    <span style={{ fontFamily: "'Poppins',sans-serif" }}>
+                      {money(x.value)} <span style={{ font: "500 12px 'Commissioner',sans-serif", color: C.muted }}>· {Math.round((x.value / totalIncome) * 100)}%</span>
+                    </span>
+                  </div>
+                  <div style={{ marginTop: 6, height: 6, background: "#EBE8DB", borderRadius: 4, overflow: "hidden" }}>
+                    <div style={{ width: `${(x.value / totalIncome) * 100}%`, height: "100%", borderRadius: 4, background: C.teal }} />
+                  </div>
+                </div>
+              ))}
             </>
           )}
         </Card>
