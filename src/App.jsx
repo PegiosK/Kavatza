@@ -419,13 +419,15 @@ function AppInner() {
       for (const m in assignments) if (c.id in assignments[m]) months.add(m);
       if (c.plan?.length) for (let m = c.plan[0].from; m <= horizon; m = addMonthsKey(m, 1)) months.add(m);
       const assignedIn = (m) => assignments[m]?.[c.id] ?? planFor(c.plan, m);
-      let available = 0;
+      // Each month stands alone: nothing carries over in the category.
+      // Closed months use up only what was actually spent (the rest went back to "Για μοίρασμα");
+      // this and coming months hold back what's assigned, or the spending if it went over.
+      for (const m in a) months.add(m);
       for (const m of months) {
-        const v = assignedIn(m);
-        totalAssigned += v;
-        if (m <= dispMonth) available += v;
+        const spentM = -(a[m] || 0);
+        totalAssigned += m < nowMk ? spentM : Math.max(assignedIn(m), spentM);
       }
-      for (const m in a) if (m <= dispMonth) available += a[m];
+      const available = assignedIn(dispMonth) + (a[dispMonth] || 0);
       const hist = prev.filter((m) => m in a).map((m) => -a[m]);   // only months with activity count
       byCat[c.id] = {
         assigned: assignedIn(dispMonth),
@@ -910,7 +912,7 @@ function CategoryRow({ t, cat, info, last, onClick, dispMonth }) {
   const avail = info.available;
   const availColor = avail < -0.005 ? C.clay : avail > 0.005 ? C.green : C.muted;
   const spent = Math.max(0, -info.activity);   // outflow this month
-  const over = spent > info.assigned + 0.005;
+  const over = avail < -0.005;
   const frac = info.assigned > 0.005 ? Math.min(1, spent / info.assigned) : (spent > 0.005 ? 1 : 0);
   return (
     <button onClick={onClick} style={{
