@@ -6,7 +6,7 @@ import {
   Wallet, Plus, BarChart3, Settings, Repeat, Target, Download, Upload,
   ChevronLeft, ChevronRight, ChevronDown, GripVertical, X, Pencil, Trash2, Check, ArrowDownLeft, ArrowUpRight,
   PiggyBank, Languages, Receipt, AlertCircle, FolderPlus, RotateCcw, CalendarClock,
-  ArrowLeftRight, ArrowUpDown, Landmark,
+  ArrowLeftRight, ArrowUpDown, Landmark, HelpCircle,
 } from "lucide-react";
 
 /* ------------------------------------------------------------------ *
@@ -36,6 +36,7 @@ const C = {
 };
 
 const STORE_KEY = "kavatza_state_v2";
+const TUTORIAL_KEY = "kavatza_tutorial_seen_v1";
 
 /* ----------------------------- i18n ------------------------------ */
 const STR = {
@@ -96,6 +97,28 @@ const STR = {
     perMonthUntil: "a month until", goalExpired: "expired", neededThisMonth: "needed this month", removeGoal: "Remove goal",
     removeGoalMsg: "The money stays in the category this month. Whatever is left when the month closes goes back to Ready to assign.",
     goalMoneyNote: "Money held by goal categories is already set aside — don't move it to savings as well.",
+    help: "Help", tutorial: "Mini tutorial", tutorialTitle: "Welcome to KABATZA", editBudget: "Edit budget",
+    tutorialSub: "Give every euro a job before you spend it.",
+    tutorialFull: "Give every euro a purpose: start with the money you actually have and assign all of it: everyday spending, bills that must be paid, savings, or bigger goals like future purchases, holidays or trips!\n\nKeep assigning until available money is zero. This does not mean you spent your money. It means you already know where you want every euro to be used.\nWhen you spend, record the expense and the amount is deducted from the matching purpose.\n\nThe app’s goal is not to make you stop spending. It is to spend consciously so that, in the end, you achieve what you truly want.\n\nThe cat will follow you with tips and advice 😊",
+    next: "Next", back: "Back", start: "Start budgeting", skip: "Skip",
+    tutCatTitle: "Budget", tutCatBody: "In the “Budget” tab you’ll find the main expense and goal categories. You can change them with the pencil at the top right.",
+    tutTxTitle: "Transactions", tutTxBody: "Here you add and remove every income and expense. Income appears in available money. Expenses fill the bar you have budgeted.",
+    tutAccTitle: "Accounts", tutAccBody: "Here you can add the money you have saved, in investments or in cash.",
+    tutorialLocal: "Everything stays on this device. Reopen this guide anytime from More → Mini tutorial.",
+    catRichTitle: "Living large", catRich: "Spending is inside the plan — the cat is feeling rich.",
+    catBrokeTitle: "Broke cat alert", catBroke: "This month’s spending passed what you assigned — cover it before the cat sells the sofa.",
+    catNeutralTitle: "The cat is watching", catNeutral: "Assign money and log spending to set the cat’s mood.",
+    catRemain: "We still have {x} for this expense.",
+    catEmpty: "No money left. We need to take it from somewhere else. Reduce another expense or a goal.",
+    catIncomeTitle: "Money in!",
+    catIncome: "{x} just landed in your available money. Give every euro a job!",
+    catEmptyTitle: "Pockets are empty",
+    catOverspendTitle: "Target overspent",
+    catOverspend: "Careful! You passed this category's target. Move money from somewhere else to cover it.",
+    fixEntry: "Fix this entry",
+    moveFromOverspent: "This category is already overspent — moving money out of it frees nothing, it only makes it worse. Cover it from another category or from Ready to assign.",
+    coverOverspend: "Cover overspend",
+    ok: "OK",
   },
   el: {
     appName: "KABATZA", tagline: "Δώσε δουλειά σε κάθε ευρώ",
@@ -154,6 +177,28 @@ const STR = {
     perMonthUntil: "τον μήνα μέχρι", goalExpired: "έληξε", neededThisMonth: "λείπουν αυτόν τον μήνα", removeGoal: "Αφαίρεση στόχου",
     removeGoalMsg: "Τα χρήματα μένουν στην κατηγορία αυτόν τον μήνα. Ό,τι περισσέψει στο κλείσιμο του μήνα επιστρέφει στο «Για μοίρασμα».",
     goalMoneyNote: "Τα χρήματα των κατηγοριών-στόχων είναι ήδη δεσμευμένα — μην τα μεταφέρεις και εδώ.",
+    help: "Βοήθεια", tutorial: "Μίνι οδηγός", tutorialTitle: "Καλώς ήρθες στο KABATZA", editBudget: "Επεξεργασία budget",
+    tutorialSub: "Δώσε δουλειά σε κάθε ευρώ πριν το ξοδέψεις.",
+    tutorialFull: "Δώσε σε κάθε ευρώ έναν σκοπό: Ξεκινά από τα διαθέσιμα χρήματα που έχεις και μοίρασέ τα όλα: Καθημερινά έξοδα, λογαριασμοί που θα πρέπει να πληρωθούν, αποταμίευση ή μεγαλύτερους στόχους, όπως μελλοντικές αγορές, διακοπές ή ταξίδια!\n\nΣυνέχισε να τα μοιράζεις μέχρι τα διαθέσιμα χρήματα να μηδενιστούν”. Αυτό δεν σημαίνει ότι ξόδεψες τα χρήματά σου. Σημαίνει ότι ξέρεις ήδη πού θέλεις να χρησιμοποιηθεί κάθε ευρώ.\nΌταν ξοδεύεις, καταχωρείς το έξοδο και το ποσό αφαιρείται από τον αντίστοιχο σκοπό.\n\nΣκοπός του app δεν είναι να σταματήσεις να ξοδεύεις. Είναι να ξοδεύεις συνειδητά ώστε στο τέλος να καταφέρνεις αυτά που πραγματικά θέλεις.\n\nΟ γάτος θα σε παρακολουθεί με tips και συμβουλές 😊",
+    next: "Επόμενο", back: "Πίσω", start: "Ξεκίνα τον προϋπολογισμό", skip: "Παράλειψη",
+    tutCatTitle: "Προϋπολογισμός", tutCatBody: "Στο tab “Προϋπολογισμός” θα βρεις τις βασικές κατηγορίες εξόδων και στόχων. Μπορείς να τις τροποποιήσεις με το μολύβι πάνω δεξιά.",
+    tutTxTitle: "Κινήσεις", tutTxBody: "Εδώ προσθέτεις και αφαιρείς κάθε έσοδο και έξοδο αντίστοιχα. Τα έσοδα θα εμφανίζονται στα διαθέσιμα χρήματα. Τα έξοδα συμπληρώνουν την μπάρα που έχεις προϋπολογίσει",
+    tutAccTitle: "Λογαριασμοί", tutAccBody: "Εδώ μπορείς να προσθέσεις τα χρήματα που έχεις αποταμιευμένα, σε επενδύσεις ή σε ρευστό",
+    tutorialLocal: "Όλα μένουν στη συσκευή. Ξαναδές τον οδηγό όποτε θες από Άλλα → Μίνι οδηγός.",
+    catRichTitle: "Ζει χαμένα", catRich: "Τα έξοδα είναι μέσα στο πλάνο — η γάτα νιώθει πλούσια.",
+    catBrokeTitle: "Άφραγκη γάτα", catBroke: "Τα έξοδα πέρασαν όσα μοίρασες — κάλυψέ τα πριν πουλήσει τον καναπέ.",
+    catNeutralTitle: "Η γάτα παρακολουθεί", catNeutral: "Μοίρασε χρήματα και καταχώρησε έξοδα για να διαμορφωθεί η διάθεσή της.",
+    catRemain: "Έχουμε ακόμη {x} για αυτό το έξοδο.",
+    catEmpty: "Δεν έχουμε άλλα λεφτά. Πρέπει να πάρουμε από κάπου αλλού. Μείωσε κάποιο άλλο έξοδο ή στόχο.",
+    catIncomeTitle: "Μπήκαν λεφτά!",
+    catIncome: "Μπήκαν {x} στα διαθέσιμα χρήματα. Δώσε σε κάθε ευρώ έναν σκοπό!",
+    catEmptyTitle: "Τελείωσαν τα λεφτά",
+    catOverspendTitle: "Ξεπέρασες τον στόχο",
+    catOverspend: "Προσοχή! Ξεπέρασες τον στόχο αυτής της κατηγορίας. Μετακίνησε χρήματα από κάπου αλλού για να τον καλύψεις.",
+    fixEntry: "Διόρθωση κίνησης",
+    moveFromOverspent: "Αυτή η κατηγορία είναι ήδη εκτός budget — η μετακίνηση από εδώ δεν ελευθερώνει χρήματα, την κάνει χειρότερη. Κάλυψέ την από άλλη κατηγορία ή από το «Για μοίρασμα».",
+    coverOverspend: "Κάλυψη υπέρβασης",
+    ok: "Εντάξει",
   },
 };
 
@@ -250,12 +295,12 @@ function seedState() {
   const g1 = uid(), g2 = uid(), g3 = uid();
   const cat = (groupId, name) => ({ id: uid(), groupId, name, plan: [] });
   return {
-    version: 4,
+    version: 5,
     settings: { lang: "el" },
     groups: [
       { id: g1, name: "Πάγια έξοδα" },
       { id: g2, name: "Καθημερινά" },
-      { id: g3, name: "Στόχοι" },
+      { id: g3, name: "Στόχοι", isGoals: true },
     ],
     categories: [
       cat(g1, "Ενοίκιο"),
@@ -329,7 +374,14 @@ function withDefaults(state) {
     }
     for (const a of state.accounts) delete a.goal;
   }
-  state.version = 4;
+  // v5: final-amount goals are a "Στόχοι"-group-only feature — flag that group.
+  if ((state.version || 0) < 5) {
+    if (!state.groups.some((g) => g.isGoals)) {
+      const g = state.groups.find((x) => x.name === "Στόχοι" || x.name === "Goals");
+      if (g) g.isGoals = true;
+    }
+  }
+  state.version = 5;
   return state;
 }
 function saveState(state) {
@@ -419,6 +471,166 @@ class ErrorBoundary extends React.Component {
   }
 }
 
+
+/* -------------------- mascot + onboarding -------------------- */
+function effectiveAssigned(state, catId, mk) {
+  const override = state?.assignments?.[mk]?.[catId];
+  if (override !== undefined) return override || 0;
+  return planFor(state?.categories?.find((c) => c.id === catId)?.plan, mk) || 0;
+}
+function monthBudgetHealth(state, dispMonth) {
+  if (!state) return { status: "neutral", assigned: 0, spent: 0 };
+  let assigned = 0, spent = 0;
+  for (const c of state.categories || []) assigned += effectiveAssigned(state, c.id, dispMonth);
+  state.transactions.forEach((x) => {
+    if (x.categoryId && x.amount < 0 && monthKey(x.date) === dispMonth) spent += -x.amount;
+  });
+  if (assigned <= 0.005 && spent <= 0.005) return { status: "neutral", assigned, spent };
+  return { status: spent > assigned + 0.005 ? "broke" : "rich", assigned, spent };
+}
+function expenseFeedback(state, tx) {
+  const mk = monthKey(tx.date);
+  const assigned = effectiveAssigned(state, tx.categoryId, mk);
+  const spentBefore = (state?.transactions || []).reduce((sum, x) =>
+    sum + (x.categoryId === tx.categoryId && x.amount < 0 && monthKey(x.date) === mk ? -x.amount : 0), 0);
+  const remaining = assigned - (spentBefore + Math.abs(tx.amount));
+  if (remaining >= -0.005) return { kind: "expense", remaining };
+  const cat = state?.categories?.find((c) => c.id === tx.categoryId);
+  return { kind: cat?.goal ? "overspend" : "empty", remaining };
+}
+
+function MascotBadge({ status = "neutral", size = 44, src: srcOverride }) {
+  const broke = status === "broke";
+  const src = srcOverride || (broke ? "./mascot/cat-broke.jpg" : "./mascot/cat-rich.png");
+  return (
+    <img src={src} alt="" width={size} height={size} style={{
+      width: size, height: size, objectFit: "cover", display: "block", flexShrink: 0,
+      borderRadius: broke ? Math.max(10, size * 0.22) : "50%",
+      border: `2px solid ${broke ? C.clay : C.gold}`,
+      filter: status === "neutral" ? "grayscale(.55) opacity(.88)" : "none",
+      animation: status === "rich" ? "mascotBounce 2.4s ease-in-out infinite" : "none",
+      background: C.paper,
+    }} />
+  );
+}
+
+function TutorialSheet({ t, onClose }) {
+  const [page, setPage] = useState(0);
+  const pages = [
+    { key: "general", icon: Wallet, status: "rich", title: t("tutorialTitle"), body: t("tutorialFull"), pre: true },
+    { key: "cats", icon: Pencil, status: "neutral", title: t("tutCatTitle"), body: t("tutCatBody") },
+    { key: "tx", icon: Receipt, status: "broke", title: t("tutTxTitle"), body: t("tutTxBody") },
+    { key: "acc", icon: PiggyBank, status: "rich", title: t("tutAccTitle"), body: t("tutAccBody") },
+  ];
+  const cur = pages[page];
+  const last = page === pages.length - 1;
+  const MockCats = () => (
+    <div style={{ background: C.card, border: `1px solid ${C.line}`, borderRadius: 14, overflow: "hidden", marginTop: 12 }}>
+      {[["Μαναβική", 0.62], ["Φαγητό έξω", 0.34], ["Στόχοι", 0.86]].map(([name, w], i) => (
+        <div key={name} style={{ padding: "11px 12px", borderTop: i ? `1px solid ${C.line}` : "none", position: "relative" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", font: "600 13px 'Commissioner',sans-serif", color: C.ink }}><span>{name}</span><span style={{ color: C.muted }}>€</span></div>
+          <div style={{ height: 6, borderRadius: 4, background: "#EBE8DB", marginTop: 8, overflow: "hidden" }}><div style={{ width: `${w * 100}%`, height: "100%", background: i === 1 ? C.clay : C.gold }} /></div>
+          {i === 0 && <span className="tut-float" style={{ position: "absolute", right: 10, top: -7, background: C.gold, borderRadius: 100, padding: 6, boxShadow: "0 8px 16px rgba(0,0,0,.22)" }}><Pencil size={15} color="#12332E" /></span>}
+        </div>
+      ))}
+    </div>
+  );
+  const MockTx = () => (
+    <div style={{ display: "grid", gap: 8, marginTop: 12 }}>
+      {[["Μισθός", "+1.200 €", C.green], ["Σούπερ μάρκετ", "-84,20 €", C.ink], ["Καφές", "-3,50 €", C.ink]].map(([name, amt, col], i) => (
+        <div key={name} className={`tut-slide tut-delay-${i + 1}`} style={{ display: "flex", alignItems: "center", gap: 10, background: C.card, border: `1px solid ${C.line}`, borderRadius: 13, padding: "10px 12px" }}>
+          <span style={{ width: 32, height: 32, borderRadius: 10, display: "grid", placeItems: "center", background: i === 0 ? C.tealSoft : C.claySoft }}>{i === 0 ? <ArrowDownLeft size={16} color={C.teal} /> : <ArrowUpRight size={16} color={C.clay} />}</span>
+          <span style={{ flex: 1, font: "600 13px 'Commissioner',sans-serif", color: C.ink }}>{name}</span>
+          <span style={{ font: "700 13px 'Poppins',sans-serif", color: col }}>{amt}</span>
+        </div>
+      ))}
+    </div>
+  );
+  const MockAcc = () => (
+    <div style={{ marginTop: 12 }}>
+      <div style={{ background: C.card, border: `1px solid ${C.line}`, borderRadius: 14, padding: "12px 14px", display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
+        <span style={{ font: "600 13px 'Commissioner',sans-serif", color: C.muted }}>{t("totalSavings")}</span>
+        <span style={{ font: "700 16px 'Poppins',sans-serif", color: C.ink }}>8.450 €</span>
+      </div>
+      {[["Μετρητά", "1.200 €"], ["Επενδύσεις", "6.800 €"], ["Ρευστό", "450 €"]].map(([name, amt], i) => (
+        <div key={name} className={`tut-slide tut-delay-${i + 1}`} style={{ display: "flex", alignItems: "center", gap: 10, background: C.card, border: `1px solid ${C.line}`, borderRadius: 13, padding: "10px 12px", marginBottom: 8 }}>
+          <span style={{ width: 32, height: 32, borderRadius: 10, display: "grid", placeItems: "center", background: C.goldSoft }}><PiggyBank size={16} color={C.gold} /></span>
+          <span style={{ flex: 1, font: "600 13px 'Commissioner',sans-serif", color: C.ink }}>{name}</span>
+          <span style={{ font: "700 13px 'Poppins',sans-serif", color: C.ink }}>{amt}</span>
+        </div>
+      ))}
+    </div>
+  );
+  return (
+    <Sheet title={t("tutorial")} onClose={onClose} t={t}>
+      <div key={cur.key} className="tut-pop">
+        <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 14 }}>
+          <MascotBadge status={cur.status} size={62} />
+          <div>
+            <div style={{ font: "700 17px 'Commissioner',sans-serif", color: C.ink }}>{cur.title}</div>
+            <div style={{ font: "600 12px 'Commissioner',sans-serif", color: C.muted, marginTop: 3 }}>{page + 1} / {pages.length}</div>
+          </div>
+        </div>
+        <div style={{ background: C.paper, border: `1px solid ${C.line}`, borderRadius: 16, padding: "14px 15px", font: "500 14px/1.55 'Commissioner',sans-serif", color: C.ink, whiteSpace: cur.pre ? "pre-line" : "normal", position: "relative", overflow: "hidden", marginBottom: 12 }}>
+          <span className="tut-shine" aria-hidden="true" />
+          {cur.body}
+          {cur.key === "cats" && <MockCats />}
+          {cur.key === "tx" && <MockTx />}
+          {cur.key === "acc" && <MockAcc />}
+        </div>
+      </div>
+      <div style={{ display: "flex", justifyContent: "center", gap: 7, margin: "4px 0 14px" }}>
+        {pages.map((p, i) => <button key={p.key} onClick={() => setPage(i)} aria-label={`page ${i + 1}`} style={{ width: i === page ? 22 : 8, height: 8, borderRadius: 99, border: "none", cursor: "pointer", background: i === page ? C.teal : C.line, transition: "all .25s ease" }} />)}
+      </div>
+      <div style={{ display: "flex", gap: 9 }}>
+        {page > 0 && <GhostBtn onClick={() => setPage(page - 1)}><ChevronLeft size={16} />{t("back")}</GhostBtn>}
+        <div style={{ flex: 1 }}>{last ? <PrimaryBtn onClick={onClose}><Check size={18} />{t("start")}</PrimaryBtn> : <PrimaryBtn onClick={() => setPage(page + 1)}>{t("next")}<ChevronRight size={18} /></PrimaryBtn>}</div>
+      </div>
+      <div style={{ marginTop: 8 }}><GhostBtn onClick={onClose}>{t("skip")}</GhostBtn></div>
+    </Sheet>
+  );
+}
+
+const CAT_FEEDBACK_KINDS = {
+  expense: {
+    img: "./mascot/cat-expense.png", titleKey: "catRichTitle", good: true,
+    msg: (t, f) => t("catRemain").replace("{x}", money(Math.max(0, f.remaining || 0))),
+  },
+  income: {
+    img: "./mascot/cat-income.png", titleKey: "catIncomeTitle", good: true,
+    msg: (t, f) => t("catIncome").replace("{x}", money(Math.max(0, f.amount || 0))),
+  },
+  empty: {
+    img: "./mascot/cat-empty.png", titleKey: "catEmptyTitle", good: false,
+    msg: (t) => t("catEmpty"),
+  },
+  overspend: {
+    img: "./mascot/cat-overspend.png", titleKey: "catOverspendTitle", good: false,
+    msg: (t) => t("catOverspend"),
+  },
+};
+function CatFeedbackSheet({ t, feedback, onClose, onEdit }) {
+  const kind = CAT_FEEDBACK_KINDS[feedback.kind] || CAT_FEEDBACK_KINDS[feedback.status === "broke" ? "empty" : "expense"];
+  const color = kind.good ? C.teal : C.clay;
+  return (
+    <Sheet title={t(kind.titleKey)} onClose={onClose} t={t}>
+      <div className="tut-pop" style={{ textAlign: "center", paddingTop: 6 }}>
+        <div style={{ display: "flex", justifyContent: "center", marginBottom: 14 }}>
+          <img src={kind.img} alt="" width={150} height={150} style={{
+            width: 150, height: 150, objectFit: "cover", borderRadius: "50%",
+            border: `3px solid ${kind.good ? C.gold : C.clay}`,
+            animation: kind.good ? "mascotBounce 2.4s ease-in-out infinite" : "none",
+            background: C.paper,
+          }} />
+        </div>
+        <div style={{ font: "700 20px/1.35 'Commissioner',sans-serif", color, background: kind.good ? C.tealSoft : C.claySoft, borderRadius: 16, padding: "14px 16px", marginBottom: 16 }}>{kind.msg(t, feedback)}</div>
+        <PrimaryBtn onClick={onClose} color={color}><Check size={18} />{t("ok")}</PrimaryBtn>
+        {onEdit && <div style={{ marginTop: 10 }}><GhostBtn onClick={onEdit}><Pencil size={16} />{t("fixEntry")}</GhostBtn></div>}
+      </div>
+    </Sheet>
+  );
+}
+
 /* =========================== main app =========================== */
 export default function App() {
   return <ErrorBoundary><AppInner /></ErrorBoundary>;
@@ -429,6 +641,8 @@ function AppInner() {
   const [dispMonth, setDispMonth] = useState(curMonth());
   const [modal, setModal] = useState(null);    // {type, ...}
   const [toast, setToast] = useState(null);
+  const [tutorialOpen, setTutorialOpen] = useState(() => { try { return !localStorage.getItem(TUTORIAL_KEY); } catch { return false; } });
+  const [catFeedback, setCatFeedback] = useState(null);
   const fileRef = useRef(null);
 
   // persist on every change
@@ -440,6 +654,7 @@ function AppInner() {
   useEffect(() => { document.documentElement.lang = lang; }, [lang]);
 
   const flash = (msg) => { setToast(msg); setTimeout(() => setToast(null), 2600); };
+  const closeTutorial = () => { setTutorialOpen(false); try { localStorage.setItem(TUTORIAL_KEY, "1"); } catch {} };
 
   /* ---- derived budget math ---- */
   // One pass over transactions → per-category, per-month activity.
@@ -516,6 +731,8 @@ function AppInner() {
     return state.schedules.filter((s) => s.nextDate <= today);
   }, [state]);
 
+  const budgetHealth = useMemo(() => monthBudgetHealth(state, dispMonth), [state, dispMonth]);
+
   if (!state || !calc) {
     return <div style={{ minHeight: "100vh", display: "grid", placeItems: "center", background: C.paper, color: C.muted, font: "500 15px 'Commissioner',sans-serif" }}>…</div>;
   }
@@ -529,7 +746,7 @@ function AppInner() {
     const a = tx?.accountId && s.accounts.find((x) => x.id === tx.accountId);
     if (a) a.balance = round2(a.balance - sign * tx.amount);
   };
-  const addTx = (tx) => update((s) => { s.transactions.unshift({ id: uid(), scheduleId: null, ...tx }); });
+  const addTx = (tx) => { const id = uid(); update((s) => { s.transactions.unshift({ id, scheduleId: null, ...tx }); }); return id; };
   const editTx = (id, tx) => update((s) => { const i = s.transactions.findIndex((x) => x.id === id); if (i > -1) s.transactions[i] = { ...s.transactions[i], ...tx }; });
   const delTx = (id) => update((s) => {
     applyTransfer(s, s.transactions.find((x) => x.id === id), -1);
@@ -684,11 +901,12 @@ function AppInner() {
           <BudgetScreen
             t={t} lang={lang} calc={calc} groupsView={groupsView} dispMonth={dispMonth}
             setDispMonth={setDispMonth} dueCount={dueSchedules.length}
+            health={budgetHealth}
             onCategory={(c) => setModal({ type: "assign", catId: c.id })}
             onManage={() => setModal({ type: "manage" })}
             onTargets={() => setModal({ type: "targets" })}
             onMove={() => setModal({ type: "move" })}
-            onSavings={() => setModal({ type: "savings" })}
+            onHelp={() => setTutorialOpen(true)}
             onDue={() => setTab("more")}
             backupNotice={!state.settings.backupNoticeDismissed && typeof window !== "undefined" && !window.Capacitor?.isNativePlatform?.()}
             onDismissNotice={dismissBackupNotice}
@@ -712,6 +930,7 @@ function AppInner() {
             onManageCats={() => setModal({ type: "manage" })}
             onSetLang={setLang} onExportJSON={exportJSON} onExportCSV={exportCSV}
             onImport={() => fileRef.current?.click()} onClear={clearAll}
+            onOpenTutorial={() => setTutorialOpen(true)}
           />
         )}
 
@@ -742,14 +961,23 @@ function AppInner() {
         {modal?.type === "tx" && (
           <TxSheet t={t} state={state} initial={modal.tx} dispMonth={dispMonth}
             onClose={() => setModal(null)}
-            onSave={(tx) => { modal.tx ? editTx(modal.tx.id, tx) : addTx(tx); setModal(null); }}
+            onSave={(tx) => {
+              if (modal.tx) editTx(modal.tx.id, tx);
+              else {
+                const id = addTx(tx);
+                if (tx.amount < 0 && tx.categoryId) setCatFeedback({ ...expenseFeedback(state, tx), tx: { ...tx, id } });
+                else if (tx.amount > 0 && tx.categoryId === null && !tx.accountId) setCatFeedback({ kind: "income", amount: tx.amount, tx: { ...tx, id } });
+              }
+              setModal(null);
+            }}
             onDelete={modal.tx ? () => { delTx(modal.tx.id); setModal(null); } : null} />
         )}
         {modal?.type === "assign" && (() => {
           const cat = state.categories.find((c) => c.id === modal.catId);
           if (!cat) return null;
+          const allowGoal = !!state.groups.find((g) => g.id === cat.groupId)?.isGoals || !!cat.goal;
           return (
-            <AssignSheet t={t} cat={cat} info={calc.byCat[cat.id]} dispMonth={dispMonth} lang={lang}
+            <AssignSheet t={t} cat={cat} allowGoal={allowGoal} info={calc.byCat[cat.id]} dispMonth={dispMonth} lang={lang}
               hasAccounts={state.accounts.length > 0}
               onClose={() => setModal(null)}
               onAssign={(amt) => setAssigned(cat.id, amt)}
@@ -794,6 +1022,12 @@ function AppInner() {
             onDelete={modal.account ? () => { delAccount(modal.account.id); setModal(null); } : null} />
         )}
 
+        {tutorialOpen && <TutorialSheet t={t} onClose={closeTutorial} />}
+        {catFeedback && (
+          <CatFeedbackSheet t={t} feedback={catFeedback} onClose={() => setCatFeedback(null)}
+            onEdit={catFeedback.tx ? () => { const tx = catFeedback.tx; setCatFeedback(null); setModal({ type: "tx", tx }); } : null} />
+        )}
+
         <input ref={fileRef} type="file" accept="application/json" onChange={onImport} style={{ display: "none" }} />
 
         {toast && (
@@ -834,7 +1068,7 @@ function NavBtn({ icon: Icon, label, active, onClick, badge }) {
 }
 
 /* ======================== Budget screen ========================= */
-function BudgetScreen({ t, lang, calc, groupsView, dispMonth, setDispMonth, onCategory, onManage, dueCount, onDue, backupNotice, onDismissNotice, onTargets, onMove, onSavings }) {
+function BudgetScreen({ t, lang, calc, groupsView, dispMonth, setDispMonth, onCategory, onManage, dueCount, onDue, backupNotice, onDismissNotice, onTargets, onMove, onHelp, health }) {
   const [collapsed, setCollapsed] = useState({});
   const toggleGroup = (id) => setCollapsed((c) => ({ ...c, [id]: !c[id] }));
   const [pickerOpen, setPickerOpen] = useState(false);
@@ -852,16 +1086,21 @@ function BudgetScreen({ t, lang, calc, groupsView, dispMonth, setDispMonth, onCa
         padding: "calc(16px + env(safe-area-inset-top)) 18px 36px",
       }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
-          <span style={{ display: "flex", alignItems: "center", gap: 9 }}>
-            <img src="./mascot/mascot-circle.png" alt="" style={{ width: 38, height: 38, borderRadius: "50%", border: "2px solid " + C.gold, display: "block" }} />
+          <span style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <MascotBadge status={health?.status || "neutral"} size={84} />
             <span style={{
-              fontFamily: "'Luckiest Guy',cursive", fontSize: 22, lineHeight: 1, paddingTop: 4, color: "#fff",
+              fontFamily: "'Luckiest Guy',cursive", fontSize: 26, lineHeight: 1, paddingTop: 6, color: "#fff",
               textShadow: "-2px 0 0 #06211E,2px 0 0 #06211E,0 -2px 0 #06211E,0 2px 0 #06211E,-2px -2px 0 #06211E,2px -2px 0 #06211E,-2px 2px 0 #06211E,3px 3px 0 #06211E",
             }}>KABATZA</span>
           </span>
-          <button onClick={onManage} style={{ ...iconBtn, background: C.gold, gap: 7, padding: "9px 16px", borderRadius: 100, boxShadow: "0 4px 12px rgba(0,0,0,.25)" }}>
-            <span style={{ font: "800 12px 'Commissioner',sans-serif", color: "#12332E", textTransform: "uppercase", letterSpacing: ".04em" }}>{t("edit")}</span>
-          </button>
+          <span style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <button onClick={onHelp} aria-label={t("help")} style={{ ...iconBtn, background: "rgba(243,239,226,.14)", width: 42, height: 42, borderRadius: "50%" }}>
+              <HelpCircle size={21} color={C.coin} />
+            </button>
+            <button onClick={onManage} aria-label={t("edit")} style={{ ...iconBtn, background: C.gold, width: 50, height: 50, borderRadius: "50%", boxShadow: "0 4px 12px rgba(0,0,0,.25)", animation: "pulseGlow 2.6s ease-in-out infinite" }}>
+              <Pencil size={23} color="#12332E" />
+            </button>
+          </span>
         </div>
 
         {/* month nav */}
@@ -937,8 +1176,8 @@ function BudgetScreen({ t, lang, calc, groupsView, dispMonth, setDispMonth, onCa
         )}
 
         {/* budget actions */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 8, marginTop: 16 }}>
-          {[[Target, t("targets"), onTargets], [ArrowLeftRight, t("move"), onMove], [Landmark, t("savings"), onSavings]].map(([Icon, label, fn]) => (
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: 8, marginTop: 16 }}>
+          {[[Target, t("targets"), onTargets], [ArrowLeftRight, t("move"), onMove]].map(([Icon, label, fn]) => (
             <button key={label} onClick={fn} style={{
               display: "flex", flexDirection: "column", alignItems: "center", gap: 4, padding: "10px 4px",
               background: "rgba(243,239,226,.12)", color: C.coin, border: "none", borderRadius: 12, cursor: "pointer",
@@ -1359,7 +1598,7 @@ function MiniEmpty({ t }) {
 }
 
 /* ========================= More screen ========================== */
-function MoreScreen({ t, lang, state, due, onEnterSchedule, onDelSchedule, onNewSchedule, onManageCats, onSetLang, onExportJSON, onExportCSV, onImport, onClear }) {
+function MoreScreen({ t, lang, state, due, onEnterSchedule, onDelSchedule, onNewSchedule, onManageCats, onSetLang, onExportJSON, onExportCSV, onImport, onClear, onOpenTutorial }) {
   const [confirmClear, setConfirmClear] = useState(false);
   const catName = (id) => id === null ? t("income") : (state.categories.find((c) => c.id === id)?.name || t("uncategorised"));
   const dfmt = (iso) => new Date(iso + "T00:00:00").toLocaleDateString(lang === "el" ? "el-GR" : "en-GB", { day: "numeric", month: "short", year: "numeric" });
@@ -1422,6 +1661,18 @@ function MoreScreen({ t, lang, state, due, onEnterSchedule, onDelSchedule, onNew
             <GhostBtn onClick={onExportCSV} color={C.ink}><Receipt size={16} />{t("exportCSV")}</GhostBtn>
             <GhostBtn onClick={onImport} color={C.ink}><Upload size={16} />{t("importData")}</GhostBtn>
           </div>
+        </Card>
+
+        {/* Tutorial */}
+        <Card>
+          <button onClick={onOpenTutorial} style={{ width: "100%", background: "transparent", border: "none", cursor: "pointer", display: "flex", alignItems: "center", gap: 12, padding: 0, textAlign: "start" }}>
+            <MascotBadge status="rich" size={46} />
+            <span style={{ flex: 1 }}>
+              <span style={{ display: "block", font: "700 15px 'Commissioner',sans-serif", color: C.ink }}>{t("tutorial")}</span>
+              <span style={{ display: "block", font: "500 12.5px 'Commissioner',sans-serif", color: C.muted, marginTop: 2 }}>{t("tutorialSub")}</span>
+            </span>
+            <ChevronRight size={20} color={C.muted} />
+          </button>
         </Card>
 
         {/* Settings */}
@@ -1557,7 +1808,7 @@ function TxSheet({ t, state, initial, dispMonth, onClose, onSave, onDelete }) {
 }
 
 /* ======================== Assign sheet ========================== */
-function AssignSheet({ t, cat, info, dispMonth, lang, hasAccounts, onClose, onAssign, onSetAmount, onSetGoal, onMove, onFromSavings }) {
+function AssignSheet({ t, cat, allowGoal, info, dispMonth, lang, hasAccounts, onClose, onAssign, onSetAmount, onSetGoal, onMove, onFromSavings }) {
   const [amount, setAmount] = useState(toInput(info.assigned));
   const [goalAmt, setGoalAmt] = useState(toInput(cat.goal?.target));
   const [goalDate, setGoalDate] = useState(cat.goal?.byDate || "");
@@ -1605,7 +1856,7 @@ function AssignSheet({ t, cat, info, dispMonth, lang, hasAccounts, onClose, onAs
 
       {overspend > 0.005 && (
         <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 14 }}>
-          <Chip onClick={() => apply((parseAmount(amount) || 0) + round2(overspend))} color={C.clay} bg={C.claySoft}>
+          <Chip onClick={() => apply(round2(info.assigned + overspend))} color={C.clay} bg={C.claySoft}>
             {t("coverOverspend")} +{money(overspend)}
           </Chip>
           <Chip onClick={() => { commit(); onMove({ toId: cat.id, amount: overspend }); }} color={C.clay} bg={C.claySoft}>
@@ -1625,7 +1876,8 @@ function AssignSheet({ t, cat, info, dispMonth, lang, hasAccounts, onClose, onAs
         )}
       </div>
 
-      {/* final-amount goal (YNAB "have a balance of"): keeps its leftovers month to month */}
+      {/* final-amount goal (YNAB "have a balance of"): only for categories in the "Στόχοι" group */}
+      {allowGoal && (
       <div style={{ borderTop: `1px solid ${C.line}`, paddingTop: 16, marginBottom: 16 }}>
         <label style={fieldLabel}>{t("finalGoal")}</label>
         <div style={{ display: "flex", gap: 12 }}>
@@ -1645,7 +1897,7 @@ function AssignSheet({ t, cat, info, dispMonth, lang, hasAccounts, onClose, onAs
             <GoalLines t={t} lang={lang} g={g} />
             <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 8, marginTop: 12 }}>
               {g.left > 0.005 && (
-                <Chip onClick={() => apply((parseAmount(amount) || 0) + round2(g.left))}>
+                <Chip onClick={() => apply(round2(info.assigned + g.left))}>
                   {t("neededThisMonth")} +{money(g.left)}
                 </Chip>
               )}
@@ -1656,6 +1908,7 @@ function AssignSheet({ t, cat, info, dispMonth, lang, hasAccounts, onClose, onAs
           </>
         )}
       </div>
+      )}
       {confirmRemove && (
         <ConfirmDialog t={t} title={t("removeGoal")} message={t("removeGoalMsg")} confirmText={t("removeGoal")}
           onCancel={() => setConfirmRemove(false)}
@@ -1760,13 +2013,14 @@ function ManageSheet({ t, groupsView, onClose, onAddCategory, onRenameCategory, 
 
   return (
     <Sheet title={t("manageCats")} onClose={onClose} t={t}>
-      <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 12 }}>
-        <button onClick={() => setSorting((v) => !v)} style={{
-          border: `1.5px solid ${sorting ? C.teal : C.line}`, background: sorting ? C.tealSoft : C.card, color: sorting ? C.teal : C.ink,
-          borderRadius: 10, padding: "8px 14px", font: "600 13.5px 'Commissioner',sans-serif", cursor: "pointer",
-          display: "inline-flex", alignItems: "center", gap: 6,
-        }}>{sorting ? <><Check size={15} />{t("done")}</> : <><ArrowUpDown size={15} />{t("reorder")}</>}</button>
-      </div>
+      <button onClick={() => setSorting((v) => !v)} style={{
+        width: "100%", border: "none", cursor: "pointer", marginBottom: 14,
+        background: sorting ? C.teal : C.gold, color: sorting ? "#fff" : "#12332E",
+        borderRadius: 14, padding: "13px 16px",
+        font: "800 14.5px 'Commissioner',sans-serif", textTransform: "uppercase", letterSpacing: ".06em",
+        display: "flex", alignItems: "center", justifyContent: "center", gap: 9,
+        boxShadow: "0 5px 14px rgba(0,0,0,.22)",
+      }}>{sorting ? <><Check size={19} />{t("done")}</> : <><ArrowUpDown size={19} />{t("reorder")}</>}</button>
 
       {sorting ? (
         <>
@@ -2009,7 +2263,9 @@ function MoveSheet({ t, groupsView, calc, preset, onClose, onMove }) {
   const [toId, setToId] = useState(defTo);
   const [amount, setAmount] = useState(toInput(preset.amount));
   const amt = parseAmount(amount);
-  const valid = !isNaN(amt) && amt > 0 && fromId !== toId;
+  // Money already spent can't be "moved out" — an overspent category may only receive, never give.
+  const fromOver = fromId !== RTA && av(fromId) < -0.005;
+  const valid = !isNaN(amt) && amt > 0 && fromId !== toId && !fromOver;
   const options = (
     <>
       <option value={RTA}>{t("readyToAssign")} ({money(calc.readyToAssign)})</option>
@@ -2038,8 +2294,15 @@ function MoveSheet({ t, groupsView, calc, preset, onClose, onMove }) {
       </Field>
       <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 16, alignItems: "center" }}>
         {av(fromId) > 0.005 && <Chip onClick={() => setAmount(toInput(av(fromId)))}>{t("allAvailable")} {money(av(fromId))}</Chip>}
+        {toId !== RTA && av(toId) < -0.005 && <Chip onClick={() => setAmount(toInput(-av(toId)))}>{t("coverOverspend")} {money(-av(toId))}</Chip>}
         {valid && amt > av(fromId) + 0.005 && <span style={{ font: "500 13px 'Commissioner',sans-serif", color: C.clay }}>{t("willGoNegative")}</span>}
       </div>
+      {fromOver && (
+        <div style={{ display: "flex", gap: 9, alignItems: "flex-start", background: C.claySoft, borderRadius: 12, padding: "11px 13px", marginBottom: 14 }}>
+          <AlertCircle size={17} color={C.clay} style={{ flexShrink: 0, marginTop: 1 }} />
+          <span style={{ font: "500 13px/1.45 'Commissioner',sans-serif", color: C.clay }}>{t("moveFromOverspent")}</span>
+        </div>
+      )}
       <PrimaryBtn onClick={() => valid && onMove(fromId, toId, round2(amt))} disabled={!valid}><ArrowLeftRight size={18} />{t("move")}</PrimaryBtn>
     </Sheet>
   );
