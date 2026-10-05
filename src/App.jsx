@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useMemo, useCallback, useRef } from "react";
-import catRichImg from "./assets/mascot/cat-rich.webp";
-import catBrokeImg from "./assets/mascot/cat-broke.jpg";
-import catExpenseImg from "./assets/mascot/cat-expense.webp";
-import catIncomeImg from "./assets/mascot/cat-income.webp";
-import catEmptyImg from "./assets/mascot/cat-empty.webp";
-import catOverspendImg from "./assets/mascot/cat-overspend.webp";
+import catRichImg from "./mascot/cat-rich.webp";
+import catBrokeImg from "./mascot/cat-broke.jpg";
+import catExpenseImg from "./mascot/cat-expense.webp";
+import catIncomeImg from "./mascot/cat-income.webp";
+import catEmptyImg from "./mascot/cat-empty.webp";
+import catOverspendImg from "./mascot/cat-overspend.webp";
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, CartesianGrid, Legend,
 } from "recharts";
