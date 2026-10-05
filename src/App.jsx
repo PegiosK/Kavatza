@@ -89,6 +89,10 @@ const STR = {
     assignTo: "Assign to", readyToAssignOpt: "Ready to assign (assign later)", exceedsBalance: "More than this account's balance.",
     deletedAccount: "Deleted account", leftovers: "Leftovers", allLeftovers: "All leftovers",
     savingsGoal: "Savings goal", goalThisMonth: "This month's goal", transfer: "Transfer",
+    finalGoal: "Final amount goal", finalAmount: "Final amount", stillNeeded: "still needed", goalDone: "Goal reached",
+    perMonthUntil: "a month until", goalExpired: "expired", neededThisMonth: "needed this month", removeGoal: "Remove goal",
+    removeGoalMsg: "The money stays in the category this month. Whatever is left when the month closes goes back to Ready to assign.",
+    goalMoneyNote: "Money held by goal categories is already set aside — don't move it to savings as well.",
   },
   el: {
     appName: "KABATZA", tagline: "Δώσε δουλειά σε κάθε ευρώ",
@@ -140,6 +144,10 @@ const STR = {
     assignTo: "Μοίρασμα σε", readyToAssignOpt: "Για μοίρασμα (αργότερα)", exceedsBalance: "Ξεπερνά το υπόλοιπο του λογαριασμού.",
     deletedAccount: "Διαγραμμένος λογαριασμός", leftovers: "Περισσεύματα", allLeftovers: "Όλα τα περισσεύματα",
     savingsGoal: "Στόχος αποταμίευσης", goalThisMonth: "Στόχος μήνα", transfer: "Μεταφορά",
+    finalGoal: "Στόχος τελικού ποσού", finalAmount: "Τελικό ποσό", stillNeeded: "λείπουν", goalDone: "Ο στόχος ολοκληρώθηκε",
+    perMonthUntil: "τον μήνα μέχρι", goalExpired: "έληξε", neededThisMonth: "λείπουν αυτόν τον μήνα", removeGoal: "Αφαίρεση στόχου",
+    removeGoalMsg: "Τα χρήματα μένουν στην κατηγορία αυτόν τον μήνα. Ό,τι περισσέψει στο κλείσιμο του μήνα επιστρέφει στο «Για μοίρασμα».",
+    goalMoneyNote: "Τα χρήματα των κατηγοριών-στόχων είναι ήδη δεσμευμένα — μην τα μεταφέρεις και εδώ.",
   },
 };
 
@@ -208,13 +216,19 @@ function planFor(plan, mk) {
 }
 const setPlan = (plan, mk, amount) => [...(plan || []).filter((st) => st.from < mk), { from: mk, amount }];
 
-// Savings-account goal: monthly amount to reach goal.target by goal.byDate, and what's still missing this month.
-function accountNeed(acc, inThisMonth, mk) {
-  const g = acc.goal;
-  if (!g?.target || !g.byDate) return null;
-  const months = Math.max(1, monthsDiff(mk, g.byDate) + 1);
-  const perMonth = Math.max(0, (g.target - (acc.balance - inThisMonth)) / months);
-  return { perMonth, left: Math.max(0, perMonth - inThisMonth) };
+// Final-amount goal on a category: progress is the category's balance (like YNAB "have a balance of").
+// With a date, the monthly share is what's missing spread over the months left (this one included).
+function goalInfo(goal, available, assigned, mk) {
+  if (!goal?.target) return null;
+  const remaining = Math.max(0, goal.target - available);
+  const expired = !!goal.byDate && goal.byDate.slice(0, 7) < mk;
+  let perMonth = null, left = 0;
+  if (goal.byDate && !expired) {
+    const months = Math.max(1, monthsDiff(mk, goal.byDate) + 1);
+    perMonth = Math.max(0, (goal.target - (available - assigned)) / months);
+    left = Math.max(0, perMonth - assigned);
+  }
+  return { target: goal.target, byDate: goal.byDate, balance: available, remaining, expired, perMonth, left };
 }
 
 /* --------------------------- seed data --------------------------- */
@@ -222,7 +236,7 @@ function seedState() {
   const g1 = uid(), g2 = uid(), g3 = uid();
   const cat = (groupId, name) => ({ id: uid(), groupId, name, plan: [] });
   return {
-    version: 3,
+    version: 4,
     settings: { lang: "el" },
     groups: [
       { id: g1, name: "Πάγια έξοδα" },
@@ -279,7 +293,27 @@ function withDefaults(state) {
     const plan = goal.type === "monthly" && goal.target > 0 ? [{ from: nowMk, amount: goal.target }] : [];
     return { ...rest, plan, legacyGoal: goal };
   });
-  state.version = 3;
+  // v4: final-amount goals live on categories only. Old "build a balance" goals come back as
+  // final-amount goals; savings-account goals become categories in the "Στόχοι" group.
+  if ((state.version || 0) < 4) {
+    for (const c of state.categories) {
+      if (!c.goal && c.legacyGoal?.type === "balance" && c.legacyGoal.target > 0) {
+        c.goal = { target: c.legacyGoal.target, byDate: c.legacyGoal.byDate || "" };
+        c.roll = { since: nowMk, until: null };
+      }
+    }
+    const withGoal = state.accounts.filter((a) => a.goal?.target > 0);
+    if (withGoal.length) {
+      let g = state.groups.find((x) => x.name === "Στόχοι");
+      if (!g) { g = { id: uid(), name: "Στόχοι" }; state.groups.push(g); }
+      for (const a of withGoal) {
+        state.categories.push({ id: uid(), groupId: g.id, name: a.name, plan: [],
+          goal: { target: a.goal.target, byDate: a.goal.byDate || "" }, roll: { since: nowMk, until: null } });
+      }
+    }
+    for (const a of state.accounts) delete a.goal;
+  }
+  state.version = 4;
   return state;
 }
 function saveState(state) {
@@ -395,13 +429,11 @@ function AppInner() {
   // One pass over transactions → per-category, per-month activity.
   const calc = useMemo(() => {
     if (!state) return null;
-    const { transactions, assignments, categories, accounts } = state;
+    const { transactions, assignments, categories } = state;
     const nowMk = curMonth();
     const act = {};               // catId -> { "YYYY-MM": sum }
-    const accIn = {};             // accountId -> paid into savings this calendar month
     let totalIncome = 0;
     for (const x of transactions) {
-      if (x.accountId && monthKey(x.date) === nowMk) accIn[x.accountId] = (accIn[x.accountId] || 0) - x.amount;
       if (x.categoryId === null) { totalIncome += x.amount; continue; }
       const mk = monthKey(x.date);
       const m = act[x.categoryId] || (act[x.categoryId] = {});
@@ -419,15 +451,34 @@ function AppInner() {
       for (const m in assignments) if (c.id in assignments[m]) months.add(m);
       if (c.plan?.length) for (let m = c.plan[0].from; m <= horizon; m = addMonthsKey(m, 1)) months.add(m);
       const assignedIn = (m) => assignments[m]?.[c.id] ?? planFor(c.plan, m);
-      // Each month stands alone: nothing carries over in the category.
-      // Closed months use up only what was actually spent (the rest went back to "Για μοίρασμα");
-      // this and coming months hold back what's assigned, or the spending if it went over.
       for (const m in a) months.add(m);
-      for (const m of months) {
-        const spentM = -(a[m] || 0);
-        totalAssigned += m < nowMk ? spentM : Math.max(assignedIn(m), spentM);
+      // Months where the category keeps its leftovers: while it has a final-amount goal
+      // (c.roll = { since, until }; until = month the goal was removed, null while active).
+      const keeps = (m) => !!c.roll && m >= c.roll.since && (!c.roll.until || m <= c.roll.until);
+      const sorted = [...months].sort();
+      const last = sorted[sorted.length - 1];
+      let carry = 0, available = 0;
+      for (let m = sorted[0]; sorted.length && (m <= horizon || m <= last); m = addMonthsKey(m, 1)) {
+        const asg = m <= horizon ? assignedIn(m) : (assignments[m]?.[c.id] ?? 0);
+        const actM = a[m] || 0;
+        let avail;
+        if (keeps(m)) {
+          // goal category: what's assigned goes in and stays; overspending isn't carried
+          avail = carry + asg + actM;
+          totalAssigned += asg;
+          if (avail < 0) { totalAssigned -= avail; carry = 0; } else carry = avail;
+          // goal removed: once that month has closed, what's left goes back to "Για μοίρασμα"
+          if (!keeps(addMonthsKey(m, 1)) && m < nowMk) { totalAssigned -= carry; carry = 0; }
+        } else {
+          // Each month stands alone: closed months use up only what was spent (the rest went back
+          // to "Για μοίρασμα"); this and coming months hold back what's assigned, or more if overspent.
+          avail = asg + actM;
+          totalAssigned += m < nowMk ? -actM : Math.max(asg, -actM);
+          carry = 0;
+        }
+        if (m === dispMonth) available = avail;
       }
-      const available = assignedIn(dispMonth) + (a[dispMonth] || 0);
+      if (!sorted.length || dispMonth < sorted[0]) available = 0;
       const hist = prev.filter((m) => m in a).map((m) => -a[m]);   // only months with activity count
       byCat[c.id] = {
         assigned: assignedIn(dispMonth),
@@ -437,11 +488,10 @@ function AppInner() {
         spent: -(a[dispMonth] || 0),
         lastSpent: prev[0] in a ? -a[prev[0]] : null,
         avgSpent: hist.length ? hist.reduce((s, v) => s + v, 0) / hist.length : null,
+        goal: goalInfo(c.goal, available, assignedIn(dispMonth), dispMonth),
       };
     }
-    const accNeed = {};
-    for (const ac of accounts) accNeed[ac.id] = accountNeed(ac, accIn[ac.id] || 0, nowMk);
-    return { readyToAssign: totalIncome - totalAssigned, byCat, totalIncome, totalAssigned, accNeed };
+    return { readyToAssign: totalIncome - totalAssigned, byCat, totalIncome, totalAssigned };
   }, [state, dispMonth]);
 
   const dueSchedules = useMemo(() => {
@@ -486,6 +536,21 @@ function AppInner() {
       for (const m in s.assignments) if (m >= dispMonth) delete s.assignments[m][catId];
     }
   });
+  // Final-amount goal. Setting one starts keeping leftovers from this month;
+  // removing it keeps them through this month only (then they return to "Για μοίρασμα").
+  const setCatGoal = (catId, goal) => update((s) => {
+    const c = s.categories.find((x) => x.id === catId); if (!c) return;
+    if (goal) {
+      if (!c.goal) {
+        const continues = c.roll?.until && c.roll.until >= addMonthsKey(dispMonth, -1);
+        c.roll = continues ? { since: c.roll.since, until: null } : { since: dispMonth, until: null };
+      }
+      c.goal = goal;
+    } else if (c.goal) {
+      c.goal = null;
+      if (c.roll) c.roll = dispMonth < c.roll.since ? null : { ...c.roll, until: dispMonth };
+    }
+  });
   const moveMoney = (fromId, toId, amt) => update((s) => {
     if (fromId !== RTA) addAssigned(s, fromId, -amt);
     if (toId !== RTA) addAssigned(s, toId, amt);
@@ -494,7 +559,7 @@ function AppInner() {
   // tx.amount < 0: into savings; `cat` = RTA, one category's leftover, or ALL category leftovers.
   const saveTransfer = (id, tx, cat) => {
     const takes = tx.amount >= 0 || !cat || cat === RTA ? []
-      : cat === ALL ? Object.entries(calc.byCat).filter(([, v]) => v.available > 0.005).map(([cid, v]) => [cid, v.available])
+      : cat === ALL ? Object.entries(calc.byCat).filter(([, v]) => !v.goal && v.available > 0.005).map(([cid, v]) => [cid, v.available])
       : [[cat, -tx.amount]];
     update((s) => {
       const i = s.transactions.findIndex((x) => x.id === id);
@@ -533,8 +598,8 @@ function AppInner() {
   });
 
   const setLang = (l) => update((s) => { s.settings.lang = l; });
-  const addAccount = (name, balance, goal) => update((s) => { s.accounts.push({ id: uid(), name, balance, goal }); });
-  const editAccount = (id, name, balance, goal) => update((s) => { const a = s.accounts.find((x) => x.id === id); if (a) { a.name = name; a.balance = balance; a.goal = goal; } });
+  const addAccount = (name, balance) => update((s) => { s.accounts.push({ id: uid(), name, balance }); });
+  const editAccount = (id, name, balance) => update((s) => { const a = s.accounts.find((x) => x.id === id); if (a) { a.name = name; a.balance = balance; } });
   const delAccount = (id) => update((s) => { s.accounts = s.accounts.filter((x) => x.id !== id); });
   const dismissBackupNotice = () => update((s) => { s.settings.backupNoticeDismissed = true; });
   const clearAll = () => { setState(seedState()); flash(t("everyEuro")); };
@@ -599,7 +664,7 @@ function AppInner() {
             onEdit={(tx) => setModal(tx.accountId ? { type: "savings", tx } : { type: "tx", tx })} />
         )}
         {tab === "accounts" && (
-          <AccountsScreen t={t} accounts={state.accounts} need={calc.accNeed} onAdd={() => setModal({ type: "account", account: null })}
+          <AccountsScreen t={t} accounts={state.accounts} onAdd={() => setModal({ type: "account", account: null })}
             onEdit={(a) => setModal({ type: "account", account: a })}
             onTransfer={() => setModal({ type: "savings", dir: "out" })} />
         )}
@@ -654,6 +719,7 @@ function AppInner() {
               onClose={() => setModal(null)}
               onAssign={(amt) => setAssigned(cat.id, amt)}
               onSetAmount={(amt, scope) => setAssignments([{ catId: cat.id, amount: amt }], scope)}
+              onSetGoal={(goal) => setCatGoal(cat.id, goal)}
               onMove={(preset) => setModal({ type: "move", ...preset, back: modal })}
               onFromSavings={(preset) => setModal({ type: "savings", ...preset, back: modal })} />
           );
@@ -687,7 +753,7 @@ function AppInner() {
         )}
         {modal?.type === "account" && (
           <AccountSheet t={t} initial={modal.account} onClose={() => setModal(modal.back || null)}
-            onSave={(name, bal, goal) => { modal.account ? editAccount(modal.account.id, name, bal, goal) : addAccount(name, bal, goal); setModal(modal.back || null); }}
+            onSave={(name, bal) => { modal.account ? editAccount(modal.account.id, name, bal) : addAccount(name, bal); setModal(modal.back || null); }}
             onDelete={modal.account ? () => { delAccount(modal.account.id); setModal(null); } : null} />
         )}
 
@@ -895,7 +961,7 @@ function BudgetScreen({ t, lang, calc, groupsView, dispMonth, setDispMonth, onCa
               <div style={{ background: C.card, borderRadius: 16, overflow: "hidden", border: `1px solid ${C.line}` }}>
                 {g.cats.length === 0 && <div style={{ padding: 16, color: C.muted, font: "500 14px 'Commissioner',sans-serif" }}>—</div>}
                 {g.cats.map((c, i) => (
-                  <CategoryRow key={c.id} t={t} cat={c} info={calc.byCat[c.id]}
+                  <CategoryRow key={c.id} t={t} lang={lang} cat={c} info={calc.byCat[c.id]}
                     last={i === g.cats.length - 1} onClick={() => onCategory(c)} dispMonth={dispMonth} />
                 ))}
               </div>
@@ -908,7 +974,31 @@ function BudgetScreen({ t, lang, calc, groupsView, dispMonth, setDispMonth, onCa
   );
 }
 
-function CategoryRow({ t, cat, info, last, onClick, dispMonth }) {
+// Final-amount goal: balance against the goal, what's still needed, and the monthly share if dated.
+function GoalLines({ t, lang, g }) {
+  const done = g.remaining <= 0.005;
+  return (
+    <>
+      <div style={{ marginTop: 9, height: 6, background: "#EBE8DB", borderRadius: 4, overflow: "hidden" }}>
+        <div style={{ width: `${Math.max(0, Math.min(1, g.balance / g.target)) * 100}%`, height: "100%", borderRadius: 4, background: done ? C.green : C.gold, transition: "width .35s ease" }} />
+      </div>
+      <div style={{ font: "500 12px 'Commissioner',sans-serif", color: C.muted, marginTop: 5 }}>
+        {money(Math.max(0, g.balance))} {t("ofWord")} {money(g.target)} · {done
+          ? <b style={{ color: C.green }}>{t("goalDone")}</b>
+          : <b style={{ color: C.ink }}>{t("stillNeeded")} {money(g.remaining)}</b>}
+      </div>
+      {g.byDate && (
+        <div style={{ font: "500 12px 'Commissioner',sans-serif", color: g.expired ? C.clay : C.muted, marginTop: 2 }}>
+          {g.expired
+            ? `${t("goalExpired")} · ${monthLabel(g.byDate.slice(0, 7), lang)}`
+            : !done && `${money(g.perMonth)} ${t("perMonthUntil")} ${monthLabel(g.byDate.slice(0, 7), lang)}`}
+        </div>
+      )}
+    </>
+  );
+}
+
+function CategoryRow({ t, lang, cat, info, last, onClick, dispMonth }) {
   const avail = info.available;
   const availColor = avail < -0.005 ? C.clay : avail > 0.005 ? C.green : C.muted;
   const spent = Math.max(0, -info.activity);   // outflow this month
@@ -922,11 +1012,13 @@ function CategoryRow({ t, cat, info, last, onClick, dispMonth }) {
     }}>
       <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 12 }}>
         <div style={{ font: "600 15px 'Commissioner',sans-serif", color: C.ink, minWidth: 0, flex: 1, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-          {cat.name} {info.planned > 0 && <Repeat size={12} color={C.gold} style={{ verticalAlign: "middle", marginLeft: 2 }} />}
+          {cat.name} {info.goal && <Target size={12} color={C.gold} style={{ verticalAlign: "middle", marginLeft: 2 }} />}
+          {info.planned > 0 && <Repeat size={12} color={C.gold} style={{ verticalAlign: "middle", marginLeft: 2 }} />}
         </div>
         <div style={{ font: "700 16px 'Poppins',sans-serif", color: availColor, flexShrink: 0 }}>{money(avail)}</div>
       </div>
 
+      {info.goal ? <GoalLines t={t} lang={lang} g={info.goal} /> : (<>
       {/* envelope depletion: spent vs assigned */}
       <div style={{ marginTop: 9, height: 6, background: "#EBE8DB", borderRadius: 4, overflow: "hidden" }}>
         <div style={{
@@ -937,6 +1029,7 @@ function CategoryRow({ t, cat, info, last, onClick, dispMonth }) {
       <div style={{ font: "500 12px 'Commissioner',sans-serif", color: over ? C.clay : C.muted, marginTop: 5 }}>
         {money(spent)} {t("ofWord")} {money(info.assigned)}
       </div>
+      </>)}
     </button>
   );
 }
@@ -969,7 +1062,7 @@ function Empty({ t, text, hint, icon: Icon = Wallet }) {
 }
 
 /* ======================== Accounts screen ======================== */
-function AccountsScreen({ t, accounts, need, onAdd, onEdit, onTransfer }) {
+function AccountsScreen({ t, accounts, onAdd, onEdit, onTransfer }) {
   const total = accounts.reduce((s, a) => s + a.balance, 0);
   return (
     <div>
@@ -992,22 +1085,9 @@ function AccountsScreen({ t, accounts, need, onAdd, onEdit, onTransfer }) {
                 padding: "14px 16px", display: "block",
               }}>
                 <span style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
-                  <span style={{ font: "600 15px 'Commissioner',sans-serif", color: C.ink }}>
-                    {a.name} {a.goal?.target > 0 && <Target size={12} color={C.gold} style={{ verticalAlign: "middle" }} />}
-                  </span>
+                  <span style={{ font: "600 15px 'Commissioner',sans-serif", color: C.ink }}>{a.name}</span>
                   <span style={{ font: "700 16px 'Poppins',sans-serif", color: a.balance < 0 ? C.clay : C.ink }}>{money(a.balance)}</span>
                 </span>
-                {a.goal?.target > 0 && (
-                  <span style={{ display: "block", marginTop: 9 }}>
-                    <span style={{ display: "block", height: 6, background: "#EBE8DB", borderRadius: 4, overflow: "hidden" }}>
-                      <span style={{ display: "block", width: `${Math.max(0, Math.min(1, a.balance / a.goal.target)) * 100}%`, height: "100%", borderRadius: 4, background: a.balance >= a.goal.target ? C.green : C.gold }} />
-                    </span>
-                    <span style={{ display: "block", font: "500 12px 'Commissioner',sans-serif", color: C.muted, marginTop: 5 }}>
-                      {money(a.balance)} {t("ofWord")} {money(a.goal.target)}
-                      {need[a.id]?.perMonth > 0.005 && <> · {money(need[a.id].perMonth)} {t("needPerMonth")}</>}
-                    </span>
-                  </span>
-                )}
               </button>
             ))}
           </div>
@@ -1025,15 +1105,12 @@ function AccountsScreen({ t, accounts, need, onAdd, onEdit, onTransfer }) {
 function AccountSheet({ t, initial, onClose, onSave, onDelete }) {
   const [name, setName] = useState(initial?.name || "");
   const [bal, setBal] = useState(initial ? initial.balance.toString().replace(".", ",") : "");
-  const [goal, setGoal] = useState(toInput(initial?.goal?.target));
-  const [byDate, setByDate] = useState(initial?.goal?.byDate || "");
   const [confirmDel, setConfirmDel] = useState(false);
-  const g = goal.trim() === "" ? 0 : parseAmount(goal);
-  const valid = name.trim().length > 0 && !isNaN(parseAmount(bal || "0")) && !isNaN(g);
+  const valid = name.trim().length > 0 && !isNaN(parseAmount(bal || "0"));
   const submit = () => {
     const b = parseAmount(bal || "0");
     if (!valid) return;
-    onSave(name.trim(), round2(b), g > 0 ? { target: round2(g), byDate } : null);
+    onSave(name.trim(), round2(b));
   };
   return (
     <Sheet title={initial ? t("edit") : t("addAccount")} onClose={onClose} t={t}>
@@ -1044,18 +1121,6 @@ function AccountSheet({ t, initial, onClose, onSave, onDelete }) {
         <input inputMode="decimal" value={bal} onChange={(e) => setBal(e.target.value)} placeholder="0,00"
           style={{ ...inputStyle, font: "700 20px 'Poppins',sans-serif", textAlign: "right" }} />
       </Field>
-      <div style={{ display: "flex", gap: 12 }}>
-        <div style={{ flex: 1 }}>
-          <Field label={`${t("savingsGoal")} (€)`}>
-            <input inputMode="decimal" value={goal} onChange={(e) => setGoal(e.target.value)} placeholder="—" style={inputStyle} />
-          </Field>
-        </div>
-        <div style={{ flex: 1 }}>
-          <Field label={t("byDate")}>
-            <input type="month" value={byDate} onChange={(e) => setByDate(e.target.value)} style={inputStyle} />
-          </Field>
-        </div>
-      </div>
       <PrimaryBtn onClick={submit} disabled={!valid}><Check size={18} />{t("save")}</PrimaryBtn>
       {confirmDel && <ConfirmDialog t={t} message={t("deleteAccountConfirm")} onCancel={() => setConfirmDel(false)} onConfirm={onDelete} />}
       {onDelete && (
@@ -1422,8 +1487,13 @@ function TxSheet({ t, state, initial, dispMonth, onClose, onSave, onDelete }) {
 }
 
 /* ======================== Assign sheet ========================== */
-function AssignSheet({ t, cat, info, dispMonth, lang, hasAccounts, onClose, onAssign, onSetAmount, onMove, onFromSavings }) {
+function AssignSheet({ t, cat, info, dispMonth, lang, hasAccounts, onClose, onAssign, onSetAmount, onSetGoal, onMove, onFromSavings }) {
   const [amount, setAmount] = useState(toInput(info.assigned));
+  const [goalAmt, setGoalAmt] = useState(toInput(cat.goal?.target));
+  const [goalDate, setGoalDate] = useState(cat.goal?.byDate || "");
+  const [goalDirty, setGoalDirty] = useState(false);
+  const [confirmRemove, setConfirmRemove] = useState(false);
+  const g = info.goal;
   const [scope, setScope] = useState("forward");
   const [dirty, setDirty] = useState(false);   // only the amount field / scope toggle commit a repeating change
   const edit = (v) => { setAmount(v); setDirty(true); };
@@ -1433,6 +1503,11 @@ function AssignSheet({ t, cat, info, dispMonth, lang, hasAccounts, onClose, onAs
 
   // Persist edits without closing (also used before jumping to Move / Savings).
   const commit = () => {
+    if (goalDirty) {
+      const gt = parseAmount(goalAmt);
+      if (!isNaN(gt) && gt > 0) onSetGoal({ target: round2(gt), byDate: goalDate });
+      setGoalDirty(false);
+    }
     if (!dirty) return;
     const v = amount.trim() === "" ? 0 : parseAmount(amount);
     if (!isNaN(v)) onSetAmount(round2(v), scope);
@@ -1479,6 +1554,43 @@ function AssignSheet({ t, cat, info, dispMonth, lang, hasAccounts, onClose, onAs
           </GhostBtn>
         )}
       </div>
+
+      {/* final-amount goal (YNAB "have a balance of"): keeps its leftovers month to month */}
+      <div style={{ borderTop: `1px solid ${C.line}`, paddingTop: 16, marginBottom: 16 }}>
+        <label style={fieldLabel}>{t("finalGoal")}</label>
+        <div style={{ display: "flex", gap: 12 }}>
+          <div style={{ flex: 1 }}>
+            <Field label={`${t("finalAmount")} (€)`}>
+              <input inputMode="decimal" value={goalAmt} onChange={(e) => { setGoalAmt(e.target.value); setGoalDirty(true); }} placeholder="—" style={inputStyle} />
+            </Field>
+          </div>
+          <div style={{ flex: 1 }}>
+            <Field label={t("byDate")}>
+              <input type="month" value={goalDate} onChange={(e) => { setGoalDate(e.target.value); setGoalDirty(true); }} style={inputStyle} />
+            </Field>
+          </div>
+        </div>
+        {g && (
+          <>
+            <GoalLines t={t} lang={lang} g={g} />
+            <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 8, marginTop: 12 }}>
+              {g.left > 0.005 && (
+                <Chip onClick={() => apply((parseAmount(amount) || 0) + round2(g.left))}>
+                  {t("neededThisMonth")} +{money(g.left)}
+                </Chip>
+              )}
+              <button onClick={() => setConfirmRemove(true)} style={{ border: "none", background: "transparent", color: C.clay, font: "600 13px 'Commissioner',sans-serif", cursor: "pointer", padding: "6px 0" }}>
+                {t("removeGoal")}
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+      {confirmRemove && (
+        <ConfirmDialog t={t} title={t("removeGoal")} message={t("removeGoalMsg")} confirmText={t("removeGoal")}
+          onCancel={() => setConfirmRemove(false)}
+          onConfirm={() => { setConfirmRemove(false); onSetGoal(null); setGoalAmt(""); setGoalDate(""); setGoalDirty(false); }} />
+      )}
 
       <PrimaryBtn onClick={() => { commit(); onClose(); }}><Check size={18} />{t("save")}</PrimaryBtn>
     </Sheet>
@@ -1797,7 +1909,8 @@ function SavingsSheet({ t, lang, state, calc, groupsView, preset, dispMonth, onC
   }
 
   const av = (id) => calc.byCat[id]?.available ?? 0;
-  const leftTotal = round2(Object.values(calc.byCat).reduce((s, v) => s + Math.max(0, v.available), 0));
+  // goal categories keep their money, so "all leftovers" never includes them
+  const leftTotal = round2(Object.values(calc.byCat).reduce((s, v) => s + (v.goal ? 0 : Math.max(0, v.available)), 0));
   const pickFrom = (v) => {
     setFrom(v);
     if (v === ALL) setAmount(toInput(leftTotal));
@@ -1809,7 +1922,7 @@ function SavingsSheet({ t, lang, state, calc, groupsView, preset, dispMonth, onC
   const valid = !isNaN(amt) && amt > 0 && accountId;
   // balance available to draw from, counting this transfer's own amount back in when editing
   const bal = (acc?.balance ?? 0) + (init?.accountId === accountId ? Math.max(0, init.amount) : 0);
-  const need = calc.accNeed[accountId];
+  const hasGoalCats = Object.values(calc.byCat).some((v) => v.goal);
 
   return (
     <Sheet title={t("savings")} onClose={onClose} t={t}>
@@ -1843,10 +1956,8 @@ function SavingsSheet({ t, lang, state, calc, groupsView, preset, dispMonth, onC
         {showFrom && from !== ALL && valid && amt > (from === RTA ? calc.readyToAssign : av(from)) + 0.005 && (
           <div style={{ font: "500 13px 'Commissioner',sans-serif", color: C.clay, marginTop: 6 }}>{t("willGoNegative")}</div>
         )}
-        {showFrom && from === RTA && need?.left > 0.005 && (
-          <div style={{ marginTop: 8 }}>
-            <Chip onClick={() => setAmount(toInput(round2(need.left)))}>{t("goalThisMonth")} +{money(need.left)}</Chip>
-          </div>
+        {dir === "out" && hasGoalCats && (
+          <div style={{ font: "500 12.5px/1.45 'Commissioner',sans-serif", color: C.muted, marginTop: 8 }}>{t("goalMoneyNote")}</div>
         )}
       </Field>
       {dir === "in" && !init && (
