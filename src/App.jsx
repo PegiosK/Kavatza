@@ -64,6 +64,7 @@ const STR = {
     spendingByCategory: "Spending this month", incomeVsExpense: "Income vs spending",
     noActivity: "No activity yet", noActivityHint: "Tap + to log your first transaction.",
     noScheduled: "Nothing scheduled", noScheduledHint: "Add a recurring bill or paycheck.",
+    addMoney: "Add", removeMoney: "Remove", goalAmount: "Goal amount", balanceWord: "Balance",
     addTransaction: "Add transaction", newTransaction: "New transaction", editTransaction: "Edit transaction",
     assign: "Assign", setGoal: "Goal", noGoal: "No goal", balanceGoal: "Build a balance",
     monthlyGoal: "Fund it monthly", goalTarget: "Target amount", byDate: "By date (optional)",
@@ -144,6 +145,7 @@ const STR = {
     spendingByCategory: "Έξοδα αυτόν τον μήνα", incomeVsExpense: "Έσοδα vs έξοδα",
     noActivity: "Δεν υπάρχουν κινήσεις", noActivityHint: "Πάτησε + για την πρώτη σου κίνηση.",
     noScheduled: "Τίποτα προγραμματισμένο", noScheduledHint: "Πρόσθεσε πάγιο λογαριασμό ή μισθό.",
+    addMoney: "Πρόσθεσε", removeMoney: "Αφαίρεσε", goalAmount: "Ποσό στόχου", balanceWord: "Υπόλοιπο",
     addTransaction: "Προσθήκη κίνησης", newTransaction: "Νέα κίνηση", editTransaction: "Επεξεργασία κίνησης",
     assign: "Μοίρασμα", setGoal: "Στόχος", noGoal: "Χωρίς στόχο", balanceGoal: "Συγκέντρωση ποσού",
     monthlyGoal: "Μηνιαία κάλυψη", goalTarget: "Ποσό στόχου", byDate: "Μέχρι (προαιρετικό)",
@@ -275,17 +277,9 @@ const setPlan = (plan, mk, amount) => [...(plan || []).filter((st) => st.from < 
 
 // Final-amount goal on a category: progress is the category's balance (like YNAB "have a balance of").
 // With a date, the monthly share is what's missing spread over the months left (this one included).
-function goalInfo(goal, available, assigned, mk) {
+function goalInfo(goal, available) {
   if (!goal?.target) return null;
-  const remaining = Math.max(0, goal.target - available);
-  const expired = !!goal.byDate && goal.byDate.slice(0, 7) < mk;
-  let perMonth = null, left = 0;
-  if (goal.byDate && !expired) {
-    const months = Math.max(1, monthsDiff(mk, goal.byDate) + 1);
-    perMonth = Math.max(0, (goal.target - (available - assigned)) / months);
-    left = Math.max(0, perMonth - assigned);
-  }
-  return { target: goal.target, byDate: goal.byDate, balance: available, remaining, expired, perMonth, left };
+  return { target: goal.target, balance: available, remaining: Math.max(0, goal.target - available) };
 }
 
 // Income sources: the four built-in ones keep a translation key as id (name null = translated);
@@ -301,7 +295,7 @@ function seedState() {
   const g1 = uid(), g2 = uid(), g3 = uid();
   const cat = (groupId, name) => ({ id: uid(), groupId, name, plan: [] });
   return {
-    version: 5,
+    version: 6,
     settings: { lang: "el" },
     groups: [
       { id: g1, name: "Πάγια έξοδα" },
@@ -387,7 +381,16 @@ function withDefaults(state) {
       if (g) g.isGoals = true;
     }
   }
-  state.version = 5;
+  // v6: «Στόχοι» categories are expenses without a time limit — no monthly amount.
+  // Repeating amounts stop from this month on (past months stay as they were).
+  if ((state.version || 0) < 6) {
+    const goalGroups = new Set(state.groups.filter((g) => g.isGoals).map((g) => g.id));
+    for (const c of state.categories) {
+      if (goalGroups.has(c.groupId) && c.plan?.some((st) => st.amount > 0 && (st.from >= nowMk || planFor(c.plan, nowMk) > 0)))
+        c.plan = setPlan(c.plan, nowMk, 0);
+    }
+  }
+  state.version = 6;
   return state;
 }
 function saveState(state) {
@@ -666,7 +669,8 @@ function AppInner() {
   // One pass over transactions → per-category, per-month activity.
   const calc = useMemo(() => {
     if (!state) return null;
-    const { transactions, assignments, categories } = state;
+    const { transactions, assignments, categories, groups } = state;
+    const goalGroups = new Set(groups.filter((g) => g.isGoals).map((g) => g.id));
     const nowMk = curMonth();
     const act = {};               // catId -> { "YYYY-MM": sum }
     let totalIncome = 0;
@@ -691,7 +695,9 @@ function AppInner() {
       for (const m in a) months.add(m);
       // Months where the category keeps its leftovers: while it has a final-amount goal
       // (c.roll = { since, until }; until = month the goal was removed, null while active).
-      const keeps = (m) => !!c.roll && m >= c.roll.since && (!c.roll.until || m <= c.roll.until);
+      // «Στόχοι» categories are expenses without a time limit: they always keep their balance.
+      const isGoal = goalGroups.has(c.groupId);
+      const keeps = (m) => isGoal || (!!c.roll && m >= c.roll.since && (!c.roll.until || m <= c.roll.until));
       const sorted = [...months].sort();
       const last = sorted[sorted.length - 1];
       let carry = 0, available = 0;
@@ -725,7 +731,8 @@ function AppInner() {
         spent: -(a[dispMonth] || 0),
         lastSpent: prev[0] in a ? -a[prev[0]] : null,
         avgSpent: hist.length ? hist.reduce((s, v) => s + v, 0) / hist.length : null,
-        goal: goalInfo(c.goal, available, assignedIn(dispMonth), dispMonth),
+        isGoal,
+        goal: goalInfo(c.goal, available),
       };
     }
     return { readyToAssign: totalIncome - totalAssigned, byCat, totalIncome, totalAssigned };
@@ -965,7 +972,7 @@ function AppInner() {
 
         {/* modals */}
         {modal?.type === "tx" && (
-          <TxSheet t={t} state={state} initial={modal.tx} dispMonth={dispMonth}
+          <TxSheet t={t} state={state} initial={modal.tx} presetCat={modal.presetCat} dispMonth={dispMonth}
             onClose={() => setModal(null)}
             onSave={(tx) => {
               if (modal.tx) editTx(modal.tx.id, tx);
@@ -981,16 +988,16 @@ function AppInner() {
         {modal?.type === "assign" && (() => {
           const cat = state.categories.find((c) => c.id === modal.catId);
           if (!cat) return null;
-          const allowGoal = !!state.groups.find((g) => g.id === cat.groupId)?.isGoals || !!cat.goal;
           return (
-            <AssignSheet t={t} cat={cat} allowGoal={allowGoal} info={calc.byCat[cat.id]} dispMonth={dispMonth} lang={lang}
+            <AssignSheet t={t} cat={cat} isGoal={calc.byCat[cat.id].isGoal} info={calc.byCat[cat.id]} dispMonth={dispMonth} lang={lang}
               hasAccounts={state.accounts.length > 0}
               onClose={() => setModal(null)}
               onAssign={(amt) => setAssigned(cat.id, amt)}
               onSetAmount={(amt, scope) => setAssignments([{ catId: cat.id, amount: amt }], scope)}
               onSetGoal={(goal) => setCatGoal(cat.id, goal)}
               onMove={(preset) => setModal({ type: "move", ...preset, back: modal })}
-              onFromSavings={(preset) => setModal({ type: "savings", ...preset, back: modal })} />
+              onFromSavings={(preset) => setModal({ type: "savings", ...preset, back: modal })}
+              onNewTx={() => setModal({ type: "tx", tx: null, presetCat: cat.id })} />
           );
         })()}
         {modal?.type === "move" && (
@@ -1269,13 +1276,6 @@ function GoalLines({ t, lang, g }) {
           ? <b style={{ color: C.green }}>{t("goalDone")}</b>
           : <b style={{ color: C.ink }}>{t("stillNeeded")} {money(g.remaining)}</b>}
       </div>
-      {g.byDate && (
-        <div style={{ font: "500 12px 'Commissioner',sans-serif", color: g.expired ? C.clay : C.muted, marginTop: 2 }}>
-          {g.expired
-            ? `${t("goalExpired")} · ${monthLabel(g.byDate.slice(0, 7), lang)}`
-            : !done && `${money(g.perMonth)} ${t("perMonthUntil")} ${monthLabel(g.byDate.slice(0, 7), lang)}`}
-        </div>
-      )}
     </>
   );
 }
@@ -1300,7 +1300,7 @@ function CategoryRow({ t, lang, cat, info, last, onClick, dispMonth }) {
         <div style={{ font: "700 16px 'Poppins',sans-serif", color: availColor, flexShrink: 0 }}>{money(avail)}</div>
       </div>
 
-      {info.goal ? <GoalLines t={t} lang={lang} g={info.goal} /> : (<>
+      {info.isGoal ? (info.goal && <GoalLines t={t} lang={lang} g={info.goal} />) : info.goal ? <GoalLines t={t} lang={lang} g={info.goal} /> : (<>
       {/* envelope depletion: spent vs assigned */}
       <div style={{ marginTop: 9, height: 6, background: "#EBE8DB", borderRadius: 4, overflow: "hidden" }}>
         <div style={{
@@ -1714,10 +1714,10 @@ function MoreScreen({ t, lang, state, due, onEnterSchedule, onDelSchedule, onNew
 }
 
 /* ===================== Transaction sheet ======================== */
-function TxSheet({ t, state, initial, dispMonth, onClose, onSave, onDelete }) {
+function TxSheet({ t, state, initial, presetCat, dispMonth, onClose, onSave, onDelete }) {
   const [inflow, setInflow] = useState(initial ? initial.amount >= 0 : false);
   const [amount, setAmount] = useState(initial ? Math.abs(initial.amount).toString().replace(".", ",") : "");
-  const [catId, setCatId] = useState(initial ? initial.categoryId : (state.categories[0]?.id ?? null));
+  const [catId, setCatId] = useState(initial ? initial.categoryId : (presetCat ?? state.categories[0]?.id ?? null));
   // Income keeps categoryId null (so "Για μοίρασμα" math is untouched) and points to a source by id.
   const SRC = state.incomeSources.map((v) => v.id);
   const label = (id) => srcLabel(t, state.incomeSources, id);
@@ -1814,51 +1814,91 @@ function TxSheet({ t, state, initial, dispMonth, onClose, onSave, onDelete }) {
 }
 
 /* ======================== Assign sheet ========================== */
-function AssignSheet({ t, cat, allowGoal, info, dispMonth, lang, hasAccounts, onClose, onAssign, onSetAmount, onSetGoal, onMove, onFromSavings }) {
-  const [amount, setAmount] = useState(toInput(info.assigned));
+function AssignSheet({ t, cat, isGoal, info, dispMonth, lang, hasAccounts, onClose, onAssign, onSetAmount, onSetGoal, onMove, onFromSavings, onNewTx }) {
+  // mode "set": type this month's total (regular categories). "add" / "sub": type an amount to add or
+  // take away, this month only, like YNAB's + / − on the number pad. «Στόχοι» categories only add or take away.
+  const [mode, setMode] = useState(isGoal ? "add" : "set");
+  const [amount, setAmount] = useState(isGoal ? "" : toInput(info.assigned));
   const [goalAmt, setGoalAmt] = useState(toInput(cat.goal?.target));
-  const [goalDate, setGoalDate] = useState(cat.goal?.byDate || "");
   const [goalDirty, setGoalDirty] = useState(false);
-  const [confirmRemove, setConfirmRemove] = useState(false);
-  const g = info.goal;
   const [scope, setScope] = useState("forward");
-  const [dirty, setDirty] = useState(false);   // only the amount field / scope toggle commit a repeating change
+  const [dirty, setDirty] = useState(false);   // only the amount field / scope toggle commit a change
   const edit = (v) => { setAmount(v); setDirty(true); };
+  const pickMode = (m) => {
+    const next = mode === m && !isGoal ? "set" : m;            // tapping the active + / − again goes back to the total
+    setMode(next); setDirty(false);
+    setAmount(next === "set" ? toInput(info.assigned) : "");
+  };
 
   // one-off top-ups (cover overspending) apply to this month only
-  const apply = (amt) => { onAssign(amt); setAmount(toInput(amt)); };
+  const apply = (amt) => { onAssign(amt); setAmount(mode === "set" ? toInput(amt) : ""); };
 
-  // Persist edits without closing (also used before jumping to Move / Savings).
+  const typed = amount.trim() === "" ? 0 : parseAmount(amount);
+  const delta = mode === "add" ? typed : mode === "sub" ? -typed : 0;
+
+  // Persist edits without closing (also used before jumping to Move / Savings / New transaction).
   const commit = () => {
     if (goalDirty) {
-      const gt = parseAmount(goalAmt);
-      if (!isNaN(gt) && gt > 0) onSetGoal({ target: round2(gt), byDate: goalDate });
+      const gt = goalAmt.trim() === "" ? 0 : parseAmount(goalAmt);
+      if (!isNaN(gt)) onSetGoal(gt > 0 ? { target: round2(gt) } : null);
       setGoalDirty(false);
     }
-    if (!dirty) return;
-    const v = amount.trim() === "" ? 0 : parseAmount(amount);
-    if (!isNaN(v)) onSetAmount(round2(v), scope);
+    if (!dirty || isNaN(typed)) return;
+    if (mode === "set") onSetAmount(round2(typed), scope);
+    else if (typed > 0) onAssign(round2(info.assigned + delta));   // taken from / returned to «Για μοίρασμα»
     setDirty(false);
+    if (mode !== "set") setAmount("");
   };
 
   const overspend = info.available < 0 ? -info.available : 0;
+  const pm = (m, label) => (
+    <button onClick={() => pickMode(m)} aria-label={label} style={{
+      width: 52, flex: "none", borderRadius: 12, cursor: "pointer", font: "700 24px 'Poppins',sans-serif",
+      border: `1.5px solid ${mode === m ? C.teal : C.line}`, background: mode === m ? C.tealSoft : C.card, color: mode === m ? C.teal : C.muted,
+    }}>{m === "add" ? "+" : "−"}</button>
+  );
 
   return (
     <Sheet title={cat.name} onClose={onClose} t={t}>
-      {/* status strip */}
-      <div style={{ display: "flex", gap: 8, marginBottom: 18 }}>
-        <Stat label={t("assigned")} value={money(info.assigned)} />
-        <Stat label={t("activity")} value={money(info.activity)} />
-        <Stat label={t("available")} value={money(info.available)} accent={info.available < 0 ? C.clay : info.available > 0 ? C.green : C.muted} />
-      </div>
+      {/* status strip — monthly figures, so not for «Στόχοι» (their line under the target says it all) */}
+      {!isGoal && (
+        <div style={{ display: "flex", gap: 8, marginBottom: 18 }}>
+          <Stat label={t("assigned")} value={money(info.assigned)} />
+          <Stat label={t("activity")} value={money(info.activity)} />
+          <Stat label={t("available")} value={money(info.available)} accent={info.available < 0 ? C.clay : info.available > 0 ? C.green : C.muted} />
+        </div>
+      )}
 
-      <Field label={`${t("assignedThisMonth")} · ${monthLabel(dispMonth, lang)} (€)`}>
-        <input inputMode="decimal" value={amount} onChange={(e) => edit(e.target.value)} placeholder="0,00"
-          style={{ ...inputStyle, font: "700 22px 'Poppins',sans-serif", textAlign: "right" }} />
-        <SpendHints t={t} info={info} onPick={(v) => edit(toInput(v))} />
+      {isGoal && (
+        <>
+          <Field label={`${t("goalAmount")} (€)`}>
+            <input inputMode="decimal" value={goalAmt} onChange={(e) => { setGoalAmt(e.target.value); setGoalDirty(true); }} placeholder="—"
+              style={{ ...inputStyle, font: "700 22px 'Poppins',sans-serif", textAlign: "right" }} />
+          </Field>
+          {info.goal
+            ? <div style={{ margin: "-6px 0 16px" }}><GoalLines t={t} lang={lang} g={info.goal} /></div>
+            : <div style={{ margin: "-6px 0 16px", font: "500 13px 'Commissioner',sans-serif", color: C.muted }}>{t("balanceWord")}: <b style={{ color: C.ink }}>{money(info.available)}</b></div>}
+        </>
+      )}
+
+      <Field label={mode === "set" ? `${t("assignedThisMonth")} · ${monthLabel(dispMonth, lang)} (€)` : `${mode === "add" ? t("addMoney") : t("removeMoney")} (€)`}>
+        <div style={{ display: "flex", gap: 8, alignItems: "stretch" }}>
+          {pm("sub", t("removeMoney"))}
+          <input inputMode="decimal" value={amount} onChange={(e) => edit(e.target.value)} placeholder="0,00"
+            style={{ ...inputStyle, flex: 1, minWidth: 0, font: "700 22px 'Poppins',sans-serif", textAlign: "right" }} />
+          {pm("add", t("addMoney"))}
+        </div>
+        {mode !== "set" && typed > 0 && !isNaN(typed) && (
+          <div style={{ font: "500 13px 'Commissioner',sans-serif", color: C.muted, marginTop: 7 }}>
+            {isGoal ? t("balanceWord") : t("assigned")}: {money(isGoal ? info.available : info.assigned)} → <b style={{ color: C.ink }}>{money((isGoal ? info.available : info.assigned) + delta)}</b>
+          </div>
+        )}
+        {mode === "set" && <SpendHints t={t} info={info} onPick={(v) => edit(toInput(v))} />}
       </Field>
-      <Segmented value={scope} onChange={(v) => { setScope(v); setDirty(true); }}
-        options={[["month", t("scopeMonth")], ["forward", t("scopeForward")]]} />
+      {mode === "set" && (
+        <Segmented value={scope} onChange={(v) => { setScope(v); setDirty(true); }}
+          options={[["month", t("scopeMonth")], ["forward", t("scopeForward")]]} />
+      )}
 
       {overspend > 0.005 && (
         <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 14 }}>
@@ -1871,7 +1911,10 @@ function AssignSheet({ t, cat, allowGoal, info, dispMonth, lang, hasAccounts, on
         </div>
       )}
 
-      <div style={{ display: "flex", gap: 8, marginBottom: 18 }}>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 18 }}>
+        <GhostBtn color={C.ink} onClick={() => { commit(); onNewTx(); }}>
+          <Receipt size={16} />{t("newTransaction")}
+        </GhostBtn>
         <GhostBtn color={C.ink} onClick={() => { commit(); onMove(info.available > 0.005 ? { fromId: cat.id } : { toId: cat.id }); }}>
           <ArrowLeftRight size={16} />{t("move")}
         </GhostBtn>
@@ -1881,45 +1924,6 @@ function AssignSheet({ t, cat, allowGoal, info, dispMonth, lang, hasAccounts, on
           </GhostBtn>
         )}
       </div>
-
-      {/* final-amount goal (YNAB "have a balance of"): only for categories in the "Στόχοι" group */}
-      {allowGoal && (
-      <div style={{ borderTop: `1px solid ${C.line}`, paddingTop: 16, marginBottom: 16 }}>
-        <label style={fieldLabel}>{t("finalGoal")}</label>
-        <div style={{ display: "flex", gap: 12 }}>
-          <div style={{ flex: 1 }}>
-            <Field label={`${t("finalAmount")} (€)`}>
-              <input inputMode="decimal" value={goalAmt} onChange={(e) => { setGoalAmt(e.target.value); setGoalDirty(true); }} placeholder="—" style={inputStyle} />
-            </Field>
-          </div>
-          <div style={{ flex: 1 }}>
-            <Field label={t("byDate")}>
-              <input type="month" value={goalDate} onChange={(e) => { setGoalDate(e.target.value); setGoalDirty(true); }} style={inputStyle} />
-            </Field>
-          </div>
-        </div>
-        {g && (
-          <>
-            <GoalLines t={t} lang={lang} g={g} />
-            <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 8, marginTop: 12 }}>
-              {g.left > 0.005 && (
-                <Chip onClick={() => apply(round2(info.assigned + g.left))}>
-                  {t("neededThisMonth")} +{money(g.left)}
-                </Chip>
-              )}
-              <button onClick={() => setConfirmRemove(true)} style={{ border: "none", background: "transparent", color: C.clay, font: "600 13px 'Commissioner',sans-serif", cursor: "pointer", padding: "6px 0" }}>
-                {t("removeGoal")}
-              </button>
-            </div>
-          </>
-        )}
-      </div>
-      )}
-      {confirmRemove && (
-        <ConfirmDialog t={t} title={t("removeGoal")} message={t("removeGoalMsg")} confirmText={t("removeGoal")}
-          onCancel={() => setConfirmRemove(false)}
-          onConfirm={() => { setConfirmRemove(false); onSetGoal(null); setGoalAmt(""); setGoalDate(""); setGoalDirty(false); }} />
-      )}
 
       <PrimaryBtn onClick={() => { commit(); onClose(); }}><Check size={18} />{t("save")}</PrimaryBtn>
     </Sheet>
@@ -2316,7 +2320,8 @@ function MoveSheet({ t, groupsView, calc, preset, onClose, onMove }) {
 
 /* ======================= Targets sheet ========================== */
 // Every category's monthly amount on one screen, with actual spending next to it.
-function TargetsSheet({ t, lang, groupsView, calc, dispMonth, onClose, onSave }) {
+function TargetsSheet({ t, lang, groupsView: allGroups, calc, dispMonth, onClose, onSave }) {
+  const groupsView = allGroups.filter((g) => !g.isGoals);   // «Στόχοι» have no monthly amount
   const init = {};
   for (const g of groupsView) for (const c of g.cats) init[c.id] = toInput(calc.byCat[c.id].assigned);
   const [vals, setVals] = useState(init);
