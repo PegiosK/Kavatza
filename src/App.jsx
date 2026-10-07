@@ -15,6 +15,17 @@ import {
   ArrowLeftRight, ArrowUpDown, Landmark, HelpCircle,
 } from "lucide-react";
 
+// Load and decode every cat mood once at startup, so a mood change never waits for the
+// network (web) or a first-time decode (web and APK). About 370 KB in total.
+const CAT_IMAGES = [catRichImg, catBrokeImg, catExpenseImg, catIncomeImg, catEmptyImg, catOverspendImg];
+const preloadedCats = CAT_IMAGES.map((src) => {
+  if (typeof Image === "undefined") return null;
+  const im = new Image();
+  im.src = src;
+  im.decode?.().catch(() => {});
+  return im;                                         // kept referenced so the decoded image stays in memory
+});
+
 /* ------------------------------------------------------------------ *
  * KABATZA (καβάτζα) — a zero-based envelope budget for Greece (EUR).
  * Local-only. No accounts linked. Data lives on the device.
