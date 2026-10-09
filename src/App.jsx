@@ -204,15 +204,15 @@ const STR = {
     tutTxTitle: "Κινήσεις", tutTxBody: "Εδώ προσθέτεις και αφαιρείς κάθε έσοδο και έξοδο αντίστοιχα. Τα έσοδα θα εμφανίζονται στα διαθέσιμα χρήματα. Τα έξοδα συμπληρώνουν την μπάρα που έχεις προϋπολογίσει",
     tutAccTitle: "Λογαριασμοί", tutAccBody: "Εδώ μπορείς να προσθέσεις τα χρήματα που έχεις αποταμιευμένα, σε επενδύσεις ή σε ρευστό",
     tutorialLocal: "Όλα μένουν στη συσκευή. Ξαναδές τον οδηγό όποτε θες από Άλλα → Μίνι οδηγός.",
-    catRichTitle: "Ζει χαμένα", catRich: "Τα έξοδα είναι μέσα στο πλάνο — η γάτα νιώθει πλούσια.",
+    catRichTitle: "Λεφτά υπάρχουν", catRich: "Τα έξοδα είναι μέσα στο πλάνο — η γάτα νιώθει πλούσια.",
     catBrokeTitle: "Άφραγκη γάτα", catBroke: "Τα έξοδα πέρασαν όσα μοίρασες — κάλυψέ τα πριν πουλήσει τον καναπέ.",
     catNeutralTitle: "Η γάτα παρακολουθεί", catNeutral: "Μοίρασε χρήματα και καταχώρησε έξοδα για να διαμορφωθεί η διάθεσή της.",
     catRemain: "Έχουμε ακόμη {x} για αυτό το έξοδο.",
     catEmpty: "Δεν έχουμε άλλα λεφτά. Πρέπει να πάρουμε από κάπου αλλού. Μείωσε κάποιο άλλο έξοδο ή στόχο.",
-    catIncomeTitle: "Μπήκαν λεφτά!",
+    catIncomeTitle: "Κονομήσαμε πάλι",
     catIncome: "Μπήκαν {x} στα διαθέσιμα χρήματα. Δώσε σε κάθε ευρώ έναν σκοπό!",
-    catEmptyTitle: "Τελείωσαν τα λεφτά",
-    catOverspendTitle: "Ξεπέρασες τον στόχο",
+    catEmptyTitle: "Μείναμε ταπί",
+    catOverspendTitle: "Σπάσαμε τον κουμπαρά",
     catOverspend: "Προσοχή! Ξεπέρασες τον στόχο αυτής της κατηγορίας. Μετακίνησε χρήματα από κάπου αλλού για να τον καλύψεις.",
     fixEntry: "Διόρθωση κίνησης",
     moveFromOverspent: "Αυτή η κατηγορία είναι ήδη εκτός budget — η μετακίνηση από εδώ δεν ελευθερώνει χρήματα, την κάνει χειρότερη. Κάλυψέ την από άλλη κατηγορία ή από το «Για μοίρασμα».",
@@ -498,10 +498,33 @@ function effectiveAssigned(state, catId, mk) {
   if (override !== undefined) return override || 0;
   return planFor(state?.categories?.find((c) => c.id === catId)?.plan, mk) || 0;
 }
+// What a category has to spend in month `mk`, before that month's activity, and that activity.
+// Regular categories: just what's assigned that month. «Στόχοι» (and categories keeping leftovers)
+// also carry their balance from earlier months — the same rules as the budget math in App.
+function categoryFunds(state, catId, mk) {
+  const c = state?.categories?.find((x) => x.id === catId);
+  if (!c) return { funds: 0, activity: 0 };
+  const isGoal = !!state.groups?.find((g) => g.id === c.groupId)?.isGoals;
+  const keeps = (m) => isGoal || (!!c.roll && m >= c.roll.since && (!c.roll.until || m <= c.roll.until));
+  const act = {};
+  for (const x of state.transactions || []) if (x.categoryId === catId) {
+    const m = monthKey(x.date); act[m] = (act[m] || 0) + x.amount;
+  }
+  if (!keeps(mk)) return { funds: effectiveAssigned(state, catId, mk), activity: act[mk] || 0 };
+  const starts = [mk, ...Object.keys(act)];
+  for (const m in state.assignments || {}) if (catId in state.assignments[m]) starts.push(m);
+  if (c.plan?.length) starts.push(c.plan[0].from);
+  let carry = 0;
+  for (let m = starts.sort()[0]; m < mk; m = addMonthsKey(m, 1)) {
+    const avail = carry + effectiveAssigned(state, catId, m) + (act[m] || 0);
+    carry = keeps(m) && keeps(addMonthsKey(m, 1)) ? Math.max(0, avail) : 0;
+  }
+  return { funds: carry + effectiveAssigned(state, catId, mk), activity: act[mk] || 0 };
+}
 function monthBudgetHealth(state, dispMonth) {
   if (!state) return { status: "neutral", assigned: 0, spent: 0 };
   let assigned = 0, spent = 0;
-  for (const c of state.categories || []) assigned += effectiveAssigned(state, c.id, dispMonth);
+  for (const c of state.categories || []) assigned += categoryFunds(state, c.id, dispMonth).funds;
   state.transactions.forEach((x) => {
     if (x.categoryId && x.amount < 0 && monthKey(x.date) === dispMonth) spent += -x.amount;
   });
@@ -509,14 +532,13 @@ function monthBudgetHealth(state, dispMonth) {
   return { status: spent > assigned + 0.005 ? "broke" : "rich", assigned, spent };
 }
 function expenseFeedback(state, tx) {
-  const mk = monthKey(tx.date);
-  const assigned = effectiveAssigned(state, tx.categoryId, mk);
-  const spentBefore = (state?.transactions || []).reduce((sum, x) =>
-    sum + (x.categoryId === tx.categoryId && x.amount < 0 && monthKey(x.date) === mk ? -x.amount : 0), 0);
-  const remaining = assigned - (spentBefore + Math.abs(tx.amount));
+  // compare with what the category actually has (for «Στόχοι»: its accumulated balance)
+  const { funds, activity } = categoryFunds(state, tx.categoryId, monthKey(tx.date));
+  const remaining = funds + activity - Math.abs(tx.amount);
   if (remaining >= -0.005) return { kind: "expense", remaining };
   const cat = state?.categories?.find((c) => c.id === tx.categoryId);
-  return { kind: cat?.goal ? "overspend" : "empty", remaining };
+  const isGoal = !!state?.groups?.find((g) => g.id === cat?.groupId)?.isGoals;
+  return { kind: cat?.goal || isGoal ? "overspend" : "empty", remaining };
 }
 
 function MascotBadge({ status = "neutral", size = 44, src: srcOverride }) {
@@ -525,7 +547,7 @@ function MascotBadge({ status = "neutral", size = 44, src: srcOverride }) {
   return (
     <img src={src} alt="" width={size} height={size} loading="eager" decoding="async" style={{
       width: size, height: size, objectFit: "cover", display: "block", flexShrink: 0,
-      borderRadius: broke ? Math.max(10, size * 0.22) : "50%",
+      borderRadius: "50%",                        // every mood is a round medallion; broke keeps its red rim
       border: `2px solid ${broke ? C.clay : C.gold}`,
       filter: status === "neutral" ? "grayscale(.55) opacity(.88)" : "none",
       animation: status === "rich" ? "mascotBounce 2.4s ease-in-out infinite" : "none",
