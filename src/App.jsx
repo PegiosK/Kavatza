@@ -137,6 +137,29 @@ const STR = {
     moveFromOverspent: "This category is already overspent — moving money out of it frees nothing, it only makes it worse. Cover it from another category or from Ready to assign.",
     coverOverspend: "Cover overspend",
     ok: "OK",
+    expenseKind: "Expense", incomeKind: "Income", adjustment: "Adjustment", increase: "Increase", decrease: "Decrease",
+    accCash: "Cash", accChecking: "Current account", accSavings: "Savings account", accCard: "Credit card",
+    accInvest: "Investments", accLoan: "Loan", accountType: "Account type",
+    onBudget: "In the budget", tracking: "Tracking only", onBudgetHint: "Its money counts in Ready to assign.",
+    trackingHint: "Shows its balance only — not part of the budget.",
+    balanceToday: "Balance today", debtToday: "Debt today", loanToday: "Loan balance today",
+    realBalance: "Real balance today", realDebt: "Real debt today", reconcile: "Reconcile",
+    reconcileHint: "Type what your bank shows today. Any difference is entered as an «Adjustment».",
+    reconciled: "The balance matches.", cardPayments: "Card payments", debtWord: "Debt",
+    needToPay: "{x} missing to pay it off", paidOff: "Fully covered",
+    deleteAccountTx: "Delete this account? Its transactions ({n}) will be deleted too.",
+    deleteCatConfirmN: "Delete this category? Its transactions ({n}) stay as «Uncategorised» expenses.",
+    deleteGroupConfirmN: "Delete this group and all its categories? Their transactions ({n}) stay as «Uncategorised» expenses.",
+    payCard: "Pay the card",
+    wzTitle: "Accounts & cards", wzNext: "Next", wzFinish: "Finish",
+    wzIntro: "This version knows which account each euro is in and handles credit cards the way YNAB does.\n\nA few quick steps move your current data over. Nothing is deleted.",
+    wzBackup: "First, keep a copy of your data just in case.",
+    wzAccounts: "Your accounts", wzAccountsHint: "Set each account's type and its real balance today. Add any card or account that's missing.",
+    wzDefault: "Where did your existing entries happen?", wzDefaultHint: "Your existing transactions and scheduled items go to this account. You can change any of them later.",
+    wzCards: "Paid by card this month", wzCardsHint: "Tick this month's expenses you paid by credit card. They move to the card and their money goes to «Card payments».",
+    wzOrphans: "Expenses without a category", wzOrphansHint: "These expenses lost their category when a category was deleted. Pick one for each.",
+    wzSummary: "Ready", wzStartAdded: "Starting balances added to Ready to assign", wzRtaNow: "Ready to assign after the move",
+    wzNeedBudgetAcc: "Add at least one account that isn't a card or loan.",
   },
   el: {
     appName: "KABATZA", tagline: "Δώσε δουλειά σε κάθε ευρώ",
@@ -218,6 +241,29 @@ const STR = {
     moveFromOverspent: "Αυτή η κατηγορία είναι ήδη εκτός budget — η μετακίνηση από εδώ δεν ελευθερώνει χρήματα, την κάνει χειρότερη. Κάλυψέ την από άλλη κατηγορία ή από το «Για μοίρασμα».",
     coverOverspend: "Κάλυψη υπέρβασης",
     ok: "Εντάξει",
+    expenseKind: "Έξοδο", incomeKind: "Έσοδο", adjustment: "Προσαρμογή", increase: "Αύξηση", decrease: "Μείωση",
+    accCash: "Μετρητά", accChecking: "Τρεχούμενος", accSavings: "Ταμιευτήριο", accCard: "Πιστωτική κάρτα",
+    accInvest: "Επενδύσεις", accLoan: "Δάνειο", accountType: "Τύπος λογαριασμού",
+    onBudget: "Στον προϋπολογισμό", tracking: "Παρακολούθηση", onBudgetHint: "Τα χρήματά του μετράνε στο «Για μοίρασμα».",
+    trackingHint: "Δείχνει μόνο το υπόλοιπο — δεν μπαίνει στον προϋπολογισμό.",
+    balanceToday: "Υπόλοιπο σήμερα", debtToday: "Οφειλή σήμερα", loanToday: "Υπόλοιπο δανείου σήμερα",
+    realBalance: "Πραγματικό υπόλοιπο σήμερα", realDebt: "Πραγματική οφειλή σήμερα", reconcile: "Συμφωνία",
+    reconcileHint: "Γράψε ό,τι δείχνει σήμερα η τράπεζα. Αν διαφέρει, η διαφορά καταχωρείται ως «Προσαρμογή».",
+    reconciled: "Το υπόλοιπο συμφωνεί.", cardPayments: "Πληρωμές καρτών", debtWord: "Οφειλή",
+    needToPay: "λείπουν {x} για την εξόφληση", paidOff: "Καλύπτεται πλήρως",
+    deleteAccountTx: "Διαγραφή λογαριασμού; Θα διαγραφούν και οι κινήσεις του ({n}).",
+    deleteCatConfirmN: "Διαγραφή κατηγορίας; Οι κινήσεις της ({n}) μένουν ως έξοδα «Χωρίς κατηγορία».",
+    deleteGroupConfirmN: "Διαγραφή ομάδας και όλων των κατηγοριών της; Οι κινήσεις τους ({n}) μένουν ως έξοδα «Χωρίς κατηγορία».",
+    payCard: "Πληρωμή κάρτας",
+    wzTitle: "Λογαριασμοί & κάρτες", wzNext: "Επόμενο", wzFinish: "Ολοκλήρωση",
+    wzIntro: "Η νέα έκδοση ξέρει σε ποιον λογαριασμό βρίσκεται κάθε ευρώ και χειρίζεται τις πιστωτικές κάρτες όπως το YNAB.\n\nΜε λίγα βήματα περνάμε τα δεδομένα σου. Τίποτα δεν διαγράφεται.",
+    wzBackup: "Πρώτα κράτα ένα αντίγραφο των δεδομένων σου, για σιγουριά.",
+    wzAccounts: "Οι λογαριασμοί σου", wzAccountsHint: "Διάλεξε τον τύπο κάθε λογαριασμού και γράψε το πραγματικό υπόλοιπο σήμερα. Πρόσθεσε όποια κάρτα ή λογαριασμό λείπει.",
+    wzDefault: "Από πού έγιναν οι κινήσεις σου;", wzDefaultHint: "Οι κινήσεις και τα πάγια που ήδη έχεις μπαίνουν σε αυτόν τον λογαριασμό. Μπορείς να αλλάξεις όποια θες αργότερα.",
+    wzCards: "Πληρωμένα με κάρτα αυτόν τον μήνα", wzCardsHint: "Τσέκαρε τα έξοδα αυτού του μήνα που πλήρωσες με πιστωτική. Πάνε στην κάρτα και τα χρήματά τους στις «Πληρωμές καρτών».",
+    wzOrphans: "Έξοδα χωρίς κατηγορία", wzOrphansHint: "Αυτά τα έξοδα έχασαν την κατηγορία τους όταν διαγράφηκε μια κατηγορία. Διάλεξε κατηγορία για το καθένα.",
+    wzSummary: "Έτοιμο", wzStartAdded: "Αρχικά υπόλοιπα που προστίθενται στο «Για μοίρασμα»", wzRtaNow: "«Για μοίρασμα» μετά τη μεταφορά",
+    wzNeedBudgetAcc: "Χρειάζεται τουλάχιστον ένας λογαριασμός που δεν είναι κάρτα ή δάνειο.",
   },
 };
 
@@ -228,8 +274,7 @@ const fmtLocal = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(
 const todayISO = () => fmtLocal(new Date());
 const round2 = (n) => Math.round(n * 100) / 100;
 const toInput = (n) => (n ? String(round2(n)).replace(".", ",") : "");
-const RTA = "__rta__";                 // "Για μοίρασμα" as a move/transfer source
-const ALL = "__all__";                 // "all category leftovers" as a transfer source
+const RTA = "__rta__";                 // "Για μοίρασμα" as a move source
 const monthKey = (iso) => (iso || "").slice(0, 7);
 const curMonth = () => todayISO().slice(0, 7);
 
@@ -290,7 +335,7 @@ const setPlan = (plan, mk, amount) => [...(plan || []).filter((st) => st.from < 
 // With a date, the monthly share is what's missing spread over the months left (this one included).
 function goalInfo(goal, available) {
   if (!goal?.target) return null;
-  return { target: goal.target, balance: available, remaining: Math.max(0, goal.target - available) };
+  return { target: goal.target, balance: available, remaining: Math.max(0, goal.target - Math.max(0, available)) };
 }
 
 // Income sources: the four built-in ones keep a translation key as id (name null = translated);
@@ -301,13 +346,48 @@ const srcLabel = (t, sources, id) => {
   return x ? (x.name || t(x.id)) : t("income");
 };
 
+/* Accounts (v7). Budget accounts (cash, current, savings, card) hold the money you budget;
+   tracking accounts (investments, loans) only show a balance. Balances are computed from
+   transactions — a "start" transaction carries each account's opening balance.
+   Transaction kinds:
+     expense  — amount < 0 (a refund is > 0), accountId, categoryId (null = «Χωρίς κατηγορία»)
+     income   — amount > 0, accountId, source; goes to «Για μοίρασμα»
+     transfer — amount > 0, from accountId to toAccountId; budget → tracking needs a category
+     start / adjust — opening balance / reconciliation difference on accountId */
+const ACC_TYPES = ["checking", "savings", "cash", "card", "invest", "loan"];
+const TRACKING_TYPES = new Set(["invest", "loan"]);
+const ACC_TYPE_KEY = { cash: "accCash", checking: "accChecking", savings: "accSavings", card: "accCard", invest: "accInvest", loan: "accLoan" };
+const isOnBudget = (a) => !!a && !TRACKING_TYPES.has(a.type);
+const isDebtType = (type) => type === "card" || type === "loan";
+const txKind = (x) => x.kind || (x.categoryId === null && x.amount > 0 ? "income" : "expense");
+
+// Default account for a new entry: the one used last, else the first budget account (income never goes to a card).
+function defaultAccountId(state, kind) {
+  const ok = (a) => isOnBudget(a) && !(kind === "income" && a.type === "card");
+  return (state.accounts.find((a) => a.id === state.settings?.lastAccountId && ok(a)) || state.accounts.find(ok))?.id ?? null;
+}
+
+function accountBalances(state) {
+  const bal = {};
+  for (const a of state.accounts || []) bal[a.id] = 0;
+  for (const x of state.transactions || []) {
+    if (txKind(x) === "transfer") {
+      if (x.accountId in bal) bal[x.accountId] -= x.amount;
+      if (x.toAccountId in bal) bal[x.toAccountId] += x.amount;
+    } else if (x.accountId in bal) bal[x.accountId] += x.amount;
+  }
+  for (const k in bal) bal[k] = round2(bal[k]);
+  return bal;
+}
+
 /* --------------------------- seed data --------------------------- */
 function seedState() {
   const g1 = uid(), g2 = uid(), g3 = uid();
   const cat = (groupId, name) => ({ id: uid(), groupId, name, plan: [] });
+  const cash = uid();
   return {
-    version: 6,
-    settings: { lang: "el" },
+    version: 7,
+    settings: { lang: "el", lastAccountId: cash },
     groups: [
       { id: g1, name: "Πάγια έξοδα" },
       { id: g2, name: "Καθημερινά" },
@@ -328,10 +408,10 @@ function seedState() {
       cat(g3, "Διακοπές"),
     ],
     assignments: {},          // { 'YYYY-MM': { catId: amount } }
-    transactions: [],         // { id, date, amount, categoryId|null, source?, payee, memo, scheduleId|null, accountId? }
-                              // accountId set = savings transfer: +amount into the budget, −amount into savings
-    schedules: [],            // { id, name, amount, categoryId|null, freq, nextDate, payee }
-    accounts: [{ id: uid(), name: "Μετρητά", balance: 0 }],  // { id, name, balance }
+    transactions: [],         // { id, kind, date, amount, accountId, toAccountId?, categoryId|null, source?, payee, memo, scheduleId|null }
+    schedules: [],            // { id, name, amount, categoryId|null, accountId, freq, nextDate, payee }
+    accounts: [{ id: cash, name: "Μετρητά", type: "cash" }],  // { id, name, type } — balance is computed
+                              // a card's payment category is the category with cardId = the card's id
     incomeSources: DEFAULT_SOURCES(),
   };
 }
@@ -400,6 +480,13 @@ function withDefaults(state) {
       if (goalGroups.has(c.groupId) && c.plan?.some((st) => st.amount > 0 && (st.from >= nowMk || planFor(c.plan, nowMk) > 0)))
         c.plan = setPlan(c.plan, nowMk, 0);
     }
+  }
+  // v7: accounts with types and computed balances, transaction kinds, card payment categories.
+  // Older data stays at v6 until the one-time wizard (MigrationWizard) converts it.
+  if ((state.version || 0) >= 7) {
+    for (const a of state.accounts) if (!a.type) a.type = "cash";
+    for (const x of state.transactions) if (!x.kind) x.kind = txKind(x);
+    return state;
   }
   state.version = 6;
   return state;
@@ -492,55 +579,163 @@ class ErrorBoundary extends React.Component {
 }
 
 
-/* -------------------- mascot + onboarding -------------------- */
-function effectiveAssigned(state, catId, mk) {
-  const override = state?.assignments?.[mk]?.[catId];
-  if (override !== undefined) return override || 0;
-  return planFor(state?.categories?.find((c) => c.id === catId)?.plan, mk) || 0;
-}
-// What a category has to spend in month `mk`, before that month's activity, and that activity.
-// Regular categories: just what's assigned that month. «Στόχοι» (and categories keeping leftovers)
-// also carry their balance from earlier months — the same rules as the budget math in App.
-function categoryFunds(state, catId, mk) {
-  const c = state?.categories?.find((x) => x.id === catId);
-  if (!c) return { funds: 0, activity: 0 };
-  const isGoal = !!state.groups?.find((g) => g.id === c.groupId)?.isGoals;
-  const keeps = (m) => isGoal || (!!c.roll && m >= c.roll.since && (!c.roll.until || m <= c.roll.until));
-  const act = {};
-  for (const x of state.transactions || []) if (x.categoryId === catId) {
-    const m = monthKey(x.date); act[m] = (act[m] || 0) + x.amount;
-  }
-  if (!keeps(mk)) return { funds: effectiveAssigned(state, catId, mk), activity: act[mk] || 0 };
-  const starts = [mk, ...Object.keys(act)];
-  for (const m in state.assignments || {}) if (catId in state.assignments[m]) starts.push(m);
-  if (c.plan?.length) starts.push(c.plan[0].from);
-  let carry = 0;
-  for (let m = starts.sort()[0]; m < mk; m = addMonthsKey(m, 1)) {
-    const avail = carry + effectiveAssigned(state, catId, m) + (act[m] || 0);
-    carry = keeps(m) && keeps(addMonthsKey(m, 1)) ? Math.max(0, avail) : 0;
-  }
-  return { funds: carry + effectiveAssigned(state, catId, mk), activity: act[mk] || 0 };
-}
-function monthBudgetHealth(state, dispMonth) {
-  if (!state) return { status: "neutral", assigned: 0, spent: 0 };
-  let assigned = 0, spent = 0;
-  for (const c of state.categories || []) assigned += categoryFunds(state, c.id, dispMonth).funds;
-  state.transactions.forEach((x) => {
-    if (x.categoryId && x.amount < 0 && monthKey(x.date) === dispMonth) spent += -x.amount;
+/* ------------------------- budget math ------------------------- */
+/* «Για μοίρασμα» = money that came in − money held by categories.
+   Comes in: income, opening balances / adjustments of budget accounts (not cards),
+   transfers from a tracking account into the budget.
+   Held by a category in a month:
+     regular — closed months: what was used (leftovers go back); this & later months: what's assigned.
+               Overspending paid in cash (or any non-card account) comes straight out of «Για μοίρασμα».
+     «Στόχοι» / keeping leftovers / card payment — what's assigned stays and carries over.
+   Card purchases (YNAB style), in date order inside each category and month: the part the category
+   still has money for is "funded" — that money moves to the card's payment category. The rest is
+   card debt: it doesn't touch «Για μοίρασμα», the payment category shows what's missing.
+   Payment category = its own assignments + funded purchases − payments (transfers into the card). */
+function computeBudget(state, dispMonth) {
+  const { transactions, assignments, categories, groups, accounts } = state;
+  const accById = Object.fromEntries((accounts || []).map((a) => [a.id, a]));
+  // an unknown account (shouldn't happen) counts as a plain budget account, so no entry silently drops out
+  const on = (id) => !accById[id] || isOnBudget(accById[id]);
+  const isCardAcc = (id) => accById[id]?.type === "card";
+  const catById = Object.fromEntries(categories.map((c) => [c.id, c]));
+  const goalGroups = new Set(groups.filter((g) => g.isGoals).map((g) => g.id));
+  const nowMk = curMonth();
+  const balances = accountBalances(state);
+
+  let inflows = 0, held = 0;
+  const catTx = {};     // catId -> [{ m, amt, card, date, i }]
+  const pay = {};       // cardId -> { month: payment-category activity }
+  const addPay = (cardId, m, v) => { const p = pay[cardId] || (pay[cardId] = {}); p[m] = (p[m] || 0) + v; };
+
+  transactions.forEach((x, i) => {
+    const m = monthKey(x.date), kind = txKind(x);
+    if (kind === "income") {
+      if (!on(x.accountId)) return;
+      inflows += x.amount;
+      if (isCardAcc(x.accountId)) addPay(x.accountId, m, -x.amount);   // came in and paid the card at once
+      return;
+    }
+    if (kind === "start" || kind === "adjust") {
+      if (on(x.accountId) && !isCardAcc(x.accountId)) inflows += x.amount;   // card balance = debt, not money
+      return;
+    }
+    let acc, amt;
+    if (kind === "transfer") {
+      const fOn = on(x.accountId), tOn = on(x.toAccountId);
+      if (fOn && tOn) {                       // between budget accounts: only card payments matter
+        if (isCardAcc(x.toAccountId)) addPay(x.toAccountId, m, -x.amount);
+        if (isCardAcc(x.accountId)) addPay(x.accountId, m, x.amount);
+        return;
+      }
+      if (!fOn && tOn) { if (!isCardAcc(x.toAccountId)) inflows += x.amount; return; }
+      if (!fOn) return;                       // tracking → tracking
+      acc = x.accountId; amt = -x.amount;     // budget → tracking: spent from a category
+    } else {
+      if (!on(x.accountId)) return;
+      acc = x.accountId; amt = x.amount;
+    }
+    const cat = catById[x.categoryId];
+    if (!cat || cat.cardId) {                 // «Χωρίς κατηγορία»: straight from «Για μοίρασμα»
+      held -= amt;
+      if (isCardAcc(acc)) addPay(acc, m, -amt);
+      return;
+    }
+    (catTx[cat.id] || (catTx[cat.id] = [])).push({ m, amt, card: isCardAcc(acc) ? acc : null, date: x.date, i });
   });
+
+  const horizon = dispMonth > nowMk ? dispMonth : nowMk;
+  const prev = [1, 2, 3].map((k) => addMonthsKey(dispMonth, -k));
+  const byCat = {};
+  // payment categories last: they receive what the other categories fund
+  const ordered = [...categories.filter((c) => !c.cardId), ...categories.filter((c) => c.cardId)];
+  for (const c of ordered) {
+    const isCard = !!c.cardId;
+    const list = (catTx[c.id] || []).sort((a, b) => a.date.localeCompare(b.date) || b.i - a.i);
+    const byM = {}, act = {};
+    if (isCard) Object.assign(act, pay[c.cardId] || {});
+    else for (const it of list) { (byM[it.m] || (byM[it.m] = [])).push(it); act[it.m] = (act[it.m] || 0) + it.amt; }
+    const months = new Set(Object.keys(act));
+    for (const m in assignments) if (c.id in assignments[m]) months.add(m);
+    if (c.plan?.length) for (let m = c.plan[0].from; m <= horizon; m = addMonthsKey(m, 1)) months.add(m);
+    const assignedIn = (m) => assignments[m]?.[c.id] ?? planFor(c.plan, m);
+    // «Στόχοι» are expenses without a time limit: they always keep their balance, like card payments.
+    // c.roll = { since, until }: months a category kept its leftovers under an older goal.
+    const isGoal = goalGroups.has(c.groupId);
+    const keeps = (m) => isCard || isGoal || (!!c.roll && m >= c.roll.since && (!c.roll.until || m <= c.roll.until));
+    const sorted = [...months].sort();
+    const last = sorted[sorted.length - 1];
+    let carry = 0, available = 0;
+    for (let m = sorted[0]; sorted.length && (m <= horizon || m <= last); m = addMonthsKey(m, 1)) {
+      const asg = m <= horizon ? assignedIn(m) : (assignments[m]?.[c.id] ?? 0);
+      const k = keeps(m);
+      let r = (k ? carry : 0) + asg, unfunded = 0;
+      if (isCard) r += act[m] || 0;
+      else for (const it of byM[m] || []) {
+        if (it.card) {
+          if (it.amt < 0) {
+            const funded = Math.min(-it.amt, Math.max(0, r));
+            unfunded += -it.amt - funded;
+            addPay(it.card, m, funded);
+          } else addPay(it.card, m, -it.amt);   // refund on the card
+        }
+        r += it.amt;
+      }
+      const cashOver = Math.max(0, -r - unfunded);
+      if (k) {
+        held += asg + cashOver;
+        carry = Math.max(0, r);
+        // leftovers stop being kept: once that month has closed, they go back to «Για μοίρασμα»
+        if (!keeps(addMonthsKey(m, 1)) && m < nowMk) { held -= carry; carry = 0; }
+      } else {
+        held += m < nowMk ? asg - Math.max(0, r) + cashOver : asg + cashOver;
+        carry = 0;
+      }
+      if (m === dispMonth) available = r;
+    }
+    if (!sorted.length || dispMonth < sorted[0]) available = 0;
+    const hist = prev.filter((m) => m in act).map((m) => -act[m]);
+    const debt = isCard ? Math.max(0, -(balances[c.cardId] || 0)) : 0;
+    byCat[c.id] = {
+      assigned: assignedIn(dispMonth),
+      planned: planFor(c.plan, dispMonth),
+      activity: act[dispMonth] || 0,
+      available,
+      spent: -(act[dispMonth] || 0),
+      lastSpent: prev[0] in act ? -act[prev[0]] : null,
+      avgSpent: hist.length ? hist.reduce((s, v) => s + v, 0) / hist.length : null,
+      isGoal,
+      isCard,
+      debt,
+      need: isCard ? round2(Math.max(0, debt - Math.max(0, available))) : 0,
+      goal: goalInfo(c.goal, available),
+    };
+  }
+  return { readyToAssign: round2(inflows - held), byCat, totalIncome: inflows, totalAssigned: held, balances };
+}
+
+// Header cat: is this month's spending inside what the categories have? (card payments excluded)
+function monthBudgetHealth(calc) {
+  if (!calc) return { status: "neutral", assigned: 0, spent: 0 };
+  let assigned = 0, spent = 0;
+  for (const v of Object.values(calc.byCat)) {
+    if (v.isCard) continue;
+    assigned += v.available - v.activity;
+    spent += -v.activity;
+  }
   if (assigned <= 0.005 && spent <= 0.005) return { status: "neutral", assigned, spent };
   return { status: spent > assigned + 0.005 ? "broke" : "rich", assigned, spent };
 }
+// Popup after a new expense, from the state before it was saved.
 function expenseFeedback(state, tx) {
-  // compare with what the category actually has (for «Στόχοι»: its accumulated balance)
-  const { funds, activity } = categoryFunds(state, tx.categoryId, monthKey(tx.date));
-  const remaining = funds + activity - Math.abs(tx.amount);
+  const info = computeBudget(state, monthKey(tx.date)).byCat[tx.categoryId];
+  if (!info) return null;
+  const remaining = info.available - Math.abs(tx.amount);
   if (remaining >= -0.005) return { kind: "expense", remaining };
-  const cat = state?.categories?.find((c) => c.id === tx.categoryId);
-  const isGoal = !!state?.groups?.find((g) => g.id === cat?.groupId)?.isGoals;
-  return { kind: cat?.goal || isGoal ? "overspend" : "empty", remaining };
+  const cat = state.categories.find((c) => c.id === tx.categoryId);
+  return { kind: cat?.goal || info.isGoal ? "overspend" : "empty", remaining };
 }
 
+/* -------------------- mascot + onboarding -------------------- */
 function MascotBadge({ status = "neutral", size = 44, src: srcOverride }) {
   const broke = status === "broke";
   const src = srcOverride || (broke ? catBrokeImg : catRichImg);
@@ -699,77 +894,8 @@ function AppInner() {
   const closeTutorial = () => { setTutorialOpen(false); try { localStorage.setItem(TUTORIAL_KEY, "1"); } catch {} };
 
   /* ---- derived budget math ---- */
-  // One pass over transactions → per-category, per-month activity.
-  const calc = useMemo(() => {
-    if (!state) return null;
-    const { transactions, assignments, categories, groups } = state;
-    const goalGroups = new Set(groups.filter((g) => g.isGoals).map((g) => g.id));
-    const nowMk = curMonth();
-    const act = {};               // catId -> { "YYYY-MM": sum }
-    let totalIncome = 0;
-    for (const x of transactions) {
-      if (x.categoryId === null) { totalIncome += x.amount; continue; }
-      const mk = monthKey(x.date);
-      const m = act[x.categoryId] || (act[x.categoryId] = {});
-      m[mk] = (m[mk] || 0) + x.amount;
-    }
-    // Plans count up to the later of this month and the month on screen,
-    // so looking ahead shows what "Για μοίρασμα" will be once those months are assigned.
-    const horizon = dispMonth > nowMk ? dispMonth : nowMk;
-    const prev = [1, 2, 3].map((i) => addMonthsKey(dispMonth, -i));
-    let totalAssigned = 0;
-    const byCat = {};
-    for (const c of categories) {
-      const a = act[c.id] || {};
-      const months = new Set();
-      for (const m in assignments) if (c.id in assignments[m]) months.add(m);
-      if (c.plan?.length) for (let m = c.plan[0].from; m <= horizon; m = addMonthsKey(m, 1)) months.add(m);
-      const assignedIn = (m) => assignments[m]?.[c.id] ?? planFor(c.plan, m);
-      for (const m in a) months.add(m);
-      // Months where the category keeps its leftovers: while it has a final-amount goal
-      // (c.roll = { since, until }; until = month the goal was removed, null while active).
-      // «Στόχοι» categories are expenses without a time limit: they always keep their balance.
-      const isGoal = goalGroups.has(c.groupId);
-      const keeps = (m) => isGoal || (!!c.roll && m >= c.roll.since && (!c.roll.until || m <= c.roll.until));
-      const sorted = [...months].sort();
-      const last = sorted[sorted.length - 1];
-      let carry = 0, available = 0;
-      for (let m = sorted[0]; sorted.length && (m <= horizon || m <= last); m = addMonthsKey(m, 1)) {
-        const asg = m <= horizon ? assignedIn(m) : (assignments[m]?.[c.id] ?? 0);
-        const actM = a[m] || 0;
-        let avail;
-        if (keeps(m)) {
-          // goal category: what's assigned goes in and stays; overspending isn't carried
-          avail = carry + asg + actM;
-          totalAssigned += asg;
-          if (avail < 0) { totalAssigned -= avail; carry = 0; } else carry = avail;
-          // goal removed: once that month has closed, what's left goes back to "Για μοίρασμα"
-          if (!keeps(addMonthsKey(m, 1)) && m < nowMk) { totalAssigned -= carry; carry = 0; }
-        } else {
-          // Each month stands alone: closed months use up only what was spent (the rest went back
-          // to "Για μοίρασμα"); this and coming months hold back what's assigned, or more if overspent.
-          avail = asg + actM;
-          totalAssigned += m < nowMk ? -actM : Math.max(asg, -actM);
-          carry = 0;
-        }
-        if (m === dispMonth) available = avail;
-      }
-      if (!sorted.length || dispMonth < sorted[0]) available = 0;
-      const hist = prev.filter((m) => m in a).map((m) => -a[m]);   // only months with activity count
-      byCat[c.id] = {
-        assigned: assignedIn(dispMonth),
-        planned: planFor(c.plan, dispMonth),
-        activity: a[dispMonth] || 0,
-        available,
-        spent: -(a[dispMonth] || 0),
-        lastSpent: prev[0] in a ? -a[prev[0]] : null,
-        avgSpent: hist.length ? hist.reduce((s, v) => s + v, 0) / hist.length : null,
-        isGoal,
-        goal: goalInfo(c.goal, available),
-      };
-    }
-    return { readyToAssign: totalIncome - totalAssigned, byCat, totalIncome, totalAssigned };
-  }, [state, dispMonth]);
+  const migrating = !!state && (state.version || 0) < 7;      // v6 data waits for the one-time wizard
+  const calc = useMemo(() => (state && !migrating ? computeBudget(state, dispMonth) : null), [state, dispMonth, migrating]);
 
   const dueSchedules = useMemo(() => {
     if (!state) return [];
@@ -777,27 +903,31 @@ function AppInner() {
     return state.schedules.filter((s) => s.nextDate <= today);
   }, [state]);
 
-  const budgetHealth = useMemo(() => monthBudgetHealth(state, dispMonth), [state, dispMonth]);
+  const budgetHealth = useMemo(() => monthBudgetHealth(calc), [calc]);
 
-  if (!state || !calc) {
-    return <div style={{ minHeight: "100vh", display: "grid", placeItems: "center", background: C.paper, color: C.muted, font: "500 15px 'Commissioner',sans-serif" }}>…</div>;
-  }
+  const exportJSON = () => {
+    const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
+    download(blob, `kavatza-backup-${todayISO()}.json`);
+  };
+
+  const loading = <div style={{ minHeight: "100vh", display: "grid", placeItems: "center", background: C.paper, color: C.muted, font: "500 15px 'Commissioner',sans-serif" }}>…</div>;
+  if (!state) return loading;
+  if (migrating) return <MigrationWizard t={t} state={state} onExport={exportJSON} onDone={(s) => { setState(s); setDispMonth(curMonth()); }} />;
+  if (!calc) return loading;
 
   /* ---- mutations ---- */
   const update = (fn) => setState((prev) => { const next = structuredClone(prev); fn(next); return next; });
 
-  // A savings transfer moves an account's balance the opposite way to the budget:
-  // +amount into the budget = −amount from the account. sign −1 undoes it.
-  const applyTransfer = (s, tx, sign = 1) => {
-    const a = tx?.accountId && s.accounts.find((x) => x.id === tx.accountId);
-    if (a) a.balance = round2(a.balance - sign * tx.amount);
+  // the account used last is the default next time
+  const remember = (s, tx) => {
+    if (["expense", "income", "transfer"].includes(tx.kind) && isOnBudget(s.accounts.find((a) => a.id === tx.accountId))) s.settings.lastAccountId = tx.accountId;
   };
-  const addTx = (tx) => { const id = uid(); update((s) => { s.transactions.unshift({ id, scheduleId: null, ...tx }); }); return id; };
-  const editTx = (id, tx) => update((s) => { const i = s.transactions.findIndex((x) => x.id === id); if (i > -1) s.transactions[i] = { ...s.transactions[i], ...tx }; });
-  const delTx = (id) => update((s) => {
-    applyTransfer(s, s.transactions.find((x) => x.id === id), -1);
-    s.transactions = s.transactions.filter((x) => x.id !== id);
+  const addTx = (tx) => { const id = uid(); update((s) => { s.transactions.unshift({ id, scheduleId: null, ...tx }); remember(s, tx); }); return id; };
+  const editTx = (id, tx) => update((s) => {
+    const i = s.transactions.findIndex((x) => x.id === id);
+    if (i > -1) s.transactions[i] = { id, scheduleId: s.transactions[i].scheduleId ?? null, ...tx };
   });
+  const delTx = (id) => update((s) => { s.transactions = s.transactions.filter((x) => x.id !== id); });
 
   const monthAssign = (s) => s.assignments[dispMonth] || (s.assignments[dispMonth] = {});
   // Adjust this month's assignment relative to what's in effect (explicit, else the plan).
@@ -834,23 +964,10 @@ function AppInner() {
     if (fromId !== RTA) addAssigned(s, fromId, -amt);
     if (toId !== RTA) addAssigned(s, toId, amt);
   });
-  // tx.amount > 0: from savings into the budget; `cat` assigns it straight on (this month).
-  // tx.amount < 0: into savings; `cat` = RTA, one category's leftover, or ALL category leftovers.
-  const saveTransfer = (id, tx, cat) => {
-    const takes = tx.amount >= 0 || !cat || cat === RTA ? []
-      : cat === ALL ? Object.entries(calc.byCat).filter(([, v]) => !v.goal && v.available > 0.005).map(([cid, v]) => [cid, v.available])
-      : [[cat, -tx.amount]];
-    update((s) => {
-      const i = s.transactions.findIndex((x) => x.id === id);
-      if (i > -1) { applyTransfer(s, s.transactions[i], -1); s.transactions[i] = { ...s.transactions[i], ...tx }; applyTransfer(s, s.transactions[i]); }
-      else { const nt = { id: uid(), categoryId: null, scheduleId: null, payee: "", ...tx }; s.transactions.unshift(nt); applyTransfer(s, nt); }
-      if (cat && tx.amount > 0) addAssigned(s, cat, tx.amount);
-      for (const [cid, amt] of takes) addAssigned(s, cid, -amt);
-    });
-  };
 
   const addCategory = (groupId, name) => update((s) => { s.categories.push({ id: uid(), groupId, name, plan: [] }); });
   const renameCategory = (id, name) => update((s) => { const c = s.categories.find((x) => x.id === id); if (c) c.name = name; });
+  // A deleted category's transactions stay expenses, «Χωρίς κατηγορία» (taken from «Για μοίρασμα»).
   const delCategory = (id) => update((s) => {
     s.categories = s.categories.filter((x) => x.id !== id);
     s.transactions.forEach((x) => { if (x.categoryId === id) x.categoryId = null; });
@@ -862,7 +979,7 @@ function AppInner() {
   // dir −1 = up, +1 = down; the Budget screen lists groups in this order
   const moveGroup = (id, dir) => update((s) => {
     const i = s.groups.findIndex((x) => x.id === id), j = i + dir;
-    if (i < 0 || j < 0 || j >= s.groups.length) return;
+    if (i < 0 || j < 0 || j >= s.groups.length || s.groups[j].isCards) return;   // card payments stay on top
     [s.groups[i], s.groups[j]] = [s.groups[j], s.groups[i]];
   });
   // Move a category to position `toIndex` of group `toGroupId` (counted without the category itself).
@@ -884,40 +1001,84 @@ function AppInner() {
     for (const m in s.assignments) for (const cid of catIds) delete s.assignments[m][cid];
     s.schedules.forEach((x) => { if (catIds.includes(x.categoryId)) x.categoryId = null; });
   });
+  const txCountFor = (catIds) => state.transactions.filter((x) => catIds.includes(x.categoryId)).length;
 
   const addSchedule = (sc) => update((s) => { s.schedules.push({ id: uid(), ...sc }); });
   const delSchedule = (id) => update((s) => { s.schedules = s.schedules.filter((x) => x.id !== id); });
   const enterSchedule = (sc) => update((s) => {
-    s.transactions.unshift({ id: uid(), date: sc.nextDate, amount: sc.amount, categoryId: sc.categoryId, ...(sc.source ? { source: sc.source } : {}), payee: sc.payee || sc.name, memo: "", scheduleId: sc.id });
+    const kind = sc.categoryId === null && sc.amount > 0 ? "income" : "expense";
+    const accountId = s.accounts.some((a) => a.id === sc.accountId) ? sc.accountId : defaultAccountId(s, kind);
+    s.transactions.unshift({ id: uid(), kind, date: sc.nextDate, amount: sc.amount, accountId, categoryId: sc.categoryId, ...(sc.source ? { source: sc.source } : {}), payee: sc.payee || sc.name, memo: "", scheduleId: sc.id });
     const i = s.schedules.findIndex((x) => x.id === sc.id);
     if (i > -1) s.schedules[i].nextDate = advanceDate(sc.nextDate, sc.freq);
   });
 
   const setLang = (l) => update((s) => { s.settings.lang = l; });
-  const addAccount = (name, balance) => update((s) => { s.accounts.push({ id: uid(), name, balance }); });
-  const editAccount = (id, name, balance) => update((s) => { const a = s.accounts.find((x) => x.id === id); if (a) { a.name = name; a.balance = balance; } });
-  const delAccount = (id) => update((s) => { s.accounts = s.accounts.filter((x) => x.id !== id); });
+  // A card gets its payment category, in the «Πληρωμές καρτών» group at the top of the budget.
+  const addAccount = (name, type, balance) => update((s) => {
+    const id = uid();
+    s.accounts.push({ id, name, type });
+    if (type === "card") {
+      let g = s.groups.find((x) => x.isCards);
+      if (!g) { g = { id: uid(), name: t("cardPayments"), isCards: true }; s.groups.unshift(g); }
+      s.categories.push({ id: uid(), groupId: g.id, name, plan: [], cardId: id });
+    }
+    if (Math.abs(balance) > 0.004) s.transactions.unshift({ id: uid(), kind: "start", date: todayISO(), amount: round2(balance), accountId: id, categoryId: null, payee: "", memo: "", scheduleId: null });
+  });
+  const renameAccount = (id, name) => update((s) => {
+    const a = s.accounts.find((x) => x.id === id); if (a) a.name = name;
+    const c = s.categories.find((x) => x.cardId === id); if (c) c.name = name;
+  });
+  // «Συμφωνία»: the difference from the real balance is entered as an adjustment
+  const reconcileAccount = (id, real) => {
+    const diff = round2(real - (calc.balances[id] || 0));
+    if (Math.abs(diff) < 0.005) { flash(t("reconciled")); return; }
+    addTx({ kind: "adjust", date: todayISO(), amount: diff, accountId: id, categoryId: null, payee: "", memo: "" });
+    flash(`${t("adjustment")} ${diff > 0 ? "+" : ""}${money(diff)}`);
+  };
+  const delAccount = (id) => update((s) => {
+    s.accounts = s.accounts.filter((x) => x.id !== id);
+    s.transactions = s.transactions.filter((x) => x.accountId !== id && x.toAccountId !== id);
+    const pc = s.categories.find((c) => c.cardId === id);
+    if (pc) {
+      s.categories = s.categories.filter((c) => c.id !== pc.id);
+      for (const m in s.assignments) delete s.assignments[m][pc.id];
+      if (!s.categories.some((c) => c.groupId === pc.groupId)) s.groups = s.groups.filter((g) => g.id !== pc.groupId);
+    }
+    s.schedules.forEach((x) => { if (x.accountId === id) x.accountId = null; });
+    if (s.settings.lastAccountId === id) delete s.settings.lastAccountId;
+  });
+  const accTxCount = (id) => state.transactions.filter((x) => x.accountId === id || x.toAccountId === id).length;
   const dismissBackupNotice = () => update((s) => { s.settings.backupNoticeDismissed = true; });
   const clearAll = () => { setState(seedState()); flash(t("everyEuro")); };
 
   const accName = (id) => state.accounts.find((a) => a.id === id)?.name || t("deletedAccount");
-  const txLabel = (x) => x.accountId
-    ? `${x.amount >= 0 ? t("fromSavings") : t("toSavings")}: ${accName(x.accountId)}`
-    : x.categoryId === null ? (x.source ? srcLabel(t, state.incomeSources, x.source)
+  const catName = (id) => state.categories.find((c) => c.id === id)?.name || t("uncategorised");
+  // What an entry is: its category, income source, the accounts of a transfer, or opening balance / adjustment.
+  const txWhat = (x) => {
+    const k = txKind(x);
+    if (k === "income") return x.source ? srcLabel(t, state.incomeSources, x.source)
       // older income kept its source only in the payee
-      : state.incomeSources.map((v) => srcLabel(t, state.incomeSources, v.id)).find((l) => l === x.payee) || t("income"))
-    : (state.categories.find((c) => c.id === x.categoryId)?.name || t("uncategorised"));
+      : state.incomeSources.map((v) => srcLabel(t, state.incomeSources, v.id)).find((l) => l === x.payee) || t("income");
+    if (k === "transfer") return `${accName(x.accountId)} → ${accName(x.toAccountId)}${x.categoryId ? ` · ${catName(x.categoryId)}` : ""}`;
+    if (k === "start") return t("startingBalance");
+    if (k === "adjust") return t("adjustment");
+    return catName(x.categoryId);
+  };
+  const txLabel = (x) => {
+    const k = txKind(x);
+    return k === "transfer" ? txWhat(x) : k === "start" || k === "adjust" ? accName(x.accountId) : `${txWhat(x)} · ${accName(x.accountId)}`;
+  };
 
   /* ---- backup / restore ---- */
-  const exportJSON = () => {
-    const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
-    download(blob, `kavatza-backup-${todayISO()}.json`);
-  };
   const exportCSV = () => {
     const esc = (v) => `"${String(v ?? "").replace(/"/g, '""')}"`;
-    const rows = [["Date", "Payee", "Category", "Memo", "Amount_EUR"]];
-    [...state.transactions].sort((a, b) => a.date.localeCompare(b.date)).forEach((x) =>
-      rows.push([x.date, esc(x.payee), esc(txLabel(x)), esc(x.memo), x.amount.toFixed(2)]));
+    const rows = [["Date", "Account", "Payee", "Category", "Memo", "Amount_EUR"]];
+    [...state.transactions].sort((a, b) => a.date.localeCompare(b.date)).forEach((x) => {
+      const tr = txKind(x) === "transfer";
+      rows.push([x.date, esc(tr ? `${accName(x.accountId)} → ${accName(x.toAccountId)}` : accName(x.accountId)), esc(x.payee),
+        esc(tr ? (x.categoryId ? catName(x.categoryId) : "") : txWhat(x)), esc(x.memo), x.amount.toFixed(2)]);
+    });
     const blob = new Blob([rows.map((r) => r.join(",")).join("\n")], { type: "text/csv" });
     download(blob, `kavatza-activity-${todayISO()}.csv`);
   };
@@ -960,14 +1121,14 @@ function AppInner() {
         )}
         {tab === "transactions" && (
           <TransactionsScreen t={t} lang={lang} state={state} txLabel={txLabel}
-            onEdit={(tx) => setModal(tx.accountId ? { type: "savings", tx } : { type: "tx", tx })} />
+            onEdit={(tx) => setModal({ type: "tx", tx })} />
         )}
         {tab === "accounts" && (
-          <AccountsScreen t={t} accounts={state.accounts} onAdd={() => setModal({ type: "account", account: null })}
+          <AccountsScreen t={t} accounts={state.accounts} balances={calc.balances} onAdd={() => setModal({ type: "account", account: null })}
             onEdit={(a) => setModal({ type: "account", account: a })}
-            onTransfer={() => setModal({ type: "savings", dir: "out" })} />
+            onTransfer={() => setModal({ type: "tx", tx: null, kind: "transfer" })} />
         )}
-        {tab === "reports" && <ReportsScreen t={t} lang={lang} state={state} dispMonth={dispMonth} txLabel={txLabel} />}
+        {tab === "reports" && <ReportsScreen t={t} lang={lang} state={state} dispMonth={dispMonth} txWhat={txWhat} />}
         {tab === "more" && (
           <MoreScreen
             t={t} lang={lang} state={state} due={dueSchedules}
@@ -1005,14 +1166,15 @@ function AppInner() {
 
         {/* modals */}
         {modal?.type === "tx" && (
-          <TxSheet t={t} state={state} initial={modal.tx} presetCat={modal.presetCat} dispMonth={dispMonth}
-            onClose={() => setModal(null)}
+          <TxSheet t={t} state={state} balances={calc.balances} initial={modal.tx} presetCat={modal.presetCat} presetTo={modal.presetTo} presetKind={modal.kind}
+            onClose={() => setModal(modal.back || null)}
             onSave={(tx) => {
               if (modal.tx) editTx(modal.tx.id, tx);
               else {
                 const id = addTx(tx);
-                if (tx.amount < 0 && tx.categoryId) setCatFeedback({ ...expenseFeedback(state, tx), tx: { ...tx, id } });
-                else if (tx.amount > 0 && tx.categoryId === null && !tx.accountId) setCatFeedback({ kind: "income", amount: tx.amount, tx: { ...tx, id } });
+                const fb = tx.kind === "expense" && tx.amount < 0 && tx.categoryId ? expenseFeedback(state, tx)
+                  : tx.kind === "income" ? { kind: "income", amount: tx.amount } : null;
+                if (fb) setCatFeedback({ ...fb, tx: { ...tx, id } });
               }
               setModal(null);
             }}
@@ -1023,14 +1185,12 @@ function AppInner() {
           if (!cat) return null;
           return (
             <AssignSheet t={t} cat={cat} isGoal={calc.byCat[cat.id].isGoal} info={calc.byCat[cat.id]} dispMonth={dispMonth} lang={lang}
-              hasAccounts={state.accounts.length > 0}
               onClose={() => setModal(null)}
               onAssign={(amt) => setAssigned(cat.id, amt)}
               onSetAmount={(amt, scope) => setAssignments([{ catId: cat.id, amount: amt }], scope)}
               onSetGoal={(goal) => setCatGoal(cat.id, goal)}
               onMove={(preset) => setModal({ type: "move", ...preset, back: modal })}
-              onFromSavings={(preset) => setModal({ type: "savings", ...preset, back: modal })}
-              onNewTx={() => setModal({ type: "tx", tx: null, presetCat: cat.id })} />
+              onNewTx={() => setModal(cat.cardId ? { type: "tx", tx: null, presetTo: cat.cardId, back: modal } : { type: "tx", tx: null, presetCat: cat.id })} />
           );
         })()}
         {modal?.type === "move" && (
@@ -1043,15 +1203,8 @@ function AppInner() {
             onClose={() => setModal(null)}
             onSave={(entries, scope) => { setAssignments(entries, scope); setModal(null); }} />
         )}
-        {modal?.type === "savings" && (
-          <SavingsSheet t={t} lang={lang} state={state} calc={calc} groupsView={groupsView} preset={modal} dispMonth={dispMonth}
-            onClose={() => setModal(modal.back || null)}
-            onAddAccount={() => setModal({ type: "account", account: null, back: modal })}
-            onSave={(tx, cat) => { saveTransfer(modal.tx?.id, tx, cat); setModal(modal.back || null); }}
-            onDelete={modal.tx ? () => { delTx(modal.tx.id); setModal(null); } : null} />
-        )}
         {modal?.type === "manage" && (
-          <ManageSheet t={t} groupsView={groupsView}
+          <ManageSheet t={t} groupsView={groupsView.filter((g) => !g.isCards)} txCount={txCountFor}
             onClose={() => setModal(null)}
             onAddCategory={addCategory} onRenameCategory={renameCategory} onDelCategory={delCategory}
             onAddGroup={addGroup} onRenameGroup={renameGroup} onDelGroup={delGroup} onMoveGroup={moveGroup} onMoveCategory={moveCategory}
@@ -1063,8 +1216,11 @@ function AppInner() {
             onSave={(sc) => { addSchedule(sc); setModal(null); }} />
         )}
         {modal?.type === "account" && (
-          <AccountSheet t={t} initial={modal.account} onClose={() => setModal(modal.back || null)}
-            onSave={(name, bal) => { modal.account ? editAccount(modal.account.id, name, bal) : addAccount(name, bal); setModal(modal.back || null); }}
+          <AccountSheet t={t} initial={modal.account} balance={modal.account ? calc.balances[modal.account.id] || 0 : 0}
+            txCount={modal.account ? accTxCount(modal.account.id) : 0}
+            onClose={() => setModal(modal.back || null)}
+            onSave={(name, type, bal) => { modal.account ? renameAccount(modal.account.id, name) : addAccount(name, type, bal); setModal(modal.back || null); }}
+            onReconcile={(real) => { reconcileAccount(modal.account.id, real); setModal(null); }}
             onDelete={modal.account ? () => { delAccount(modal.account.id); setModal(null); } : null} />
         )}
 
@@ -1313,6 +1469,24 @@ function GoalLines({ t, lang, g }) {
   );
 }
 
+// Card payment category: what's set aside against the card's debt, and what's still missing.
+function CardLines({ t, info }) {
+  if (info.debt <= 0.005) return null;
+  const missing = info.need > 0.005;
+  return (
+    <>
+      <div style={{ marginTop: 9, height: 6, background: "#EBE8DB", borderRadius: 4, overflow: "hidden" }}>
+        <div style={{ width: `${Math.max(0, Math.min(1, info.available / info.debt)) * 100}%`, height: "100%", borderRadius: 4, background: missing ? C.gold : C.green, transition: "width .35s ease" }} />
+      </div>
+      <div style={{ font: "500 12px 'Commissioner',sans-serif", color: C.muted, marginTop: 5 }}>
+        {t("debtWord")} {money(info.debt)} · {missing
+          ? <b style={{ color: C.clay }}>{t("needToPay").replace("{x}", money(info.need))}</b>
+          : <b style={{ color: C.green }}>{t("paidOff")}</b>}
+      </div>
+    </>
+  );
+}
+
 function CategoryRow({ t, lang, cat, info, last, onClick, dispMonth }) {
   const avail = info.available;
   const availColor = avail < -0.005 ? C.clay : avail > 0.005 ? C.green : C.muted;
@@ -1333,7 +1507,7 @@ function CategoryRow({ t, lang, cat, info, last, onClick, dispMonth }) {
         <div style={{ font: "700 16px 'Poppins',sans-serif", color: availColor, flexShrink: 0 }}>{money(avail)}</div>
       </div>
 
-      {info.isGoal ? (info.goal && <GoalLines t={t} lang={lang} g={info.goal} />) : info.goal ? <GoalLines t={t} lang={lang} g={info.goal} /> : (<>
+      {info.isCard ? <CardLines t={t} info={info} /> : info.isGoal ? (info.goal && <GoalLines t={t} lang={lang} g={info.goal} />) : info.goal ? <GoalLines t={t} lang={lang} g={info.goal} /> : (<>
       {/* envelope depletion: spent vs assigned */}
       <div style={{ marginTop: 9, height: 6, background: "#EBE8DB", borderRadius: 4, overflow: "hidden" }}>
         <div style={{
@@ -1377,74 +1551,127 @@ function Empty({ t, text, hint, icon: Icon = Wallet }) {
 }
 
 /* ======================== Accounts screen ======================== */
-function AccountsScreen({ t, accounts, onAdd, onEdit, onTransfer }) {
-  const total = accounts.reduce((s, a) => s + a.balance, 0);
+function AccountsScreen({ t, accounts, balances, onAdd, onEdit, onTransfer }) {
+  const sections = [
+    ["onBudget", accounts.filter(isOnBudget)],
+    ["tracking", accounts.filter((a) => !isOnBudget(a))],
+  ].filter(([, list]) => list.length);
   return (
     <div>
       <ScreenHead title={t("accounts")} />
       <Ledger>
-        <div style={{
-          background: C.card, border: `1px solid ${C.line}`, borderRadius: 16, padding: "16px 18px",
-          display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14,
-        }}>
-          <span style={{ font: "600 14px 'Commissioner',sans-serif", color: C.muted }}>{t("totalSavings")}</span>
-          <span style={{ font: "700 20px 'Poppins',sans-serif", color: C.ink }}>{money(total)}</span>
-        </div>
-
-        {accounts.length === 0 ? <Empty t={t} text={t("noAccounts")} hint={t("noAccountsHint")} icon={PiggyBank} /> : (
-          <div style={{ background: C.card, borderRadius: 16, overflow: "hidden", border: `1px solid ${C.line}`, marginBottom: 14 }}>
-            {accounts.map((a, i) => (
-              <button key={a.id} onClick={() => onEdit(a)} style={{
-                width: "100%", textAlign: "left", background: "transparent", border: "none", cursor: "pointer",
-                borderBottom: i === accounts.length - 1 ? "none" : `1px solid ${C.line}`,
-                padding: "14px 16px", display: "block",
-              }}>
-                <span style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
-                  <span style={{ font: "600 15px 'Commissioner',sans-serif", color: C.ink }}>{a.name}</span>
-                  <span style={{ font: "700 16px 'Poppins',sans-serif", color: a.balance < 0 ? C.clay : C.ink }}>{money(a.balance)}</span>
-                </span>
-              </button>
-            ))}
-          </div>
-        )}
+        {accounts.length === 0 && <Empty t={t} text={t("noAccounts")} hint={t("noAccountsHint")} icon={PiggyBank} />}
+        {sections.map(([key, list]) => {
+          const total = round2(list.reduce((s, a) => s + (balances[a.id] || 0), 0));
+          return (
+            <section key={key} style={{ marginBottom: 16 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", padding: "4px 6px 8px" }}>
+                <h3 style={{ font: "600 13px 'Commissioner',sans-serif", letterSpacing: ".06em", textTransform: "uppercase", color: C.muted, margin: 0 }}>{t(key)}</h3>
+                <span style={{ font: "700 15px 'Poppins',sans-serif", color: total < 0 ? C.clay : C.ink }}>{money(total)}</span>
+              </div>
+              <div style={{ background: C.card, borderRadius: 16, overflow: "hidden", border: `1px solid ${C.line}` }}>
+                {list.map((a, i) => {
+                  const b = balances[a.id] || 0;
+                  return (
+                    <button key={a.id} onClick={() => onEdit(a)} style={{
+                      width: "100%", textAlign: "left", background: "transparent", border: "none", cursor: "pointer",
+                      borderBottom: i === list.length - 1 ? "none" : `1px solid ${C.line}`,
+                      padding: "13px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12,
+                    }}>
+                      <span style={{ minWidth: 0 }}>
+                        <span style={{ display: "block", font: "600 15px 'Commissioner',sans-serif", color: C.ink }}>{a.name}</span>
+                        <span style={{ display: "block", font: "500 12px 'Commissioner',sans-serif", color: C.muted, marginTop: 2 }}>{t(ACC_TYPE_KEY[a.type])}</span>
+                      </span>
+                      <span style={{ font: "700 16px 'Poppins',sans-serif", color: b < -0.005 ? C.clay : C.ink, flexShrink: 0 }}>{money(b)}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </section>
+          );
+        })}
 
         <div style={{ display: "flex", gap: 8 }}>
           <GhostBtn onClick={onAdd} color={C.ink}><Plus size={16} />{t("addAccount")}</GhostBtn>
-          {accounts.length > 0 && <GhostBtn onClick={onTransfer} color={C.ink}><ArrowLeftRight size={16} />{t("transfer")}</GhostBtn>}
+          {accounts.length > 1 && <GhostBtn onClick={onTransfer} color={C.ink}><ArrowLeftRight size={16} />{t("transfer")}</GhostBtn>}
         </div>
         <div style={{ height: 12 }} />
       </Ledger>
     </div>
   );
 }
-function AccountSheet({ t, initial, onClose, onSave, onDelete }) {
+
+// Account types, budget ones first.
+function AccountTypeSelect({ t, value, onChange }) {
+  return (
+    <select value={value} onChange={(e) => onChange(e.target.value)} style={selectStyle}>
+      <optgroup label={t("onBudget")}>
+        {ACC_TYPES.filter((x) => !TRACKING_TYPES.has(x)).map((x) => <option key={x} value={x}>{t(ACC_TYPE_KEY[x])}</option>)}
+      </optgroup>
+      <optgroup label={t("tracking")}>
+        {ACC_TYPES.filter((x) => TRACKING_TYPES.has(x)).map((x) => <option key={x} value={x}>{t(ACC_TYPE_KEY[x])}</option>)}
+      </optgroup>
+    </select>
+  );
+}
+// Cards and loans are entered as what you owe (a positive number) and kept as a negative balance.
+const balanceLabel = (t, type, real) => type === "card" ? t(real ? "realDebt" : "debtToday")
+  : type === "loan" ? t("loanToday") : t(real ? "realBalance" : "balanceToday");
+const signedBalance = (type, n) => (isDebtType(type) ? -Math.abs(n) : n);
+
+function AccountSheet({ t, initial, balance, txCount, onClose, onSave, onReconcile, onDelete }) {
   const [name, setName] = useState(initial?.name || "");
-  const [bal, setBal] = useState(initial ? initial.balance.toString().replace(".", ",") : "");
+  const [type, setType] = useState(initial?.type || "checking");
+  const [bal, setBal] = useState("");
+  const [real, setReal] = useState("");
   const [confirmDel, setConfirmDel] = useState(false);
   const valid = name.trim().length > 0 && !isNaN(parseAmount(bal || "0"));
+  const realN = parseAmount(real);
   const submit = () => {
-    const b = parseAmount(bal || "0");
     if (!valid) return;
-    onSave(name.trim(), round2(b));
+    onSave(name.trim(), type, round2(signedBalance(type, parseAmount(bal || "0"))));
   };
+  const debt = isDebtType(initial?.type);
   return (
-    <Sheet title={initial ? t("edit") : t("addAccount")} onClose={onClose} t={t}>
+    <Sheet title={initial ? initial.name : t("addAccount")} onClose={onClose} t={t}>
       <Field label={t("accountName")}>
-        <input value={name} onChange={(e) => setName(e.target.value)} style={inputStyle} placeholder="—" autoFocus />
+        <input value={name} onChange={(e) => setName(e.target.value)} style={inputStyle} placeholder="—" autoFocus={!initial} />
       </Field>
-      <Field label={`${initial ? t("balance") : t("startingBalance")} (€)`}>
-        <input inputMode="decimal" value={bal} onChange={(e) => setBal(e.target.value)} placeholder="0,00"
-          style={{ ...inputStyle, font: "700 20px 'Poppins',sans-serif", textAlign: "right" }} />
-      </Field>
+      {initial ? (
+        <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
+          <Stat label={t(ACC_TYPE_KEY[initial.type])} value={money(balance)} accent={balance < -0.005 ? C.clay : C.ink} />
+        </div>
+      ) : (
+        <>
+          <Field label={t("accountType")}>
+            <AccountTypeSelect t={t} value={type} onChange={setType} />
+            <div style={{ font: "500 12.5px/1.45 'Commissioner',sans-serif", color: C.muted, marginTop: 6 }}>{t(TRACKING_TYPES.has(type) ? "trackingHint" : "onBudgetHint")}</div>
+          </Field>
+          <Field label={`${balanceLabel(t, type)} (€)`}>
+            <input inputMode="decimal" value={bal} onChange={(e) => setBal(e.target.value)} placeholder="0,00" style={amountStyle} />
+          </Field>
+        </>
+      )}
       <PrimaryBtn onClick={submit} disabled={!valid}><Check size={18} />{t("save")}</PrimaryBtn>
-      {confirmDel && <ConfirmDialog t={t} message={t("deleteAccountConfirm")} onCancel={() => setConfirmDel(false)} onConfirm={onDelete} />}
-      {onDelete && (
-        <div style={{ marginTop: 10 }}>
-          <button onClick={() => setConfirmDel(true)} style={{ width: "100%", padding: "13px", borderRadius: 12, border: "none", background: C.claySoft, color: C.clay, font: "600 15px 'Commissioner',sans-serif", cursor: "pointer", display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 7 }}>
-            <Trash2 size={16} />{t("delete")}
-          </button>
+
+      {initial && (
+        <div style={{ marginTop: 18, paddingTop: 16, borderTop: `1px solid ${C.line}` }}>
+          <Field label={`${balanceLabel(t, initial.type, true)} (€)`}>
+            <div style={{ display: "flex", gap: 8 }}>
+              <input inputMode="decimal" value={real} onChange={(e) => setReal(e.target.value)} placeholder={toInput(debt ? -balance : balance) || "0,00"}
+                style={{ ...amountStyle, flex: 1, minWidth: 0 }} />
+              <GhostBtn color={C.teal} onClick={() => !isNaN(realN) && onReconcile(round2(signedBalance(initial.type, realN)))}>
+                <Check size={16} />{t("reconcile")}
+              </GhostBtn>
+            </div>
+            <div style={{ font: "500 12.5px/1.45 'Commissioner',sans-serif", color: C.muted, marginTop: 6 }}>{t("reconcileHint")}</div>
+          </Field>
         </div>
       )}
+
+      {confirmDel && <ConfirmDialog t={t} message={txCount ? t("deleteAccountTx").replace("{n}", txCount) : t("deleteAccountConfirm")}
+        onCancel={() => setConfirmDel(false)} onConfirm={onDelete} />}
+      {onDelete && <DangerBtn onClick={() => setConfirmDel(true)}><Trash2 size={16} />{t("delete")}</DangerBtn>}
     </Sheet>
   );
 }
@@ -1469,7 +1696,7 @@ function TransactionsScreen({ t, lang, state, txLabel, onEdit }) {
       {txs.length === 0 ? <Empty t={t} text={t("noActivity")} hint={t("noActivityHint")} icon={Receipt} /> : (
         <div>
           {groups.map((grp) => {
-            const dayOut = grp.items.reduce((sum, x) => sum + (x.amount < 0 ? x.amount : 0), 0);
+            const dayOut = grp.items.reduce((sum, x) => sum + (txKind(x) === "expense" && x.amount < 0 ? x.amount : 0), 0);
             return (
             <div key={grp.date} style={{ marginBottom: 14 }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", padding: "6px 6px 8px" }}>
@@ -1478,8 +1705,10 @@ function TransactionsScreen({ t, lang, state, txLabel, onEdit }) {
               </div>
               <div style={{ background: C.card, borderRadius: 16, overflow: "hidden", border: `1px solid ${C.line}` }}>
                 {grp.items.map((x, i) => {
-                  const inflow = x.amount >= 0;
-                  const transfer = !!x.accountId;
+                  const kind = txKind(x);
+                  const transfer = kind === "transfer";
+                  const balanceTx = kind === "start" || kind === "adjust";
+                  const inflow = !transfer && x.amount >= 0;
                   return (
                     <button key={x.id} onClick={() => onEdit(x)} style={{
                       width: "100%", display: "flex", alignItems: "center", gap: 12, padding: "13px 14px",
@@ -1487,18 +1716,18 @@ function TransactionsScreen({ t, lang, state, txLabel, onEdit }) {
                       cursor: "pointer", textAlign: "left",
                     }}>
                       <div style={{ width: 38, height: 38, borderRadius: 11, flexShrink: 0, display: "grid", placeItems: "center",
-                        background: transfer ? C.tealSoft : inflow ? C.goldSoft : C.claySoft }}>
-                        {transfer ? <Landmark size={18} color={C.vault} />
+                        background: transfer || balanceTx ? C.tealSoft : inflow ? C.goldSoft : C.claySoft }}>
+                        {transfer ? <ArrowLeftRight size={18} color={C.vault} /> : balanceTx ? <Landmark size={18} color={C.vault} />
                           : inflow ? <ArrowDownLeft size={18} color={C.vault} /> : <ArrowUpRight size={18} color={C.clay} />}
                       </div>
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ font: "600 15px 'Commissioner',sans-serif", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                          {x.payee || x.memo || (transfer ? t("savings") : inflow ? t("inflow") : t("outflow"))}
+                          {x.payee || x.memo || (transfer ? t("transfer") : kind === "start" ? t("startingBalance") : kind === "adjust" ? t("adjustment") : inflow ? t("inflow") : t("outflow"))}
                         </div>
                         <div style={{ font: "500 12px 'Commissioner',sans-serif", color: C.muted, marginTop: 2 }}>{txLabel(x)}</div>
                       </div>
-                      <div style={{ font: "700 15px 'Poppins',sans-serif", color: inflow ? C.green : C.ink }}>
-                        {inflow ? "+" : ""}{money(x.amount)}
+                      <div style={{ font: "700 15px 'Poppins',sans-serif", color: inflow ? C.green : C.ink, flexShrink: 0 }}>
+                        {inflow && !transfer ? "+" : ""}{money(x.amount)}
                       </div>
                     </button>
                   );
@@ -1514,12 +1743,12 @@ function TransactionsScreen({ t, lang, state, txLabel, onEdit }) {
 }
 
 /* ======================== Reports screen ======================== */
-function ReportsScreen({ t, lang, state, dispMonth, txLabel }) {
-  // spending by category, this month
+function ReportsScreen({ t, lang, state, dispMonth, txWhat }) {
+  // spending by category, this month (transfers, opening balances and adjustments aren't spending)
   const spend = useMemo(() => {
     const map = {};
     state.transactions.forEach((x) => {
-      if (x.categoryId && x.amount < 0 && monthKey(x.date) === dispMonth) {
+      if (txKind(x) === "expense" && x.amount < 0 && monthKey(x.date) === dispMonth) {
         const name = state.categories.find((c) => c.id === x.categoryId)?.name || t("uncategorised");
         map[name] = (map[name] || 0) + Math.abs(x.amount);
       }
@@ -1527,16 +1756,16 @@ function ReportsScreen({ t, lang, state, dispMonth, txLabel }) {
     return Object.entries(map).map(([name, value]) => ({ name, value })).sort((a, b) => b.value - a.value);
   }, [state, dispMonth, t]);
 
-  // income by source, this month (savings transfers aren't income)
+  // income by source, this month
   const income = useMemo(() => {
     const map = {};
     for (const x of state.transactions) {
-      if (x.categoryId !== null || x.accountId || x.amount <= 0 || monthKey(x.date) !== dispMonth) continue;
-      const name = txLabel(x);
+      if (txKind(x) !== "income" || monthKey(x.date) !== dispMonth) continue;
+      const name = txWhat(x);
       map[name] = (map[name] || 0) + x.amount;
     }
     return Object.entries(map).map(([name, value]) => ({ name, value })).sort((a, b) => b.value - a.value);
-  }, [state, dispMonth, txLabel]);
+  }, [state, dispMonth, txWhat]);
   const totalIncome = income.reduce((s, x) => s + x.value, 0);
 
   // income vs expense, last 6 months
@@ -1546,8 +1775,9 @@ function ReportsScreen({ t, lang, state, dispMonth, txLabel }) {
       const mk = addMonthsKey(dispMonth, -i);
       let inc = 0, exp = 0;
       state.transactions.forEach((x) => {
-        if (monthKey(x.date) !== mk || x.accountId) return;
-        if (x.amount > 0) inc += x.amount; else exp += -x.amount;
+        if (monthKey(x.date) !== mk) return;
+        const k = txKind(x);
+        if (k === "income") inc += x.amount; else if (k === "expense" && x.amount < 0) exp += -x.amount;
       });
       out.push({ name: shortMonth(mk, lang), income: Math.round(inc), expense: Math.round(exp) });
     }
@@ -1639,7 +1869,8 @@ function MiniEmpty({ t }) {
 /* ========================= More screen ========================== */
 function MoreScreen({ t, lang, state, due, onEnterSchedule, onDelSchedule, onNewSchedule, onManageCats, onSetLang, onExportJSON, onExportCSV, onImport, onClear, onOpenTutorial }) {
   const [confirmClear, setConfirmClear] = useState(false);
-  const catName = (id) => id === null ? t("income") : (state.categories.find((c) => c.id === id)?.name || t("uncategorised"));
+  const catName = (s) => s.categoryId === null ? (s.amount > 0 ? t("income") : t("uncategorised")) : (state.categories.find((c) => c.id === s.categoryId)?.name || t("uncategorised"));
+  const accName = (id) => state.accounts.find((a) => a.id === id)?.name;
   const dfmt = (iso) => new Date(iso + "T00:00:00").toLocaleDateString(lang === "el" ? "el-GR" : "en-GB", { day: "numeric", month: "short", year: "numeric" });
   const freqLabel = { monthly: t("monthly"), weekly: t("weekly"), biweekly: t("biweekly"), yearly: t("yearly") };
   const dueIds = new Set(due.map((d) => d.id));
@@ -1670,7 +1901,7 @@ function MoreScreen({ t, lang, state, due, onEnterSchedule, onDelSchedule, onNew
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ font: "600 15px 'Commissioner',sans-serif", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{s.name}</div>
                   <div style={{ font: "500 12px 'Commissioner',sans-serif", color: isDue ? C.amber : C.muted, marginTop: 2 }}>
-                    {catName(s.categoryId)} · {freqLabel[s.freq]} · {dfmt(s.nextDate)}
+                    {catName(s)}{accName(s.accountId) ? ` · ${accName(s.accountId)}` : ""} · {freqLabel[s.freq]} · {dfmt(s.nextDate)}
                   </div>
                 </div>
                 <div style={{ font: "700 15px 'Poppins',sans-serif", color: inflow ? C.green : C.ink }}>{inflow ? "+" : ""}{money(s.amount)}</div>
@@ -1747,15 +1978,28 @@ function MoreScreen({ t, lang, state, due, onEnterSchedule, onDelSchedule, onNew
 }
 
 /* ===================== Transaction sheet ======================== */
-function TxSheet({ t, state, initial, presetCat, dispMonth, onClose, onSave, onDelete }) {
-  const [inflow, setInflow] = useState(initial ? initial.amount >= 0 : false);
+// Expense / income / transfer between accounts. Opening balances and adjustments
+// (made by «Συμφωνία») open here too, with just an amount that goes up or down.
+function TxSheet({ t, state, balances, initial, presetCat, presetTo, presetKind, onClose, onSave, onDelete }) {
+  const accounts = state.accounts;
+  const budgetAccs = accounts.filter(isOnBudget);
+  const incomeAccs = budgetAccs.filter((a) => a.type !== "card");
+  const firstKind = initial ? txKind(initial) : presetTo ? "transfer" : presetKind || "expense";
+  const balanceTx = firstKind === "start" || firstKind === "adjust";
+  const [kind, setKind] = useState(firstKind);
   const [amount, setAmount] = useState(initial ? Math.abs(initial.amount).toString().replace(".", ",") : "");
-  const [catId, setCatId] = useState(initial ? initial.categoryId : (presetCat ?? state.categories[0]?.id ?? null));
-  // Income keeps categoryId null (so "Για μοίρασμα" math is untouched) and points to a source by id.
+  const [up, setUp] = useState(initial ? initial.amount >= 0 : true);          // opening balance / adjustment sign
+  const spendCats = state.categories.filter((c) => !c.cardId);
+  const wasUncat = !!initial && txKind(initial) === "expense" && initial.categoryId === null;   // «Χωρίς κατηγορία» stays possible
+  const [catId, setCatId] = useState(initial ? (initial.categoryId ?? (wasUncat ? null : spendCats[0]?.id ?? null)) : (presetCat ?? spendCats[0]?.id ?? null));
+  const pick = (list, prefer) => (list.find((a) => a.id === prefer) || list.find((a) => a.id === state.settings.lastAccountId) || list[0])?.id ?? "";
+  const [accountId, setAccountId] = useState(initial?.accountId ?? (presetTo ? pick(budgetAccs.filter((a) => a.id !== presetTo)) : ""));
+  const [toId, setToId] = useState(initial?.toAccountId ?? presetTo ?? "");
+  // Income keeps categoryId null and points to a source by id.
   const SRC = state.incomeSources.map((v) => v.id);
   const label = (id) => srcLabel(t, state.incomeSources, id);
   const [src, setSrc] = useState(() => {
-    if (initial && initial.categoryId === null) {
+    if (initial && txKind(initial) === "income") {
       if (SRC.includes(initial.source)) return initial.source;
       const hit = SRC.find((k) => label(k) === initial.payee);   // older entries kept the source in the payee
       if (hit) return hit;
@@ -1766,90 +2010,111 @@ function TxSheet({ t, state, initial, presetCat, dispMonth, onClose, onSave, onD
   const [memo, setMemo] = useState(initial?.memo || "");
   const [date, setDate] = useState(initial?.date || todayISO());
 
-  const valid = !isNaN(parseAmount(amount)) && parseAmount(amount) > 0;
+  // the account list depends on the kind; keep the chosen one when it fits, else the default
+  const accList = kind === "income" ? incomeAccs : kind === "expense" ? budgetAccs : accounts;
+  const acc = accList.some((a) => a.id === accountId) ? accountId : pick(accList);
+  const toList = accounts.filter((a) => a.id !== acc);
+  const to = toList.some((a) => a.id === toId) ? toId : (toList[0]?.id ?? "");
+  const accById = (id) => accounts.find((a) => a.id === id);
+  // money leaving the budget for a tracking account (investment, loan) is spent from a category
+  const needsCat = kind === "transfer" && isOnBudget(accById(acc)) && !isOnBudget(accById(to));
+  const cat = kind === "transfer" && !spendCats.some((c) => c.id === catId) ? spendCats[0]?.id ?? null : catId;
+
+  const amt = parseAmount(amount);
+  const valid = !isNaN(amt) && amt > 0 && !!acc && (kind !== "transfer" || (!!to && (!needsCat || !!cat)));
 
   const submit = () => {
-    let amt = parseAmount(amount);
-    if (isNaN(amt) || amt <= 0) return;
-    onSave({
-      date, amount: inflow ? Math.abs(amt) : -Math.abs(amt),
-      categoryId: inflow ? null : catId,
-      ...(inflow ? { source: src } : {}),
-      payee: inflow ? (payee.trim() || label(src)) : payee.trim(),
-      memo: memo.trim(),
-    });
+    if (!valid) return;
+    const a = round2(Math.abs(amt));
+    const base = { kind, date, accountId: acc, payee: payee.trim(), memo: memo.trim() };
+    if (kind === "expense") onSave({ ...base, amount: -a, categoryId: catId || null });
+    else if (kind === "income") onSave({ ...base, amount: a, categoryId: null, source: src, payee: payee.trim() || label(src) });
+    else if (kind === "transfer") onSave({ ...base, amount: a, toAccountId: to, categoryId: needsCat ? cat : null });
+    else onSave({ ...base, amount: up ? a : -a, categoryId: null });
   };
 
+  const accOpt = (a) => <option key={a.id} value={a.id}>{a.name} ({money(balances[a.id] || 0)})</option>;
+  const catSelect = (value, onChange, withNone) => (
+    <select value={value ?? ""} onChange={(e) => onChange(e.target.value || null)} style={selectStyle}>
+      {withNone && <option value="">{t("uncategorised")}</option>}
+      {state.groups.filter((g) => !g.isCards).map((g) => (
+        <optgroup key={g.id} label={g.name}>
+          {spendCats.filter((c) => c.groupId === g.id).map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+        </optgroup>
+      ))}
+    </select>
+  );
+
+  const title = balanceTx ? t(firstKind === "start" ? "startingBalance" : "adjustment") : initial ? t("editTransaction") : t("newTransaction");
   return (
-    <Sheet title={initial ? t("editTransaction") : t("newTransaction")} onClose={onClose} t={t}>
-      {/* inflow / outflow toggle */}
-      <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
-        {[[false, t("outflow"), ArrowUpRight], [true, t("inflow"), ArrowDownLeft]].map(([val, label, Icon]) => (
-          <button key={String(val)} onClick={() => setInflow(val)} style={{
-            flex: 1, padding: "12px", borderRadius: 12, cursor: "pointer", font: "600 14px 'Commissioner',sans-serif",
-            display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 6,
-            border: `1.5px solid ${inflow === val ? (val ? C.teal : C.ink) : C.line}`,
-            background: inflow === val ? (val ? C.tealSoft : C.paper) : C.card,
-            color: inflow === val ? (val ? C.teal : C.ink) : C.muted,
-          }}><Icon size={16} />{label}</button>
-        ))}
-      </div>
+    <Sheet title={title} onClose={onClose} t={t}>
+      {balanceTx ? (
+        <Segmented value={up} onChange={setUp} options={[[true, t("increase"), ArrowDownLeft], [false, t("decrease"), ArrowUpRight]]} />
+      ) : (
+        <Segmented value={kind} onChange={setKind}
+          options={[["expense", t("expenseKind"), ArrowUpRight], ["income", t("incomeKind"), ArrowDownLeft], ["transfer", t("transfer"), ArrowLeftRight]]} />
+      )}
 
       <Field label={`${t("amount")} (€)`}>
         <input inputMode="decimal" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="0,00"
-          style={{ ...inputStyle, font: "700 22px 'Poppins',sans-serif", textAlign: "right" }} autoFocus={!initial} />
+          style={amountStyle} autoFocus={!initial} />
       </Field>
 
-      <Field label={t("category")}>
-        {inflow ? (
-          <select value={src} onChange={(e) => setSrc(e.target.value)}
-            style={{ ...inputStyle, appearance: "none", backgroundColor: "#FBFCFC", backgroundImage: "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2371796F' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><path d='m6 9 6 6 6-6'/></svg>\")", backgroundRepeat: "no-repeat", backgroundPosition: "right 13px center", paddingRight: 40 }}>
+      <Field label={kind === "transfer" ? t("from") : t("account")}>
+        <select value={acc} onChange={(e) => setAccountId(e.target.value)} style={selectStyle}>
+          {kind === "transfer" && accounts.some((a) => !isOnBudget(a)) ? (
+            <>
+              <optgroup label={t("onBudget")}>{budgetAccs.map(accOpt)}</optgroup>
+              <optgroup label={t("tracking")}>{accounts.filter((a) => !isOnBudget(a)).map(accOpt)}</optgroup>
+            </>
+          ) : accList.map(accOpt)}
+        </select>
+      </Field>
+
+      {kind === "transfer" && (
+        <Field label={t("to")}>
+          <select value={to} onChange={(e) => setToId(e.target.value)} style={selectStyle}>{toList.map(accOpt)}</select>
+        </Field>
+      )}
+
+      {kind === "expense" && (
+        <Field label={t("category")}>{catSelect(catId, setCatId, wasUncat)}</Field>
+      )}
+      {needsCat && <Field label={t("category")}>{catSelect(cat, setCatId, false)}</Field>}
+      {kind === "income" && (
+        <Field label={t("category")}>
+          <select value={src} onChange={(e) => setSrc(e.target.value)} style={selectStyle}>
             {SRC.length ? SRC.map((k) => <option key={k} value={k}>{label(k)}</option>) : <option value="">{t("income")}</option>}
           </select>
-        ) : (
-          <select value={catId ?? state.categories[0]?.id ?? ""} onChange={(e) => setCatId(e.target.value)}
-            style={{ ...inputStyle, appearance: "none", backgroundColor: "#FBFCFC", backgroundImage: "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2371796F' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><path d='m6 9 6 6 6-6'/></svg>\")", backgroundRepeat: "no-repeat", backgroundPosition: "right 13px center", paddingRight: 40 }}>
-            {state.groups.map((g) => (
-              <optgroup key={g.id} label={g.name}>
-                {state.categories.filter((c) => c.groupId === g.id).map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
-              </optgroup>
-            ))}
-          </select>
-        )}
-      </Field>
+        </Field>
+      )}
 
-      <Field label={t("payee")}>
-        <input value={payee} onChange={(e) => setPayee(e.target.value)} style={inputStyle} placeholder="—" />
-      </Field>
+      {!balanceTx && (
+        <Field label={t("payee")}>
+          <input value={payee} onChange={(e) => setPayee(e.target.value)} style={inputStyle} placeholder="—" />
+        </Field>
+      )}
 
-      <div style={{ display: "flex", gap: 12 }}>
-        <div style={{ flex: 1 }}>
-          <Field label={t("date")}>
-            <input type="date" value={date} onChange={(e) => setDate(e.target.value)} style={inputStyle} />
-          </Field>
-        </div>
-      </div>
+      <Field label={t("date")}>
+        <input type="date" value={date} onChange={(e) => setDate(e.target.value)} style={inputStyle} />
+      </Field>
 
       <Field label={t("memo")}>
         <input value={memo} onChange={(e) => setMemo(e.target.value)} style={inputStyle} placeholder="—" />
       </Field>
 
       <PrimaryBtn onClick={submit} disabled={!valid}><Check size={18} />{t("save")}</PrimaryBtn>
-      {onDelete && (
-        <div style={{ marginTop: 10 }}>
-          <button onClick={onDelete} style={{ width: "100%", padding: "13px", borderRadius: 12, border: "none", background: C.claySoft, color: C.clay, font: "600 15px 'Commissioner',sans-serif", cursor: "pointer", display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 7 }}>
-            <Trash2 size={16} />{t("delete")}
-          </button>
-        </div>
-      )}
+      {onDelete && <DangerBtn onClick={onDelete}><Trash2 size={16} />{t("delete")}</DangerBtn>}
     </Sheet>
   );
 }
 
 /* ======================== Assign sheet ========================== */
-function AssignSheet({ t, cat, isGoal, info, dispMonth, lang, hasAccounts, onClose, onAssign, onSetAmount, onSetGoal, onMove, onFromSavings, onNewTx }) {
+function AssignSheet({ t, cat, isGoal: isGoalCat, info, dispMonth, lang, onClose, onAssign, onSetAmount, onSetGoal, onMove, onNewTx }) {
   // mode "set": type this month's total (regular categories). "add" / "sub": type an amount to add or
-  // take away, this month only, like YNAB's + / − on the number pad. «Στόχοι» categories only add or take away.
+  // take away, this month only, like YNAB's + / − on the number pad. «Στόχοι» and card payment
+  // categories keep their balance, so they only add or take away.
+  const isGoal = isGoalCat || info.isCard;
   const [mode, setMode] = useState(isGoal ? "add" : "set");
   const [amount, setAmount] = useState(isGoal ? "" : toInput(info.assigned));
   const [goalAmt, setGoalAmt] = useState(toInput(cat.goal?.target));
@@ -1902,7 +2167,13 @@ function AssignSheet({ t, cat, isGoal, info, dispMonth, lang, hasAccounts, onClo
         </div>
       )}
 
-      {isGoal && (
+      {info.isCard && (
+        <div style={{ margin: "0 0 16px" }}>
+          <div style={{ font: "500 13px 'Commissioner',sans-serif", color: C.muted }}>{t("balanceWord")}: <b style={{ color: C.ink }}>{money(info.available)}</b></div>
+          <CardLines t={t} info={info} />
+        </div>
+      )}
+      {isGoalCat && (
         <>
           <Field label={`${t("goalAmount")} (€)`}>
             <input inputMode="decimal" value={goalAmt} onChange={(e) => { setGoalAmt(e.target.value); setGoalDirty(true); }} placeholder="—"
@@ -1946,16 +2217,11 @@ function AssignSheet({ t, cat, isGoal, info, dispMonth, lang, hasAccounts, onClo
 
       <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 18 }}>
         <GhostBtn color={C.ink} onClick={() => { commit(); onNewTx(); }}>
-          <Receipt size={16} />{t("newTransaction")}
+          <Receipt size={16} />{info.isCard ? t("payCard") : t("newTransaction")}
         </GhostBtn>
         <GhostBtn color={C.ink} onClick={() => { commit(); onMove(info.available > 0.005 ? { fromId: cat.id } : { toId: cat.id }); }}>
           <ArrowLeftRight size={16} />{t("move")}
         </GhostBtn>
-        {hasAccounts && (
-          <GhostBtn color={C.ink} onClick={() => { commit(); onFromSavings({ catId: cat.id, amount: round2(overspend) }); }}>
-            <Landmark size={16} />{t("fromSavings")}
-          </GhostBtn>
-        )}
       </div>
 
       <PrimaryBtn onClick={() => { commit(); onClose(); }}><Check size={18} />{t("save")}</PrimaryBtn>
@@ -1975,7 +2241,7 @@ function Chip({ children, onClick, color = C.teal, bg = C.tealSoft }) {
 }
 
 /* ====================== Manage categories ======================= */
-function ManageSheet({ t, groupsView, onClose, onAddCategory, onRenameCategory, onDelCategory, onAddGroup, onRenameGroup, onDelGroup, onMoveGroup, onMoveCategory, sources, onAddSource, onRenameSource, onDelSource }) {
+function ManageSheet({ t, groupsView, txCount, onClose, onAddCategory, onRenameCategory, onDelCategory, onAddGroup, onRenameGroup, onDelGroup, onMoveGroup, onMoveCategory, sources, onAddSource, onRenameSource, onDelSource }) {
   const [dialog, setDialog] = useState(null);
   const [sorting, setSorting] = useState(false);
   const close = () => setDialog(null);
@@ -2138,10 +2404,10 @@ function ManageSheet({ t, groupsView, onClose, onAddCategory, onRenameCategory, 
       {dialog?.kind === "delSrc" && <ConfirmDialog t={t} message={t("deleteSourceConfirm")} onCancel={close} onConfirm={() => { onDelSource(dialog.id); close(); }} />}
       {dialog?.kind === "addCat" && <PromptDialog t={t} title={t("addCategory")} label={t("categoryName")} onCancel={close} onSubmit={(n) => { onAddCategory(dialog.groupId, n); close(); }} />}
       {dialog?.kind === "renameCat" && <PromptDialog t={t} title={t("rename")} label={t("categoryName")} initial={dialog.name} onCancel={close} onSubmit={(n) => { onRenameCategory(dialog.id, n); close(); }} />}
-      {dialog?.kind === "delCat" && <ConfirmDialog t={t} message={t("deleteCatConfirm")} onCancel={close} onConfirm={() => { onDelCategory(dialog.id); close(); }} />}
+      {dialog?.kind === "delCat" && <ConfirmDialog t={t} message={t("deleteCatConfirmN").replace("{n}", txCount([dialog.id]))} onCancel={close} onConfirm={() => { onDelCategory(dialog.id); close(); }} />}
       {dialog?.kind === "addGroup" && <PromptDialog t={t} title={t("addGroup")} label={t("groupName")} onCancel={close} onSubmit={(n) => { onAddGroup(n); close(); }} />}
       {dialog?.kind === "renameGroup" && <PromptDialog t={t} title={t("rename")} label={t("groupName")} initial={dialog.name} onCancel={close} onSubmit={(n) => { onRenameGroup(dialog.id, n); close(); }} />}
-      {dialog?.kind === "delGroup" && <ConfirmDialog t={t} message={t("deleteGroupConfirm")} onCancel={close} onConfirm={() => { onDelGroup(dialog.id); close(); }} />}
+      {dialog?.kind === "delGroup" && <ConfirmDialog t={t} message={t("deleteGroupConfirmN").replace("{n}", txCount((groupsView.find((g) => g.id === dialog.id)?.cats || []).map((c) => c.id)))} onCancel={close} onConfirm={() => { onDelGroup(dialog.id); close(); }} />}
     </Sheet>
   );
 }
@@ -2151,19 +2417,24 @@ function ScheduleSheet({ t, state, onClose, onSave }) {
   const [name, setName] = useState("");
   const [inflow, setInflow] = useState(false);
   const [amount, setAmount] = useState("");
-  const [catId, setCatId] = useState(state.categories[0]?.id ?? "__income__");
+  const spendCats = state.categories.filter((c) => !c.cardId);
+  const [catId, setCatId] = useState(spendCats[0]?.id ?? "__income__");
+  const [accountId, setAccountId] = useState("");
   const [freq, setFreq] = useState("monthly");
   const [nextDate, setNextDate] = useState(todayISO());
 
   const incomeSelected = catId === "__income__";
-  const valid = name.trim() && !isNaN(parseAmount(amount)) && parseAmount(amount) > 0;
+  const isInc = incomeSelected || inflow;
+  // same accounts as a new entry: budget accounts, never a card for income; default = the last one used
+  const accs = state.accounts.filter((a) => isOnBudget(a) && !(isInc && a.type === "card"));
+  const acc = accs.some((a) => a.id === accountId) ? accountId : (accs.find((a) => a.id === state.settings.lastAccountId) || accs[0])?.id ?? "";
+  const valid = name.trim() && !isNaN(parseAmount(amount)) && parseAmount(amount) > 0 && !!acc;
 
   const submit = () => {
     const amt = parseAmount(amount); if (!valid) return;
-    const isInc = incomeSelected || inflow;
     onSave({
       name: name.trim(), amount: isInc ? Math.abs(amt) : -Math.abs(amt),
-      categoryId: incomeSelected ? null : catId, freq, nextDate, payee: name.trim(),
+      categoryId: incomeSelected ? null : catId, accountId: acc, freq, nextDate, payee: name.trim(),
     });
   };
 
@@ -2190,11 +2461,16 @@ function ScheduleSheet({ t, state, onClose, onSave }) {
         <select value={catId} onChange={(e) => { setCatId(e.target.value); if (e.target.value === "__income__") setInflow(true); }}
           style={{ ...inputStyle, appearance: "none", backgroundColor: "#FBFCFC", backgroundImage: "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2371796F' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><path d='m6 9 6 6 6-6'/></svg>\")", backgroundRepeat: "no-repeat", backgroundPosition: "right 13px center", paddingRight: 40 }}>
           <option value="__income__">＋ {t("income")}</option>
-          {state.groups.map((g) => (
+          {state.groups.filter((g) => !g.isCards).map((g) => (
             <optgroup key={g.id} label={g.name}>
-              {state.categories.filter((c) => c.groupId === g.id).map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+              {spendCats.filter((c) => c.groupId === g.id).map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
             </optgroup>
           ))}
+        </select>
+      </Field>
+      <Field label={t("account")}>
+        <select value={acc} onChange={(e) => setAccountId(e.target.value)} style={selectStyle}>
+          {accs.map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
         </select>
       </Field>
       <div style={{ display: "flex", gap: 12 }}>
@@ -2354,7 +2630,7 @@ function MoveSheet({ t, groupsView, calc, preset, onClose, onMove }) {
 /* ======================= Targets sheet ========================== */
 // Every category's monthly amount on one screen, with actual spending next to it.
 function TargetsSheet({ t, lang, groupsView: allGroups, calc, dispMonth, onClose, onSave }) {
-  const groupsView = allGroups.filter((g) => !g.isGoals);   // «Στόχοι» have no monthly amount
+  const groupsView = allGroups.filter((g) => !g.isGoals && !g.isCards);   // «Στόχοι» and card payments have no monthly amount
   const init = {};
   for (const g of groupsView) for (const c of g.cats) init[c.id] = toInput(calc.byCat[c.id].assigned);
   const [vals, setVals] = useState(init);
@@ -2397,104 +2673,226 @@ function TargetsSheet({ t, lang, groupsView: allGroups, calc, dispMonth, onClose
   );
 }
 
-/* ======================= Savings transfer ======================= */
-function SavingsSheet({ t, lang, state, calc, groupsView, preset, dispMonth, onClose, onAddAccount, onSave, onDelete }) {
-  const init = preset.tx;
-  const [dir, setDir] = useState(init ? (init.amount >= 0 ? "in" : "out") : preset.dir || "in");
-  const [accountId, setAccountId] = useState(init?.accountId ?? preset.accountId ?? state.accounts[0]?.id ?? "");
-  const [amount, setAmount] = useState(init ? toInput(Math.abs(init.amount)) : toInput(preset.amount));
-  const [catId, setCatId] = useState(preset.catId ?? "");
-  const [from, setFrom] = useState(preset.from ?? RTA);      // where money going INTO savings comes from
-  const [date, setDate] = useState(init?.date || todayISO());
-  const [memo, setMemo] = useState(init?.memo || "");
-
-  if (!init && state.accounts.length === 0) {
-    return (
-      <Sheet title={t("savings")} onClose={onClose} t={t}>
-        <Empty t={t} icon={PiggyBank} text={t("noAccounts")} hint={t("noAccountsHint")} />
-        <PrimaryBtn onClick={onAddAccount}><Plus size={18} />{t("addAccount")}</PrimaryBtn>
-      </Sheet>
-    );
+/* ================= One-time move to accounts & cards (v6 → v7) ================= */
+// accs: [{ id, name, type, real }] with real = today's balance (cards and loans negative).
+function migrateToV7(old, { accs, defAcc, cardOf, orphanCat, cardGroupName }) {
+  const s = structuredClone(old);
+  s.accounts = accs.map((a) => ({ id: a.id, name: a.name.trim(), type: a.type }));
+  const cardIds = new Set(s.accounts.filter((a) => a.type === "card").map((a) => a.id));
+  if (cardIds.size) {
+    const g = { id: uid(), name: cardGroupName, isCards: true };
+    s.groups.unshift(g);
+    for (const a of s.accounts) if (cardIds.has(a.id)) s.categories.push({ id: uid(), groupId: g.id, name: a.name, plan: [], cardId: a.id });
   }
+  s.transactions = s.transactions.map((x) => {
+    if (x.accountId) {          // the old savings transfer: + into the budget, − into savings
+      const out = x.amount < 0;
+      return { ...x, kind: "transfer", amount: Math.abs(x.amount), categoryId: null,
+        accountId: out ? defAcc : x.accountId, toAccountId: out ? x.accountId : defAcc };
+    }
+    if (x.categoryId === null && x.amount > 0) return { ...x, kind: "income", accountId: defAcc };
+    return { ...x, kind: "expense", categoryId: x.categoryId ?? (orphanCat[x.id] || null),
+      accountId: cardIds.has(cardOf[x.id]) ? cardOf[x.id] : defAcc };
+  });
+  // opening balance = today's real balance − what the existing entries already add up to
+  const bal = accountBalances(s);
+  const today = todayISO();
+  for (const a of accs) {
+    const diff = round2(a.real - (bal[a.id] || 0));
+    if (Math.abs(diff) > 0.004) s.transactions.unshift({ id: uid(), kind: "start", date: today, amount: diff, accountId: a.id, categoryId: null, payee: "", memo: "", scheduleId: null });
+  }
+  s.schedules = s.schedules.map((sc) => ({ ...sc, accountId: defAcc }));
+  s.settings = { ...s.settings, lastAccountId: defAcc };
+  s.version = 7;
+  return s;
+}
 
-  const av = (id) => calc.byCat[id]?.available ?? 0;
-  // goal categories keep their money, so "all leftovers" never includes them
-  const leftTotal = round2(Object.values(calc.byCat).reduce((s, v) => s + (v.goal ? 0 : Math.max(0, v.available)), 0));
-  const pickFrom = (v) => {
-    setFrom(v);
-    if (v === ALL) setAmount(toInput(leftTotal));
-    else if (v !== RTA) setAmount(toInput(Math.max(0, av(v))));
-  };
-  const acc = state.accounts.find((a) => a.id === accountId);
-  const showFrom = dir === "out" && !init;
-  const amt = parseAmount(amount);
-  const valid = !isNaN(amt) && amt > 0 && accountId;
-  // balance available to draw from, counting this transfer's own amount back in when editing
-  const bal = (acc?.balance ?? 0) + (init?.accountId === accountId ? Math.max(0, init.amount) : 0);
-  const hasGoalCats = Object.values(calc.byCat).some((v) => v.goal);
+function MigrationWizard({ t, state, onExport, onDone }) {
+  const nowMk = curMonth();
+  const num = (v) => (String(v).trim() === "" ? 0 : parseAmount(v));
+  const usedByOld = new Set(state.transactions.filter((x) => x.accountId).map((x) => x.accountId));
+  const [accs, setAccs] = useState(() => state.accounts.map((a) => ({
+    id: a.id, name: a.name, type: /μετρητ|cash/i.test(a.name) ? "cash" : "checking", real: toInput(a.balance),
+  })));
+  const [defAcc, setDefAcc] = useState("");
+  const [cardOf, setCardOf] = useState({});          // txId → card id
+  const [orphanCat, setOrphanCat] = useState({});    // txId → category id
+  const [step, setStep] = useState(0);
+  const [exported, setExported] = useState(false);
+
+  const setAcc = (id, patch) => setAccs((list) => list.map((a) => (a.id === id ? { ...a, ...patch } : a)));
+  const cards = accs.filter((a) => a.type === "card");
+  const cashAccs = accs.filter((a) => isOnBudget(a) && a.type !== "card");
+  const def = cashAccs.some((a) => a.id === defAcc) ? defAcc
+    : [...cashAccs].sort((a, b) => (num(b.real) || 0) - (num(a.real) || 0))[0]?.id ?? "";
+  const cardTx = state.transactions.filter((x) => !x.accountId && x.amount < 0 && monthKey(x.date) === nowMk)
+    .sort((a, b) => a.date.localeCompare(b.date));
+  const orphans = state.transactions.filter((x) => !x.accountId && x.categoryId === null && x.amount < 0)
+    .sort((a, b) => a.date.localeCompare(b.date));
+  const steps = ["intro", "accounts", "default", ...(cards.length && cardTx.length ? ["cards"] : []), ...(orphans.length ? ["orphans"] : []), "summary"];
+  const cur = steps[Math.min(step, steps.length - 1)];
+  const accsOk = accs.every((a) => a.name.trim() && !isNaN(num(a.real))) && cashAccs.length > 0;
+
+  const catName = (id) => state.categories.find((c) => c.id === id)?.name || t("uncategorised");
+  const dfmt = (iso) => new Date(iso + "T00:00:00").toLocaleDateString("el-GR", { day: "numeric", month: "short" });
+  const draft = cur === "summary" ? migrateToV7(state, {
+    accs: accs.map((a) => ({ ...a, real: round2(signedBalance(a.type, num(a.real))) })),
+    defAcc: def, cardOf, orphanCat, cardGroupName: t("cardPayments"),
+  }) : null;
+  const draftCalc = draft ? computeBudget(draft, nowMk) : null;
+  const startAdded = draft ? round2(draft.transactions.filter((x) => x.kind === "start" && isOnBudget(draft.accounts.find((a) => a.id === x.accountId)) && draft.accounts.find((a) => a.id === x.accountId)?.type !== "card").reduce((s, x) => s + x.amount, 0)) : 0;
+
+  const next = () => (cur === "summary" ? onDone(draft) : setStep(step + 1));
+  const canNext = cur === "accounts" ? accsOk : cur === "default" ? !!def : true;
+  const box = { background: C.card, border: `1px solid ${C.line}`, borderRadius: 16, padding: 14, marginBottom: 12 };
+  const hint = (k) => <div style={{ font: "500 14px/1.55 'Commissioner',sans-serif", color: C.muted, margin: "0 2px 14px", whiteSpace: "pre-line" }}>{t(k)}</div>;
+  const rowLine = (x) => (
+    <span style={{ flex: 1, minWidth: 0 }}>
+      <span style={{ display: "block", font: "600 14px 'Commissioner',sans-serif", color: C.ink, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{x.payee || catName(x.categoryId)}</span>
+      <span style={{ display: "block", font: "500 12px 'Commissioner',sans-serif", color: C.muted, marginTop: 2 }}>{dfmt(x.date)}{x.payee ? ` · ${catName(x.categoryId)}` : ""}</span>
+    </span>
+  );
 
   return (
-    <Sheet title={t("savings")} onClose={onClose} t={t}>
-      <Segmented value={dir} onChange={setDir}
-        options={[["in", t("fromSavings"), ArrowDownLeft], ["out", t("toSavings"), ArrowUpRight]]} />
-      <Field label={t("account")}>
-        <select value={accountId} onChange={(e) => setAccountId(e.target.value)} style={selectStyle}>
-          {!acc && <option value={accountId}>{t("deletedAccount")}</option>}
-          {state.accounts.map((a) => <option key={a.id} value={a.id}>{a.name} ({money(a.balance)})</option>)}
-        </select>
-      </Field>
-      {showFrom && (
-        <Field label={t("from")}>
-          <select value={from} onChange={(e) => pickFrom(e.target.value)} style={selectStyle}>
-            <option value={RTA}>{t("readyToAssign")} ({money(calc.readyToAssign)})</option>
-            <option value={ALL}>{t("allLeftovers")} ({money(leftTotal)})</option>
-            {groupsView.map((g) => (
-              <optgroup key={g.id} label={g.name}>
-                {g.cats.map((c) => <option key={c.id} value={c.id}>{c.name} ({money(av(c.id))})</option>)}
-              </optgroup>
-            ))}
-          </select>
-        </Field>
-      )}
-      <Field label={`${t("amount")} (€)`}>
-        <input inputMode="decimal" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="0,00"
-          readOnly={showFrom && from === ALL} style={amountStyle} autoFocus={!init && !preset.amount} />
-        {dir === "in" && valid && amt > bal + 0.005 && (
-          <div style={{ font: "500 13px 'Commissioner',sans-serif", color: C.clay, marginTop: 6 }}>{t("exceedsBalance")}</div>
-        )}
-        {showFrom && from !== ALL && valid && amt > (from === RTA ? calc.readyToAssign : av(from)) + 0.005 && (
-          <div style={{ font: "500 13px 'Commissioner',sans-serif", color: C.clay, marginTop: 6 }}>{t("willGoNegative")}</div>
-        )}
-        {dir === "out" && hasGoalCats && (
-          <div style={{ font: "500 12.5px/1.45 'Commissioner',sans-serif", color: C.muted, marginTop: 8 }}>{t("goalMoneyNote")}</div>
-        )}
-      </Field>
-      {dir === "in" && !init && (
-        <Field label={t("assignTo")}>
-          <select value={catId} onChange={(e) => setCatId(e.target.value)} style={selectStyle}>
-            <option value="">{t("readyToAssignOpt")}</option>
-            {groupsView.map((g) => (
-              <optgroup key={g.id} label={g.name}>
-                {g.cats.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
-              </optgroup>
-            ))}
-          </select>
-        </Field>
-      )}
-      <Field label={t("date")}>
-        <input type="date" value={date} onChange={(e) => setDate(e.target.value)} style={inputStyle} />
-      </Field>
-      <Field label={t("memo")}>
-        <input value={memo} onChange={(e) => setMemo(e.target.value)} style={inputStyle} placeholder="—" />
-      </Field>
-      <PrimaryBtn disabled={!valid} onClick={() => valid && onSave({
-        accountId, amount: dir === "in" ? round2(amt) : -round2(amt), date,
-        memo: memo.trim() || (showFrom && from === ALL ? `${t("leftovers")} ${monthLabel(dispMonth, lang)}` : ""),
-      }, dir === "in" ? catId : (showFrom ? from : ""))}>
-        <Check size={18} />{t("save")}
-      </PrimaryBtn>
-      {onDelete && <DangerBtn onClick={onDelete}><Trash2 size={16} />{t("delete")}</DangerBtn>}
-    </Sheet>
+    <div style={{ background: C.paper, minHeight: "100vh", display: "flex", justifyContent: "center", fontFamily: "'Commissioner', sans-serif", color: C.ink }}>
+      <div style={{ width: "100%", maxWidth: 480, minHeight: "100vh", background: C.paper, paddingBottom: 110 }}>
+        <header style={{ background: C.vault, padding: "calc(18px + env(safe-area-inset-top)) 20px 36px", display: "flex", alignItems: "center", gap: 14 }}>
+          <MascotBadge status="rich" size={58} />
+          <div>
+            <h1 style={{ font: "700 22px 'Commissioner',sans-serif", margin: 0, color: C.coin }}>{t("wzTitle")}</h1>
+            <div style={{ display: "flex", gap: 6, marginTop: 9 }}>
+              {steps.map((s, i) => <span key={s} style={{ width: i === step ? 22 : 8, height: 8, borderRadius: 99, background: i <= step ? C.gold : "rgba(243,239,226,.25)", transition: "all .25s ease" }} />)}
+            </div>
+          </div>
+        </header>
+        <Ledger>
+          {cur === "intro" && (
+            <>
+              {hint("wzIntro")}
+              <div style={box}>
+                <div style={{ font: "500 14px/1.5 'Commissioner',sans-serif", color: C.ink, marginBottom: 12 }}>{t("wzBackup")}</div>
+                <GhostBtn color={C.ink} onClick={() => { onExport(); setExported(true); }}>{exported ? <Check size={16} color={C.green} /> : <Download size={16} />}{t("exportJSON")}</GhostBtn>
+              </div>
+            </>
+          )}
+
+          {cur === "accounts" && (
+            <>
+              <h2 style={{ font: "700 18px 'Commissioner',sans-serif", margin: "0 2px 6px" }}>{t("wzAccounts")}</h2>
+              {hint("wzAccountsHint")}
+              {accs.map((a) => (
+                <div key={a.id} style={box}>
+                  <div style={{ display: "flex", gap: 8, marginBottom: 10 }}>
+                    <input value={a.name} onChange={(e) => setAcc(a.id, { name: e.target.value })} placeholder={t("accountName")} aria-label={t("accountName")} style={{ ...inputStyle, flex: 1, minWidth: 0 }} />
+                    {!usedByOld.has(a.id) && (
+                      <button onClick={() => setAccs((list) => list.filter((x) => x.id !== a.id))} aria-label={t("delete")} style={iconBtn}><Trash2 size={17} color={C.clay} /></button>
+                    )}
+                  </div>
+                  <div style={{ marginBottom: 10 }}><AccountTypeSelect t={t} value={a.type} onChange={(v) => setAcc(a.id, { type: v })} /></div>
+                  <label style={fieldLabel}>{balanceLabel(t, a.type)} (€)</label>
+                  <input inputMode="decimal" value={a.real} onChange={(e) => setAcc(a.id, { real: e.target.value })} placeholder="0,00" aria-label={`${a.name} ${balanceLabel(t, a.type)}`} style={amountStyle} />
+                </div>
+              ))}
+              <GhostBtn color={C.ink} onClick={() => setAccs((list) => [...list, { id: uid(), name: "", type: "card", real: "" }])}><Plus size={16} />{t("addAccount")}</GhostBtn>
+              {cashAccs.length === 0 && <div style={{ font: "500 13px 'Commissioner',sans-serif", color: C.clay, marginTop: 10 }}>{t("wzNeedBudgetAcc")}</div>}
+            </>
+          )}
+
+          {cur === "default" && (
+            <>
+              <h2 style={{ font: "700 18px 'Commissioner',sans-serif", margin: "0 2px 6px" }}>{t("wzDefault")}</h2>
+              {hint("wzDefaultHint")}
+              <Segmented value={def} onChange={setDefAcc} options={cashAccs.map((a) => [a.id, a.name])} />
+            </>
+          )}
+
+          {cur === "cards" && (
+            <>
+              <h2 style={{ font: "700 18px 'Commissioner',sans-serif", margin: "0 2px 6px" }}>{t("wzCards")}</h2>
+              {hint("wzCardsHint")}
+              <div style={{ ...box, padding: 0, overflow: "hidden" }}>
+                {cardTx.map((x, i) => {
+                  const on = cards.some((c) => c.id === cardOf[x.id]);
+                  return (
+                    <div key={x.id} style={{ display: "flex", alignItems: "center", gap: 10, padding: "11px 14px", borderTop: i ? `1px solid ${C.line}` : "none" }}>
+                      <input type="checkbox" checked={on} aria-label={x.payee || catName(x.categoryId)}
+                        onChange={(e) => setCardOf((m) => ({ ...m, [x.id]: e.target.checked ? cards[0].id : undefined }))}
+                        style={{ width: 20, height: 20, accentColor: C.teal, flexShrink: 0 }} />
+                      {rowLine(x)}
+                      {on && cards.length > 1 && (
+                        <select value={cardOf[x.id]} onChange={(e) => setCardOf((m) => ({ ...m, [x.id]: e.target.value }))} style={{ ...selectStyle, width: 120, padding: "8px 30px 8px 9px", fontSize: 13, backgroundPosition: "right 8px center" }}>
+                          {cards.map((c) => <option key={c.id} value={c.id}>{c.name || t("accCard")}</option>)}
+                        </select>
+                      )}
+                      <span style={{ font: "700 14px 'Poppins',sans-serif", color: C.ink, flexShrink: 0 }}>{money(x.amount)}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </>
+          )}
+
+          {cur === "orphans" && (
+            <>
+              <h2 style={{ font: "700 18px 'Commissioner',sans-serif", margin: "0 2px 6px" }}>{t("wzOrphans")}</h2>
+              {hint("wzOrphansHint")}
+              {orphans.map((x) => (
+                <div key={x.id} style={box}>
+                  <div style={{ display: "flex", justifyContent: "space-between", gap: 10, marginBottom: 9 }}>
+                    <span style={{ font: "600 14px 'Commissioner',sans-serif" }}>{dfmt(x.date)}{x.payee ? ` · ${x.payee}` : ""}</span>
+                    <span style={{ font: "700 14px 'Poppins',sans-serif" }}>{money(x.amount)}</span>
+                  </div>
+                  <select value={orphanCat[x.id] || ""} onChange={(e) => setOrphanCat((m) => ({ ...m, [x.id]: e.target.value }))} aria-label={`${t("category")} ${money(x.amount)}`} style={selectStyle}>
+                    <option value="">{t("uncategorised")}</option>
+                    {state.groups.map((g) => (
+                      <optgroup key={g.id} label={g.name}>
+                        {state.categories.filter((c) => c.groupId === g.id).map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+                      </optgroup>
+                    ))}
+                  </select>
+                </div>
+              ))}
+            </>
+          )}
+
+          {cur === "summary" && draft && (
+            <>
+              <h2 style={{ font: "700 18px 'Commissioner',sans-serif", margin: "0 2px 12px" }}>{t("wzSummary")}</h2>
+              <div style={{ ...box, padding: 0, overflow: "hidden" }}>
+                {draft.accounts.map((a, i) => (
+                  <div key={a.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10, padding: "12px 14px", borderTop: i ? `1px solid ${C.line}` : "none" }}>
+                    <span>
+                      <span style={{ display: "block", font: "600 15px 'Commissioner',sans-serif" }}>{a.name}</span>
+                      <span style={{ display: "block", font: "500 12px 'Commissioner',sans-serif", color: C.muted, marginTop: 2 }}>{t(ACC_TYPE_KEY[a.type])} · {t(isOnBudget(a) ? "onBudget" : "tracking")}</span>
+                    </span>
+                    <span style={{ font: "700 15px 'Poppins',sans-serif", color: (draftCalc.balances[a.id] || 0) < 0 ? C.clay : C.ink }}>{money(draftCalc.balances[a.id])}</span>
+                  </div>
+                ))}
+              </div>
+              <div style={{ ...box, display: "flex", justifyContent: "space-between", gap: 10, alignItems: "baseline" }}>
+                <span style={{ font: "500 13.5px/1.4 'Commissioner',sans-serif", color: C.muted }}>{t("wzStartAdded")}</span>
+                <b style={{ font: "700 16px 'Poppins',sans-serif" }}>{money(startAdded)}</b>
+              </div>
+              <div style={{ ...box, display: "flex", justifyContent: "space-between", gap: 10, alignItems: "baseline", background: C.tealSoft, borderColor: C.tealSoft }}>
+                <span style={{ font: "600 13.5px/1.4 'Commissioner',sans-serif", color: C.teal }}>{t("wzRtaNow")}</span>
+                <b style={{ font: "700 20px 'Poppins',sans-serif", color: draftCalc.readyToAssign < 0 ? C.clay : C.teal }}>{money(draftCalc.readyToAssign)}</b>
+              </div>
+            </>
+          )}
+        </Ledger>
+
+        <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, display: "flex", justifyContent: "center", background: "rgba(245,241,232,.94)", backdropFilter: "blur(8px)", borderTop: `1px solid ${C.line}`, paddingBottom: "env(safe-area-inset-bottom)", zIndex: 20 }}>
+          <div style={{ width: "100%", maxWidth: 480, display: "flex", gap: 9, padding: "12px 14px" }}>
+            {step > 0 && <GhostBtn onClick={() => setStep(step - 1)}><ChevronLeft size={16} />{t("back")}</GhostBtn>}
+            <div style={{ flex: 1 }}>
+              <PrimaryBtn onClick={next} disabled={!canNext}>
+                {cur === "summary" ? <><Check size={18} />{t("wzFinish")}</> : <>{t("wzNext")}<ChevronRight size={18} /></>}
+              </PrimaryBtn>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 
